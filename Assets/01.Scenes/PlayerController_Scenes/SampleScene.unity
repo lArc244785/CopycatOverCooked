@@ -8084,13 +8084,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.4934217, y: -0, z: -0, w: 0.8697902}
-  m_LocalPosition: {x: 7.97, y: 8.9, z: -1.25}
+  m_LocalRotation: {x: 0.45399043, y: 0, z: 0, w: 0.8910066}
+  m_LocalPosition: {x: 8.3, y: 9, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 59.131, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 54, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16953,7 +16953,7 @@ Transform:
   m_GameObject: {fileID: 706894385}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.4, y: 1.46, z: 3.98}
+  m_LocalPosition: {x: 2.41, y: 1.46, z: 2.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16973,10 +16973,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 5
-  _dashSpeed: 10
-  _throwPower: 10
-  _itemDetectRange: 5
-  radius: 0.2
+  _dashSpeed: 7
+  _throwPower: 10.58
+  _itemDetectRange: 1.68
+  radius: 0.07
 --- !u!54 &706894391
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -10,35 +10,44 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _itemDetectRange = 0f;
     [SerializeField] private float radius = 0f;
 
-    private float _tempSpeed = 0f;
     private bool _ingredientGrabbable = true;
     private bool _untensilGrabbable = true;
-
-    private Collider[] _cols;
+    private Vector3 _direction = Vector3.zero;
+    private Rigidbody _body = null;
     /*
     
 
     */
 
+    private void Start()
+    {
+        _body = GetComponent<Rigidbody>();
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            //_moveSpeed =
+            _body.AddForce(_direction * _dashSpeed, ForceMode.Impulse);
         }
     }
 
     private void FixedUpdate()
     {
         move();
-
-        //_cols = Physics.OverlapBox(transform.position + Vector3.forward, );
     }
 
     private void move()
     {
-        transform.position += new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")) * _moveSpeed * Time.deltaTime;
-        transform.forward = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        _direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        _direction.Normalize();
+
+        transform.position += _direction * _moveSpeed * Time.deltaTime;
+
+        if (_direction != Vector3.zero)
+        {
+            transform.forward = _direction;
+        }
     }
 
     private void OnDrawGizmosSelected()
@@ -49,6 +58,7 @@ public class PlayerController : MonoBehaviour
     private void DrawItemDetectGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(transform.position + Vector3.forward * _itemDetectRange, radius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x, 0,0), radius);
+        Debug.Log(transform.forward);
     }
 }
