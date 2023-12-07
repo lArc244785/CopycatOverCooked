@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private bool _ingredientGrabbable = true;
     private bool _untensilGrabbable = true;
 
+    private Collider[] _cols;
     /*
     
 
@@ -21,7 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             //_moveSpeed =
         }
@@ -30,6 +31,14 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         move();
+
+        //_cols = Physics.OverlapBox(transform.position + Vector3.forward, );
+    }
+
+    private void move()
+    {
+        transform.position += new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")) * _moveSpeed * Time.deltaTime;
+        transform.forward = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
     }
 
     private void OnDrawGizmosSelected()
@@ -41,11 +50,5 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.position + Vector3.forward * _itemDetectRange, radius);
-    }
-
-    private void move()
-    {
-        transform.position += new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")) * _moveSpeed * Time.deltaTime;
-        transform.forward = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
     }
 }
