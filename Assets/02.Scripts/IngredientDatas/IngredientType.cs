@@ -7,6 +7,7 @@ namespace CopycatOverCooked.Datas
 	public enum IngredientType
 	{
 		None = -1,
+		Trash = -9999,
 		Onion = 1 << 0,
 		Tomato = 1 << 1,
 		Shrimp = 1 << 2,
