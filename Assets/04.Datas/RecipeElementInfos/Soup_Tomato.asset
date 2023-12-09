@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Soup_Tomato
   m_EditorClassIdentifier: 
   <resource>k__BackingField: 2
-  <utensil>k__BackingField: 0
-  <result>k__BackingField: 1024
+  <utensil>k__BackingField: 1
+  <result>k__BackingField: 512
   <cookSucessProgress>k__BackingField: 1
   <cookFailProgress>k__BackingField: 2

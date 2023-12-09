@@ -7,17 +7,21 @@ namespace CopycatOverCooked.Utensils
 	{
 		[SerializeField] private LayerMask _detectObjectMask;
 		[SerializeField] private string cookableDetectTag;
-		private string _detectTag;
-		private bool isBurring = false;
+	
+		[SerializeField] private bool _isDetedActiveObject = false;
+
+		public bool isBuring = false;
 
 		protected override bool CanCooking()
 		{
-			return cookableDetectTag.Equals(_detectTag);
+			return (currentProgress == ProgressType.Progressing || currentProgress == ProgressType.Sucess) &&
+					_isDetedActiveObject; 
 		}
 
 		protected override bool CanGrabable()
 		{
-			return currentProgress != ProgressType.Progressing && isBurring == false;
+			return (currentProgress == ProgressType.Progressing && _isDetedActiveObject) == false && 
+				    isBuring == false;
 		}
 
 
@@ -43,9 +47,12 @@ namespace CopycatOverCooked.Utensils
 		{
 			slots.Clear();
 			slots.Add(IngredientType.Trash);
+			UpdateSlot();
 			//todo fire
 
 			currentProgress = ProgressType.Fail;
+			cookProgress += Time.deltaTime;
+			Debug.Log("Utensill Cooking Fail");
 			return;
 		}
 
@@ -55,6 +62,22 @@ namespace CopycatOverCooked.Utensils
 				return;
 
 			UpdateProgress();
+		}
+
+		private void OnTriggerEnter(Collider other)
+		{
+			if((1<< other.gameObject.layer & _detectObjectMask) > 0)
+			{
+				_isDetedActiveObject = true;
+			}
+		}
+
+		private void OnTriggerExit(Collider other)
+		{
+			if ((1 << other.gameObject.layer & _detectObjectMask) > 0)
+			{
+				_isDetedActiveObject = false;
+			}
 		}
 	}
 }

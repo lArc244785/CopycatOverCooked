@@ -22,20 +22,49 @@ namespace CopycatOverCooked.Utensils
         [SerializeField] private int _slotCount;
         protected List<IngredientType> slots;
         [SerializeField] private List<RecipeElementInfo> recipeList;
-        protected RecipeElementInfo progressRecipe;
+        protected RecipeElementInfo progressRecipe 
+        { 
+            get
+            {
+                return _progressRecipe;
+			}
+			set
+			{
+                _progressRecipe = value;
+                onChangeRecipe?.Invoke(_progressRecipe);
+			}
+        }
+
+        private RecipeElementInfo _progressRecipe;
+
         protected ProgressType currentProgress;
-        protected float cookProgress;
+        private float _cookProgress;
+        protected float cookProgress
+		{
+			set
+			{
+                _cookProgress = value;
+                onUpdateProgress?.Invoke(currentProgress, value);
+			}
+			get
+			{
+                return _cookProgress;
+			}
+		}
 
 		public event Action<IngredientType[]> onChangeSlot;
 		public event Action<ProgressType, float> onUpdateProgress;
+        public event Action<RecipeElementInfo> onChangeRecipe;
 
 		protected abstract bool CanCooking();
         protected abstract bool CanGrabable();
 
         protected virtual void Awake()
         {
-            recipeList = new List<RecipeElementInfo>();
-            recipeList.Capacity = _slotCount;
+            slots = new();
+            slots.Capacity = _slotCount;
+            currentProgress = ProgressType.None;
+            cookProgress = 0.0f;
         }
 
 
@@ -52,12 +81,14 @@ namespace CopycatOverCooked.Utensils
                 currentProgress = ProgressType.Progressing;
                 progressRecipe = foundRecipe;
                 slots.Add(resource);
+                UpdateSlot();
                 return true;
             }
             else if(progressRecipe != null && progressRecipe.resource == resource)
             {
                 slots.Add(resource);
-				cookProgress = 0.0f;
+                UpdateSlot();
+                cookProgress = 0.0f;
 				return true;
             }
 
@@ -92,7 +123,8 @@ namespace CopycatOverCooked.Utensils
             progressRecipe = null;
             cookProgress = 0.0f;
             currentProgress = ProgressType.None;
-			return spills;
+            UpdateSlot();
+            return spills;
         }
 
         public bool TrySpillToPlate(out IngredientType[] spills)
@@ -111,15 +143,23 @@ namespace CopycatOverCooked.Utensils
 		}
 
 
-        protected void SurcessProgress()
+        protected virtual void SurcessProgress()
         {
             for(int i = 0; i < slots.Count; i++)
             {
                 slots[i] = progressRecipe.result;
             }
+
+            onChangeSlot(slots.ToArray());
 			currentProgress = ProgressType.Sucess;
+            onUpdateProgress?.Invoke(currentProgress, cookProgress);
+            Debug.Log("Utensill Cooking Surcess");
 		}
 
+        protected void UpdateSlot()
+		{
+            onChangeSlot?.Invoke(slots.ToArray());
+        }
 
     }
 }
