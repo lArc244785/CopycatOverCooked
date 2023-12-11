@@ -1,37 +1,29 @@
+using Unity.Netcode;
 using UnityEngine;
 
 namespace CopycatOverCooked.Datas
 {
-    public class IngredientBox : MonoBehaviour
+    public class IngredientBox : NetworkBehaviour
     {
-        [SerializeField]
-        private Ingredient ingredientPrefab; // 인스펙터에서 설정할 Ingredient 프리팹
-        public IngredientType ingredientType; // 상자 안에 있는 재료의 타입
+        public GameObject ingredientNetworkPrefab;
+        public float unboxingCooldown = 2.0f; // 쿨다운 시간을 설정합니다. 예시로 5초를 사용합니다.
+        private double lastUnboxingTime; // 마지막으로 재료를 생성한 시간을 기록합니다.
+        public IngredientType ingredientType; // 이 상자에 설정된 재료 타입
 
-        // 상자에서 재료를 꺼내는 메서드
-        public void UnBoxing()
+        [ServerRpc]
+        public void UnBoxingServerRpc()
         {
-            // 재료의 아이콘을 얻어옵니다.
-            Sprite ingredientIcon = GetIngredientIcon(ingredientType);
-            // 재료 프리팹의 인스턴스를 생성하고 위치를 설정합니다.
-            Ingredient newIngredient = Instantiate(ingredientPrefab, transform.position, Quaternion.identity);
-            newIngredient.type = ingredientType; // 재료 타입을 설정합니다.
-            newIngredient.icon = ingredientIcon; // 재료 아이콘을 설정합니다.
-
-            // SpriteRenderer 컴포넌트에 아이콘을 설정합니다.
-            SpriteRenderer spriteRenderer = newIngredient.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
+            // 현재 시간이 마지막 unboxing 시간 + 쿨다운 시간보다 클 경우에만 실행합니다.
+            if (NetworkManager.ServerTime.Time - lastUnboxingTime >= unboxingCooldown)
             {
-                spriteRenderer.sprite = ingredientIcon;
-            }
-        }
+                GameObject ingredientObject = Instantiate(ingredientNetworkPrefab, transform.position, Quaternion.identity);
+                ingredientObject.GetComponent<NetworkObject>().Spawn();
 
-        // 재료 타입에 따른 아이콘 스프라이트를 가져오는 메서드
-        private Sprite GetIngredientIcon(IngredientType type)
-        {
-            // 재료 타입에 따라 적절한 스프라이트를 리턴합니다.
-            // 예: "Resources/Icons/Onion" 경로에 있는 스프라이트 리소스를 로드합니다.
-            return Resources.Load<Sprite>("Icons/" + type.ToString());
+                Ingredient ingredientComponent = ingredientObject.GetComponent<Ingredient>();
+                ingredientComponent.type.Value = ingredientType; // NetworkVariable을 통해 동기화됩니다.
+
+                lastUnboxingTime = NetworkManager.ServerTime.Time; // 마지막 unboxing 시간을 갱신합니다.
+            }
         }
     }
 }
