@@ -14,10 +14,8 @@ public class PlayerController : MonoBehaviour
     private bool _untensilGrabbable = true;
     private Vector3 _direction = Vector3.zero;
     private Rigidbody _body = null;
-    /*
-    
 
-    */
+    //private T item = null;
 
     private void Start()
     {
@@ -42,7 +40,7 @@ public class PlayerController : MonoBehaviour
         _direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
         _direction.Normalize();
 
-        transform.position += _direction * _moveSpeed * Time.deltaTime;
+        transform.position += _direction * _moveSpeed * Time.fixedDeltaTime;
 
         if (_direction != Vector3.zero)
         {
@@ -57,8 +55,16 @@ public class PlayerController : MonoBehaviour
 
     private void DrawItemDetectGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(new Vector3(transform.position.x, 0,0), radius);
-        Debug.Log(transform.forward);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(transform.position + transform.forward * 1.5f, radius);
+        Gizmos.DrawLine(transform.position,
+                        new Vector3(0f, 0f, 0f));
+
+        Debug.Log(transform.position);
+    }
+
+    private void DetectObject()
+    {
+        //if(Physics.Raycast(transform.position + transform.forward + transform.up, Vector3.down,                           ))
     }
 }
