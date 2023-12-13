@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CopycatOverCooked.Datas;
+using Unity.Netcode;
 
 namespace CopycatOverCooked.Orders
 {
-    public class Order : MonoBehaviour
+    public class Order : NetworkBehaviour
     {
         public event System.Action OnFailed;
         public event System.Action OnDelivered;
