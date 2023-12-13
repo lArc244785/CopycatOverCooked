@@ -1,6 +1,7 @@
 using CopycatOverCooked.Datas;
 using CopycatOverCooked.NetWork.Untesils;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,44 +15,36 @@ namespace CopycatOverCooked.UIs
 		[SerializeField] private GameObject _progressBar;
 		[SerializeField] private Image _progressGague;
 
-		private float _sucessProgress;
-
 		private NetUtensillBase _utensil;
 
 		private void Start()
 		{
 			_slotImage = _gridTransform.GetComponentsInChildren<Image>();
 			_utensil = transform.root.GetComponent<NetUtensillBase>();
-			_utensil.onChangeRecipe += UpdateRecipe;
-			_utensil.onUpdateProgress += UpdateProgress;
-			_utensil.onUpdateSlot += UpdateSlots;
+			_utensil.onChangeProgress += UpdateProgress;
+			_utensil.onChangeSlot += UpdateSlots;
 
 			_progressBar.SetActive(false);
 		}
 
-		private void UpdateRecipe(RecipeElementInfo recipe)
-		{
-			if (recipe != null)
-				_sucessProgress = recipe.cookSucessProgress;
-			_progressGague.fillAmount = 0.0f;
-		}
 
-		private void UpdateProgress(ProgressState progress, float current)
+
+		private void UpdateProgress(float current, float surcessProgress)
 		{
-			if (progress != ProgressState.Progressing)
+			Debug.Log(current);
+			if(current <= 0.0f)
 			{
 				_progressBar.SetActive(false);
 				return;
 			}
-			else
-			{
-				_progressBar.SetActive(true);
-			}
-			float fillAmount = Mathf.Clamp(current / _sucessProgress, 0.0f, 1.0f);
+
+			_progressBar.SetActive(true);
+
+			float fillAmount = Mathf.Clamp(current / surcessProgress, 0.0f, 1.0f);
 			_progressGague.fillAmount = fillAmount;
 		}
 
-		private void UpdateSlots(IEnumerator<int> enumerator)
+		private void UpdateSlots(IEnumerable<IngredientType> inputIngredient)
 		{
 			int i = 0;
 
@@ -60,13 +53,16 @@ namespace CopycatOverCooked.UIs
 				_slotImage[i].sprite = null;
 			}
 
+			if (inputIngredient == null)
+				return;
+
 			i = 0;
-			enumerator.Reset();
-			while (enumerator.MoveNext())
+
+			foreach(var item in inputIngredient)
 			{
-				_slotImage[i++].sprite = IngredientSpriteDB.instance.GetSprite((IngredientType)enumerator.Current);
+				_slotImage[i].sprite = IngredientSpriteDB.instance.GetSprite(item);
+				i++;
 			}
-			enumerator.Reset();
 		}
 
 	}

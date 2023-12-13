@@ -13,8 +13,8 @@ namespace CopycatOverCooked.Utensils
         Fail,
     }
 
-    public abstract class UtensilBase : MonoBehaviour
-    {      
+    public abstract class UtensilBase : MonoBehaviour, ISpill
+	{      
         [SerializeField] protected UtensilType type;
         [SerializeField] private int _slotCount;
         protected List<IngredientType> slots;
@@ -158,5 +158,9 @@ namespace CopycatOverCooked.Utensils
             onChangeSlot?.Invoke(slots.ToArray());
         }
 
-    }
+		IngredientType[] ISpill.Spill()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

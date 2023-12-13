@@ -1,8 +1,14 @@
 using CopycatOverCooked.Datas;
+using CopycatOverCooked.Utensils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Netcode;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace CopycatOverCooked.NetWork.Untesils
 {
@@ -14,107 +20,97 @@ namespace CopycatOverCooked.NetWork.Untesils
 		Fail,
 	}
 
-	public abstract class NetUtensillBase : NetworkBehaviour 
+	public abstract class NetUtensillBase : NetworkBehaviour, ISpill 
 	{
-		[SerializeField] protected UtensilType type;
-		[SerializeField] private int _slotCount;
-		[SerializeField] private List<RecipeElementInfo> recipeList;
-		protected RecipeElementInfo currentRecipe
-		{
-			set
-			{
-				_currentRecipe = value;
-				onChangeRecipe?.Invoke(value);
-			}
-			get
-			{
-				return _currentRecipe;
-			}
-		}
-
-		private RecipeElementInfo _currentRecipe;
-
-
-		#region NetWorkValues
+		#region NetworkVariable
+		/*[공유 데이터]
+		 *현재 진행
+		 *조리 진행 타입
+		 *현재 레시피
+		 *넣어져 있는 재료
+		 */
+		protected NetworkVariable<float> progress = new NetworkVariable<float>();
 		/// <summary>
-		/// 해당 데이터는 꼭 IngredientType으로 변환을 해야됩니다.
+		/// ProgressState
 		/// </summary>
-		protected NetworkList<int> slots = new();
-		protected NetworkVariable<float> currentProgress = new();
-		protected NetworkVariable<ProgressState> currentProgressState = new();
-		public NetworkVariable<IngredientType[]> spills = new();
+		protected NetworkVariable<int> progressType = new NetworkVariable<int>((int)ProgressState.None);
+		/// <summary>
+		/// IngredientType
+		/// </summary>
+		protected NetworkVariable<int> recipeIndex = new NetworkVariable<int>();
+		/// <summary>
+		/// IngredientType
+		/// </summary>
+		protected NetworkList<int> inputIngredients;
 		#endregion
 
-		public event Action<IEnumerator<int>> onUpdateSlot;
-		public event Action<ProgressState, float> onUpdateProgress;
-		public event Action<RecipeElementInfo> onChangeRecipe;
+		[SerializeField] private int _slotCapcity;
+		[SerializeField] private List<RecipeElementInfo> recipeList;
+		[SerializeField] private TestPlate _plate;
 
-		protected abstract bool CanCooking();
-		protected abstract bool CanGrabable();
-		public abstract void UpdateProgress();
+		public event Action<float, float> onChangeProgress;
+		public event Action<IEnumerable<IngredientType>> onChangeSlot; 
 
 		public override void OnNetworkSpawn()
 		{
 			base.OnNetworkSpawn();
 
-			if (!IsServer)
+			progress.OnValueChanged += OnChangeProgress;
+			inputIngredients.OnListChanged += OnChangeSlot;
+
+			if(IsClient)
+			{
+				ConnetionUpdateData();
+			}
+		}
+
+		protected virtual void Awake()
+		{
+			inputIngredients = new NetworkList<int>();
+		}
+
+		protected abstract bool CanCooking();
+		protected abstract bool CanGrabable();
+		public abstract void UpdateProgress();
+
+		public RecipeElementInfo GetCurrentRecipe() 
+		{
+			if (recipeIndex.Value < 0)
+				return null;
+
+			return recipeList[recipeIndex.Value];
+		}
+		
+
+		[ServerRpc(RequireOwnership = false)]
+		public void AddResourceServerRpc(int resource)
+		{
+			if (inputIngredients.Count == _slotCapcity)
 				return;
 
-			currentProgress.Value = 0.0f;
-			currentRecipe = null;
+			if ((ProgressType)progressType.Value == ProgressType.Fail)
+				return;
 
-			currentProgress.OnValueChanged += OnChangeCurrentProgress;
-			currentProgressState.OnValueChanged += OnChangeCurrentProgressState;
+			//재료가 아예 없는 경우
+			if (inputIngredients.Count == 0 && CanCookableResource((IngredientType)resource, out var foundRecipeIndex))
+			{
+				progressType.Value = (int)ProgressType.Progressing;
+				recipeIndex.Value = foundRecipeIndex;
+				inputIngredients.Add(resource);
+				progress.Value = 0.0f;
+			}
+			//재료가 있는 경우
+			else if (inputIngredients.Count > 0 && GetCurrentRecipe().resource == (IngredientType)resource)
+			{
+				inputIngredients.Add(resource);
+				progress.Value = 0.0f;
+			}
 		}
 
-		private void OnChangeCurrentRecipe(RecipeElementInfo prev, RecipeElementInfo current)
-		{
-			onChangeRecipe?.Invoke(current);
-		}
-
-		private void OnChangeCurrentProgress(float prev, float current)
-		{
-			onUpdateProgress?.Invoke(currentProgressState.Value, current);
-		}
-
-		private void OnChangeCurrentProgressState(ProgressState prev, ProgressState current)
-		{
-			onUpdateProgress?.Invoke(current, currentProgress.Value);
-		}
-
-		private bool TryAddSlot(IngredientType resource)
-		{
-			if (slots.Count >= _slotCount)
-				return false;
-
-			currentProgress.Value = 0.0f;
-			slots.Add((int)resource);
-			onUpdateSlot?.Invoke(slots.GetEnumerator());
-			return true;
-		}
-
-		//[ServerRpc(RequireOwnership = false)]
-		//public void AddResourceServerRpc(IngredientType resource, ServerRpcParams parasm = default)
-		//{
-		//	if (currentProgressState.Value == ProgressState.Fail)
-		//		return;
-
-		//	if (slots.Value.Count == 0 && CanCookableResource(resource, out var foundRecipe))
-		//	{
-		//		currentProgressState.Value = ProgressState.Progressing;
-		//		currentRecipe.Value = foundRecipe;
-		//		TryAddSlot(resource);
-		//	}
-		//	else if (currentRecipe.Value != null && currentRecipe.Value.resource == resource)
-		//	{
-		//		TryAddSlot(resource);
-		//	}
-		//}
-
-		private bool CanCookableResource(IngredientType resource, out RecipeElementInfo foundRecipe)
+		private bool CanCookableResource(IngredientType resource, out int foundRecipeIndex)
 		{
 			bool isFound = false;
-			foundRecipe = null;
+			foundRecipeIndex = -1;
 
 			int i = 0;
 
@@ -123,53 +119,94 @@ namespace CopycatOverCooked.NetWork.Untesils
 				if (recipeList[i].resource == resource)
 				{
 					isFound = true;
-					foundRecipe = recipeList[i];
+					foundRecipeIndex = i;
 				}
 				i++;
 			}
 			return isFound;
 		}
 
-		private IngredientType[] Spill()
+		private void OnChangeProgress(float prev, float current)
 		{
-			IngredientType[] spills = new IngredientType[slots.Count];
-			for (int i = 0; i < slots.Count; i++)
-				spills[i] = (IngredientType)slots[i];
+			var currentRecipe = GetCurrentRecipe();
+			var sucess = currentRecipe != null ? currentRecipe.cookSucessProgress : 0.0f;
 
-			slots.Clear();
-			currentRecipe = null;
-			currentProgress.Value = 0.0f;
-			currentProgressState.Value = ProgressState.None;
-			onUpdateSlot?.Invoke(slots.GetEnumerator());
+			onChangeProgress?.Invoke(current, sucess);
+		}
+
+		private void OnChangeSlot(NetworkListEvent<int> changeEvent)
+		{
+			if (changeEvent.Type == NetworkListEvent<int>.EventType.Clear)
+			{
+				onChangeSlot?.Invoke(null);
+				return;
+			}
+
+			IngredientType[] slots = new IngredientType[changeEvent.Index + 1];
+			for(int i =0; i < changeEvent.Index; i++)
+				slots[i] = (IngredientType)inputIngredients[i];
+			slots[changeEvent.Index] = (IngredientType)changeEvent.Value;
+
+			onChangeSlot?.Invoke(slots);
+		}
+
+		private void ConnetionUpdateData()
+		{
+			var recipe = GetCurrentRecipe();
+			float sucess = recipe != null ? recipe.cookSucessProgress : 0;
+
+			onChangeProgress?.Invoke(progress.Value, sucess);
+
+			IngredientType[] slots = new IngredientType[inputIngredients.Count];
+			for (int i = 0; i < inputIngredients.Count; i++)
+				slots[i] = (IngredientType)inputIngredients[i];
+			onChangeSlot?.Invoke(slots);
+		}
+
+		protected IngredientType[] GetSlotToArray()
+		{
+			if (inputIngredients.Count == 0)
+				return null;
+
+			IngredientType[] slots = new IngredientType[inputIngredients.Count];
+			for(int i = 0; i < slots.Length; i++)
+			{
+				slots[i] = (IngredientType)inputIngredients[i];
+			}
+
+			return slots;
+		}
+
+		public IngredientType[] Spill()
+		{
+			IngredientType[] spills = GetSlotToArray();
+			inputIngredients.Clear();
+			recipeIndex.Value = -1;
+			progress.Value = -1.0f;
+			progressType.Value = (int)ProgressType.None;
 			return spills;
 		}
 
-		[ServerRpc]
-		public void SpillToPlateServerRpc()
+		public bool CanSpillToPlate(TestPlate plate)
 		{
-			if (currentProgressState.Value != ProgressState.Sucess)
-				return;
-
-			spills.Value = Spill();
+			return progressType.Value == (int)ProgressState.Sucess && 
+				   plate.inputIngredients.Count < plate.capacity;
 		}
 
-		[ServerRpc]
+
+		[ServerRpc(RequireOwnership = false)]
+		public void SpillToPlateServerRpc()
+		{
+			if (CanSpillToPlate(_plate) == false)
+				return;
+
+			_plate.InputIngredient(Spill());
+		}
+
+		[ServerRpc(RequireOwnership = false)]
 		public void SpillToTrashServerRpc()
 		{
 			Spill();
 		}
-
-
-		protected virtual void SurcessProgress()
-		{
-			for (int i = 0; i < slots.Count; i++)
-			{
-				slots[i] = (int)currentRecipe.result;
-			}
-
-			currentProgressState.Value = ProgressState.Sucess;
-			Debug.Log("Utensill Cooking Surcess");
-		}
-
 	}
 }
