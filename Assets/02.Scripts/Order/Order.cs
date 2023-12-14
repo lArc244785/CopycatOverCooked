@@ -12,6 +12,8 @@ namespace CopycatOverCooked.Orders
         public event System.Action OnFailed;
         public event System.Action OnDelivered;
 
+        [SerializeField] private Recipe _recipe;
+
         private RecipeElementInfo recipe;
         private float waitingTime;
         private bool isCountingDown;
