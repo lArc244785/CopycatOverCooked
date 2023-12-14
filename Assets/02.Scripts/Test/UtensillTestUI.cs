@@ -28,7 +28,7 @@ public class UtensillTestUI : MonoBehaviour
         _btnAddBread.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Bread));
         _btnSpillToPlate.onClick.AddListener(() => _utensil.SpillToPlateServerRpc());
         _btnUntensillSpillToTrash.onClick.AddListener(()=> _utensil.SpillToTrashServerRpc());
-        _btnPlateSpillToTrash.onClick.AddListener(() => _plate.ClearServerRpc());
+        _btnPlateSpillToTrash.onClick.AddListener(() => _plate.EmptyServerRpc());
 	}
 
 }

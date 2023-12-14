@@ -1,5 +1,6 @@
 ﻿using CopycatOverCooked.Datas;
 using CopycatOverCooked.Utensils;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace CopycatOverCooked.NetWork.Untesils
@@ -8,6 +9,14 @@ namespace CopycatOverCooked.NetWork.Untesils
 	{
 		[SerializeField] private string _progressOnTag;
 		[SerializeField] private bool _isProgressable = false;
+
+		public bool canPickUp => true;
+
+		public ulong owner => _owner;
+
+		public bool canPointDrop => _owner >= 0;
+
+		private ulong _owner;
 
 		private void Update()
 		{

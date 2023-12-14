@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace CopycatOverCooked
 {
@@ -19,6 +20,10 @@ namespace CopycatOverCooked
 		public event Action<bool> onChangeDirty;
 
 		public IngredientType result { private set; get; }
+
+		public ulong owner => _owner;
+
+		private ulong _owner = 101;
 
 		public override void OnNetworkSpawn()
 		{
@@ -40,7 +45,7 @@ namespace CopycatOverCooked
 		{
 			inputIngredients = new NetworkList<int>();
 			inputIngredients.OnListChanged += OnChangeSlot;
-			isDirty.OnValueChanged += (prev, current) => onChangeDirty(current);
+			//isDirty.OnValueChanged += (prev, current) => onChangeDirty(current);
 		}
 
 		private void OnChangeSlot(NetworkListEvent<int> changeEvent)
@@ -61,7 +66,7 @@ namespace CopycatOverCooked
 			onChangeSlot?.Invoke(slots);
 		}
 
-
+		
 		public void AddIngredient(IngredientType[] ingredient)
 		{
 			if (IsServer == false)
@@ -74,6 +79,7 @@ namespace CopycatOverCooked
 			}
 		}
 
+
 		[ServerRpc(RequireOwnership = false)]
 		public void WashServerRpc()
 		{
@@ -81,10 +87,12 @@ namespace CopycatOverCooked
 		}
 
 		[ServerRpc(RequireOwnership = false)]
-		public void ClearServerRpc()
+		public void EmptyServerRpc()
 		{
 			inputIngredients.Clear();
 			isDirty.Value = true;
 		}
+
+
 	}
 }

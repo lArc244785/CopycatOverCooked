@@ -1,4 +1,5 @@
 ﻿using CopycatOverCooked.Datas;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace CopycatOverCooked.Utensils
@@ -11,6 +12,14 @@ namespace CopycatOverCooked.Utensils
 		[SerializeField] private bool _isDetedActiveObject = false;
 
 		public bool isBuring = false;
+
+		public bool canPickUp => true;
+
+		public bool canDrop => true;
+
+		public ulong owner { get => _owner;}
+
+		private ulong _owner;
 
 		protected override bool CanCooking()
 		{
@@ -79,5 +88,17 @@ namespace CopycatOverCooked.Utensils
 				_isDetedActiveObject = false;
 			}
 		}
+
+		[ServerRpc(RequireOwnership = false)]
+		public void PickUpServerRpc(ServerRpcParams parmas = default)
+		{
+			_owner = parmas.Receive.SenderClientId;
+		}
+
+		public void Drop()
+		{
+			throw new System.NotImplementedException();
+		}
+
 	}
 }

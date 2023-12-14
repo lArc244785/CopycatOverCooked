@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 6288674932383394954}
   - component: {fileID: 1780326085420166667}
   - component: {fileID: 1732934941268023634}
+  - component: {fileID: 800064915423835431}
   m_Layer: 0
   m_Name: NetPot
   m_TagString: Untagged
@@ -176,6 +177,18 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &800064915423835431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2411448376932094243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e95fc1d2e4b2ea4a84f0db7d04c9342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2532522479039875684
 GameObject:
   m_ObjectHideFlags: 0

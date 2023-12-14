@@ -19,7 +19,10 @@ namespace CopycatOverCooked.Datas
 
 		public Sprite GetSprite(IngredientType type)
 		{
-			return _data.ingredientSpriteTable[type];
+			if (_data.ingredientSpriteTable.ContainsKey(type))
+				return _data.ingredientSpriteTable[type];
+			else
+				return null;
 		}
 	}
 }
