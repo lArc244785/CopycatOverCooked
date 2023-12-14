@@ -4,12 +4,13 @@ using UnityEngine;
 using CopycatOverCooked.NetWork.Untesils;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using CopycatOverCooked;
 
 public class UtensillTestUI : MonoBehaviour
 {
     [SerializeField]
     private NetUtensillBase _utensil;
-    [SerializeField] private TestPlate _plate;
+    [SerializeField] private Plate _plate;
 
     [SerializeField] private Button _btnAddOnion;
     [SerializeField] private Button _btnAddTomato;
@@ -27,7 +28,7 @@ public class UtensillTestUI : MonoBehaviour
         _btnAddBread.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Bread));
         _btnSpillToPlate.onClick.AddListener(() => _utensil.SpillToPlateServerRpc());
         _btnUntensillSpillToTrash.onClick.AddListener(()=> _utensil.SpillToTrashServerRpc());
-        _btnPlateSpillToTrash.onClick.AddListener(() => _plate.SpillTrashServerRpc());
+        _btnPlateSpillToTrash.onClick.AddListener(() => _plate.ClearServerRpc());
 	}
 
 }

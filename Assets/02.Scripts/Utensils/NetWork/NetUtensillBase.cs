@@ -1,14 +1,9 @@
 using CopycatOverCooked.Datas;
 using CopycatOverCooked.Utensils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Netcode;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace CopycatOverCooked.NetWork.Untesils
 {
@@ -20,7 +15,7 @@ namespace CopycatOverCooked.NetWork.Untesils
 		Fail,
 	}
 
-	public abstract class NetUtensillBase : NetworkBehaviour, ISpill 
+	public abstract class NetUtensillBase : NetworkBehaviour, ISpill
 	{
 		#region NetworkVariable
 		/*[공유 데이터]
@@ -46,10 +41,10 @@ namespace CopycatOverCooked.NetWork.Untesils
 
 		[SerializeField] private int _slotCapcity;
 		[SerializeField] private List<RecipeElementInfo> recipeList;
-		[SerializeField] private TestPlate _plate;
+		[SerializeField] private Plate _plate;
 
 		public event Action<float, float> onChangeProgress;
-		public event Action<IEnumerable<IngredientType>> onChangeSlot; 
+		public event Action<IEnumerable<IngredientType>> onChangeSlot;
 
 		public override void OnNetworkSpawn()
 		{
@@ -58,7 +53,7 @@ namespace CopycatOverCooked.NetWork.Untesils
 			progress.OnValueChanged += OnChangeProgress;
 			inputIngredients.OnListChanged += OnChangeSlot;
 
-			if(IsClient)
+			if (IsClient)
 			{
 				ConnetionUpdateData();
 			}
@@ -73,14 +68,14 @@ namespace CopycatOverCooked.NetWork.Untesils
 		protected abstract bool CanGrabable();
 		public abstract void UpdateProgress();
 
-		public RecipeElementInfo GetCurrentRecipe() 
+		public RecipeElementInfo GetCurrentRecipe()
 		{
 			if (recipeIndex.Value < 0)
 				return null;
 
 			return recipeList[recipeIndex.Value];
 		}
-		
+
 
 		[ServerRpc(RequireOwnership = false)]
 		public void AddResourceServerRpc(int resource)
@@ -143,7 +138,7 @@ namespace CopycatOverCooked.NetWork.Untesils
 			}
 
 			IngredientType[] slots = new IngredientType[changeEvent.Index + 1];
-			for(int i =0; i < changeEvent.Index; i++)
+			for (int i = 0; i < changeEvent.Index; i++)
 				slots[i] = (IngredientType)inputIngredients[i];
 			slots[changeEvent.Index] = (IngredientType)changeEvent.Value;
 
@@ -169,7 +164,7 @@ namespace CopycatOverCooked.NetWork.Untesils
 				return null;
 
 			IngredientType[] slots = new IngredientType[inputIngredients.Count];
-			for(int i = 0; i < slots.Length; i++)
+			for (int i = 0; i < slots.Length; i++)
 			{
 				slots[i] = (IngredientType)inputIngredients[i];
 			}
@@ -182,14 +177,14 @@ namespace CopycatOverCooked.NetWork.Untesils
 			IngredientType[] spills = GetSlotToArray();
 			inputIngredients.Clear();
 			recipeIndex.Value = -1;
-			progress.Value = -1.0f;
+			progress.Value = 0f;
 			progressType.Value = (int)ProgressType.None;
 			return spills;
 		}
 
-		public bool CanSpillToPlate(TestPlate plate)
+		public bool CanSpillToPlate(Plate plate)
 		{
-			return progressType.Value == (int)ProgressState.Sucess && 
+			return progressType.Value == (int)ProgressState.Sucess &&
 				   plate.inputIngredients.Count < plate.capacity;
 		}
 
@@ -199,8 +194,10 @@ namespace CopycatOverCooked.NetWork.Untesils
 		{
 			if (CanSpillToPlate(_plate) == false)
 				return;
+			if (_plate.isDirty.Value)
+				return;
 
-			_plate.InputIngredient(Spill());
+			_plate.AddIngredient(Spill());
 		}
 
 		[ServerRpc(RequireOwnership = false)]
