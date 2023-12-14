@@ -182,10 +182,25 @@ namespace CopycatOverCooked.NetWork.Untesils
 			return spills;
 		}
 
+		public void SpillToPlate(Plate plate)
+		{
+			if(CanSpillToPlate(plate) == false) 
+				return;
+			if (_plate.isDirty.Value)
+				return;
+
+			_plate.AddIngredient(Spill());
+		}
+
 		public bool CanSpillToPlate(Plate plate)
 		{
 			return progressType.Value == (int)ProgressState.Sucess &&
 				   plate.inputIngredients.Count < plate.capacity;
+		}
+
+		public void SpillToTrash()
+		{
+			Spill();
 		}
 
 
