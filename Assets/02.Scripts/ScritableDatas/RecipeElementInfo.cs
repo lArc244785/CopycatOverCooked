@@ -15,3 +15,4 @@ namespace CopycatOverCooked.Datas
 		[field: SerializeField]public float cookFailProgress { private set; get; }
 	}
 }
+
