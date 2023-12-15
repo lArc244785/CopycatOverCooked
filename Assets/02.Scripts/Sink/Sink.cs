@@ -77,7 +77,7 @@ public class Sink : NetworkBehaviour
         {
             _progressBar.value += Time.deltaTime;
 
-            yield return new WaitForSeconds(0.001f);
+            yield return null;
         }
 
         SpawnPlateClientRpc();
