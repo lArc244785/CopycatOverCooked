@@ -1,4 +1,5 @@
 using CopycatOverCooked;
+using CopycatOverCooked.Datas;
 using CopycatOverCooked.NetWork.Untesils;
 using Unity.Netcode;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class ClientBehaviour : NetworkBehaviour
 	private NetPickUp _pickUpObject = null;
 	private NetUtensillBase _pickUpUtensill;
 	private Table _dropTable;
+	private Ingredient _pickUpingredient;
 
 	[Header("Detect"), SerializeField] private Vector3 _interactionDetectCenter;
 	[SerializeField] private Vector3 _interactionDetectedSize;
@@ -67,26 +69,54 @@ public class ClientBehaviour : NetworkBehaviour
 			{
 				pickUp.PickUp(transform, Hand.transform.localPosition);
 				_pickUpUtensill = pickUp.GetComponent<NetUtensillBase>();
+				_pickUpingredient = pickUp.GetComponent<Ingredient>();
 				_pickUpObject = pickUp;
+			}
+			if (TryDetectInteraction<IngredientBox>(out var box))
+			{
+				if (box.TryGetIngredient(out var ingredient))
+				{
+					_pickUpObject = ingredient.GetComponent<NetPickUp>();
+					_pickUpObject.PickUp(transform, Hand.transform.localPosition);
+					_pickUpingredient = ingredient;
+				}
 			}
 		}
 		else
 		{
+			if (_pickUpingredient != null && TryDetectInteraction<NetUtensillBase>(out var utensil))
+			{
+				if (utensil.TryAddResource(_pickUpingredient.type))
+				{
+					_pickUpingredient.GetComponent<NetworkObject>().Despawn();
+					_pickUpingredient = null;
+				}
+				return;
+			}
+
 			if (TryDetectInteraction<Table>(out var dropTable))
 			{
 				if (dropTable.TryPutObject(_pickUpObject))
+				{
 					_pickUpObject = null;
+					_pickUpingredient = null;
+					_pickUpUtensill = null;
+				}
+
+				return;
 			}
 
-			if(TryDetectInteraction<TrashCan>(out var trashcan))
+			if (TryDetectInteraction<TrashCan>(out var trashcan))
 			{
 				var spill = _pickUpObject.gameObject.GetComponent<ISpill>();
 				if (spill == null)
 					return;
 				trashcan.TrashUse(spill);
+				return;
 			}
+
 		}
-		
+
 
 	}
 

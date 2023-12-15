@@ -7,7 +7,7 @@ using static UnityEngine.UI.GridLayoutGroup;
 
 namespace CopycatOverCooked
 {
-	public class Plate : NetworkBehaviour
+	public class Plate : NetworkBehaviour, ISpill
 	{
 		[field: SerializeField] public int capacity { private set; get; }
 
@@ -93,6 +93,16 @@ namespace CopycatOverCooked
 			isDirty.Value = true;
 		}
 
+		public IngredientType[] Spill()
+		{
+			IngredientType[] resources = new IngredientType[inputIngredients.Count];
+			for (int i = 0; i < resources.Length; i++)
+				resources[i] = (IngredientType)inputIngredients[i];
 
+			inputIngredients.Clear();
+			isDirty.Value = true;
+
+			return resources;
+		}
 	}
 }

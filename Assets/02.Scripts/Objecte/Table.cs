@@ -8,6 +8,22 @@ public class Table : NetworkBehaviour
 	private NetPickUp _dropObject;
 	[SerializeField] private LayerMask _putLayerMask;
 
+	public override void OnNetworkSpawn()
+	{
+		base.OnNetworkSpawn();
+		if (IsServer == false)
+			return;
+
+		if(Physics.Raycast(transform.position, Vector3.up,out var hit ,Mathf.Infinity, _putLayerMask))
+		{
+			if(hit.collider.TryGetComponent<NetPickUp>(out var dropObject))
+			{
+				TryPutObject(dropObject);
+			}
+		}
+
+	}
+
 	public bool TryPutObject(NetPickUp dropObject)
 	{
 		if (IsServer == false)

@@ -53,7 +53,7 @@ MonoBehaviour:
     m_InternalValue: 1
   _putLayerMask:
     serializedVersion: 2
-    m_Bits: 786432
+    m_Bits: 851968
 --- !u!114 &4973715666730290673
 MonoBehaviour:
   m_ObjectHideFlags: 0
