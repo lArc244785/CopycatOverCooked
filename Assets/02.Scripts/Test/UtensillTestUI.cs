@@ -34,6 +34,6 @@ public class UtensillTestUI : MonoBehaviour
         _btnUntensillSpillToTrash.onClick.AddListener(()=> _utensil.SpillToTrashServerRpc());
         _btnPlateSpillToTrash.onClick.AddListener(() => _plate.EmptyServerRpc());
         _btnAddPlate.onClick.AddListener(() => _sink.AddPlate());
-        _btnWashPlate.onClick.AddListener(() => _sink.WashingPlateServerRPC());
+        _btnWashPlate.onClick.AddListener(() => _sink.WashingPlateServerRpc());
  	}
 }

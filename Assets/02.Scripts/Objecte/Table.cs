@@ -6,26 +6,19 @@ public class Table : NetworkBehaviour
 	[SerializeField] private Transform _putPoint;
 	public NetworkVariable<bool> canPutObject = new NetworkVariable<bool>(true);
 	private NetPickUp _dropObject;
-	[SerializeField] private LayerMask _putLayerMask;
 
-	public bool TryPutObject(NetPickUp dropObject)
+	public void PutObject(NetPickUp dropObject)
 	{
 		if (IsServer == false)
-			return false;
+			return;
 		if (canPutObject.Value == false)
-			return false;
+			return;
 
-		if( (_putLayerMask & 1 <<dropObject.gameObject.layer) > 0)
-		{
-			dropObject.transform.parent = null;
-			dropObject.transform.position = _putPoint.position;
-			canPutObject.Value = false;
-			_dropObject = dropObject;
-			_dropObject.onPickUp += DropObject;
-			return true;
-		}
-
-		return false;
+		dropObject.transform.parent = null;
+		dropObject.transform.position = _putPoint.position;
+		canPutObject.Value = false;
+		_dropObject = dropObject;
+		_dropObject.onPickUp += DropObject;
 	}
 
 	private void DropObject()
