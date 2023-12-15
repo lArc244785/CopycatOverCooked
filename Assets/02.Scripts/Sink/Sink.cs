@@ -31,21 +31,21 @@ public class Sink : NetworkBehaviour
         base.OnNetworkSpawn();
     }
 
-    //[ClientRpc]
-    public void SliderActive()
+    [ClientRpc]
+    public void SliderActiveClientRpc()         //슬라이더 On
     {
         _progressBar.gameObject.SetActive(true);
     }
 
-    //[ClientRpc]
-    public void SliderInactive() 
+    [ClientRpc]
+    public void SliderInactiveClientRpc()       //슬라이더 Off
     {
         _progressBar.gameObject.SetActive(false);
         _progressBar.value = 0;
     }
 
-    [ServerRpc]
-    public void SpawnPlateServerRpc()
+    [ClientRpc]
+    public void SpawnPlateClientRpc()
     {
         GameObject cleanPlate = Instantiate(_platePrefab, _plateSpawnPoint.transform.position, Quaternion.identity);
         cleanPlate.GetComponent<NetworkObject>().Spawn(true);
@@ -61,7 +61,7 @@ public class Sink : NetworkBehaviour
 
         _testplate.GetComponent<NetworkObject>().Despawn();
 
-        SliderActive();
+        SliderActiveClientRpc();
         CorotineClientRpc();
     }
 
@@ -80,10 +80,10 @@ public class Sink : NetworkBehaviour
             yield return new WaitForSeconds(0.001f);
         }
 
-        SpawnPlateServerRpc();
+        SpawnPlateClientRpc();
 
         _hasPlates.Value = false;
-        SliderInactive();
+        SliderInactiveClientRpc();
     }
 
     public void AddPlate(/* NetworkObject _dirtyPlate */)
