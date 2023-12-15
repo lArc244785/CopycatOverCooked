@@ -17,5 +17,3 @@ MonoBehaviour:
     quantity: 1
   - ingredient: 32
     quantity: 1
-  recipePrefab: {fileID: 4373485529658837772, guid: 85b519f330dbe404ca5e69c731f3639a,
-    type: 3}

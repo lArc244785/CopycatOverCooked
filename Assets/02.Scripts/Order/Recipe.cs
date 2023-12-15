@@ -10,6 +10,17 @@ namespace CopycatOverCooked.Orders
         [SerializeField]
         private List<RecipeElementInfo> elements = new List<RecipeElementInfo>();
 
+        public IngredientType result
+        {
+            get
+            {
+                IngredientType type = IngredientType.None;
+                foreach (var element in elements)
+                    type |= element.ingredient;
+                return type;
+            }
+        }
+
         public List<RecipeElementInfo> Elements
         {
             get { return elements; }

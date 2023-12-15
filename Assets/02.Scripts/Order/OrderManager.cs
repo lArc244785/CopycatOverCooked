@@ -50,6 +50,8 @@ namespace CopycatOverCooked.Orders
             }
         }
 
+        [SerializeField] private Order _order;
+
         private void Start()
         {
             isOrder = true;
@@ -94,6 +96,12 @@ namespace CopycatOverCooked.Orders
                     Debug.Log("생성 완료");
                 }
             }
+        }
+
+        void SpawnOrder()
+        {
+          var order = orderableRecipes[0];
+            _order.InitOrder(order);
         }
 
         Order CreateOrder()
