@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CopycatOverCooked.Datas;
 using Unity.Netcode;
+using System.Collections;
 
 namespace CopycatOverCooked.Orders
 {
@@ -19,9 +20,35 @@ namespace CopycatOverCooked.Orders
         // 주문 가능한 레시피 목록
         [SerializeField] private List<Recipe> orderableRecipes = new List<Recipe>();
 
-        [SerializeField] private GameObject orderPrefab;
+        [SerializeField] private List<GameObject> orderPrefabs = new List<GameObject>();
+        private GameObject currentPrefab;
 
-        private bool isOrder;
+        public bool isOrder;
+
+        public bool isSuccess;
+
+        public int _success;
+        public int _fail;
+
+        private static OrderManager _instance;    
+
+        public static OrderManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<OrderManager>();
+
+                    if (_instance == null)
+                    {
+                        Debug.LogError("OrderManager 인스턴스를 찾을 수 없습니다.");
+                    }
+                }
+
+                return _instance;
+            }
+        }
 
         private void Start()
         {
@@ -34,6 +61,7 @@ namespace CopycatOverCooked.Orders
                 CreateOrderServerRpc();
 
             InstantiateOrder();
+
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -52,12 +80,20 @@ namespace CopycatOverCooked.Orders
 
         void InstantiateOrder()
         {
-            if (isOrder)
+            if (isOrder && orderableRecipes != null && orderableRecipes.Count > 0)
             {
-                Instantiate(orderPrefab);
-                isOrder = false;
-            }
+                GameObject randomOrderPrefab = orderPrefabs[Random.Range(0, orderPrefabs.Count)];
+                Debug.Log("생성중");
+                // 생성된 주문이 없을 때만 주문 생성
+                if (randomOrderPrefab != null)
+                {
+                    currentPrefab = randomOrderPrefab;
+                    Instantiate(currentPrefab);
 
+                    isOrder = false;
+                    Debug.Log("생성 완료");
+                }
+            }
         }
 
         Order CreateOrder()
@@ -66,5 +102,6 @@ namespace CopycatOverCooked.Orders
 
             return nerOrder;
         }
+
     }
 }
