@@ -1,72 +1,77 @@
 using UnityEngine;
-using Photon.Pun;
-using System;
+using Unity.Netcode;
 
-public class NetworkedFireExtinguisher : MonoBehaviourPunCallbacks
+public class FireExtinguisher : NetworkBehaviour
 {
+    NetworkVariable<bool> isPickedUp = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private bool isHandled = false;
-    private bool isEquipped = false;
-    private float boxCastDistance;
-    private LayerMask fireLayerMask;
-    private Vector3 boxCastSize;
-
-    public GameObject cloudParticlePrefab; // 클라우드 파티클 오브젝트를 연결해주기 위한 변수
-    public Transform playerHand; // 플레이어의 손 위치를 나타내는 변수
+    public GameObject extinguishedObjectPrefab;
+    public KeyCode shootKey = KeyCode.A;
 
     private void Update()
     {
-        if (photonView.IsMine)
-        {
-            if (!isEquipped && Input.GetKeyDown(KeyCode.E))
-            {
-                photonView.RPC("Grab", RpcTarget.All);
-            }
-
-            if (isEquipped && Input.GetMouseButtonDown(0))
-            {
-                Use();
-                photonView.RPC("SyncUse", RpcTarget.All);
-            }
-        }
+        if (!IsOwner)
+            return;
     }
 
-    [PunRPC]
-    private void Grab()
+    public bool TryPickUp(ulong clientID)
     {
-        if (!isEquipped)
-        {
-            transform.SetParent(playerHand); // 소화기를 플레이어의 손에 장착
-            transform.localPosition = Vector3.zero; // 플레이어 손 위치에 설정
-            isEquipped = true;
-        }
-        else
-        {
-            transform.SetParent(null); // 소화기를 플레이어 손에서 해제
-            isEquipped = false;
-        }
+        if (isPickedUp.Value)
+            return false;
+
+        PickUpServerRpc(clientID);
+        return true;
     }
 
-    [PunRPC]
-    private void SyncUse()
+    public void Interaction()
     {
-        Use();
+        // 
     }
 
-    private void Use()
+
+    [ServerRpc(RequireOwnership = false)]
+    private void PickUpServerRpc(ulong clientID)
+    {
+        // todo -> clientId 에 해당하는 플레이어 찾아서 해당 NetworkObject에 이 소화기를 종속시키기.
+        // todo -> 플레이어 컨트롤러가 상호작용 객체 참조에 이 소화기를 가지도록 참조 대입해줘야함.
+        isPickedUp.Value = true;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void PutDownServerRpc(ulong clientID)
+    {
+        // todo -> 소화기 \NetworkObject 종속 풀기
+        isPickedUp.Value = false;
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    private void UseServerRpc()
     {
         if (!isHandled)
         {
             isHandled = true;
+            RpcSpawnExtinguishedObjectClientRpc();
+        }
+    }
 
-            RaycastHit[] hits = Physics.BoxCastAll(transform.position, boxCastSize / 2f, transform.forward, Quaternion.identity, boxCastDistance, fireLayerMask);
+    [ClientRpc]
+    private void RpcSpawnExtinguishedObjectClientRpc()
+    {
+        if (!isHandled)
+        {
+            GameObject extinguishedObject = Instantiate(extinguishedObjectPrefab, transform.position, Quaternion.identity);
+            ShootObject(extinguishedObject);
+        }
+    }
 
-            foreach (RaycastHit hit in hits)
-            {
-                // 클라우드 파티클을 생성하여 소화기에서 발사하는 동작을 만듭니다.
-                GameObject cloudParticle = Instantiate(cloudParticlePrefab, transform.position, Quaternion.identity);
-                cloudParticle.GetComponent<ParticleSystem>().Play();
-                Destroy(cloudParticle, 1.0f); // 원하는 시간 후에 파티클 시스템 제거
-            }
+    private void ShootObject(GameObject objToShoot)
+    {
+        Rigidbody rb = objToShoot.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.AddForce(transform.forward * 10f, ForceMode.Impulse);
+            Debug.Log("소화기 발사!");
         }
     }
 }
