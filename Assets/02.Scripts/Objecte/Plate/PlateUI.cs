@@ -26,7 +26,7 @@ namespace CopycatOverCooked
 			int index = 0;
 			foreach (var slot in slots)
 			{
-				_slotImage[index++].sprite = IngredientSpriteDB.instance.GetSprite(slot);
+				_slotImage[index++].sprite = IngredientVisualDataDB.instance.GetSprite(slot);
 			}
 		}
 	}

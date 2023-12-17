@@ -1,5 +1,4 @@
 ﻿using CopycatOverCooked.Datas;
-using CopycatOverCooked.Utensils;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -30,13 +29,13 @@ namespace CopycatOverCooked.NetWork.Untesils
 			if (CanCooking() == false || _isProgressable == false)
 				return;
 
-			switch ((ProgressType)progressType.Value)
+			switch ((ProgressState)progressType.Value)
 			{
-				case ProgressType.Progressing:
+				case ProgressState.Progressing:
 					if (progress.Value >= GetCurrentRecipe().cookSucessProgress)
 						Sucess();
 					break;
-				case ProgressType.Sucess:
+				case ProgressState.Sucess:
 					if (progress.Value >= GetCurrentRecipe().cookFailProgress)
 						Fail();
 					break;
@@ -47,8 +46,8 @@ namespace CopycatOverCooked.NetWork.Untesils
 		protected override bool CanCooking()
 		{
 			return GetCurrentRecipe() != null &&
-				(ProgressType)progressType.Value == ProgressType.Progressing ||
-				(ProgressType)progressType.Value == ProgressType.Sucess;
+				(ProgressState)progressType.Value == ProgressState.Progressing ||
+				(ProgressState)progressType.Value == ProgressState.Sucess;
 		}
 
 		protected override bool CanGrabable()
@@ -56,22 +55,11 @@ namespace CopycatOverCooked.NetWork.Untesils
 			return true;
 		}
 
-		private void Sucess()
-		{
-			var result = (int)GetCurrentRecipe().result;
-
-			for (int i = 0; i < inputIngredients.Count; i++)
-			{
-				inputIngredients[i] = result;
-			}
-			progressType.Value = (int)ProgressType.Sucess;
-		}
-
 		private void Fail()
 		{
 			inputIngredients.Clear();
 			inputIngredients.Add((int)IngredientType.Trash);
-			progressType.Value = (int)ProgressType.Fail;
+			progressType.Value = (int)ProgressState.Fail;
 		}
 
 		private void OnTriggerEnter(Collider other)
@@ -90,6 +78,15 @@ namespace CopycatOverCooked.NetWork.Untesils
 
 			if (other.gameObject.tag.Equals(_progressOnTag))
 				_isProgressable = false;
+		}
+
+		public override bool TryAddResource(Ingredient resource)
+		{
+			if(base.TryAddResource(resource)== false)
+				return false;
+
+			resource.GetComponent<NetworkObject>().Despawn();
+			return true;
 		}
 	}
 }

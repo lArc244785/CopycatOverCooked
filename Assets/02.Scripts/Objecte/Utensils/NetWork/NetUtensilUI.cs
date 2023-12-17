@@ -1,7 +1,6 @@
 using CopycatOverCooked.Datas;
 using CopycatOverCooked.NetWork.Untesils;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,10 +18,14 @@ namespace CopycatOverCooked.UIs
 
 		private void Start()
 		{
-			_slotImage = _gridTransform.GetComponentsInChildren<Image>();
 			_utensil = transform.root.GetComponent<NetUtensillBase>();
 			_utensil.onChangeProgress += UpdateProgress;
-			_utensil.onChangeSlot += UpdateSlots;
+
+			if (_gridTransform != null)
+			{
+				_slotImage = _gridTransform.GetComponentsInChildren<Image>();
+				_utensil.onChangeSlot += UpdateSlots;
+			}
 
 			_progressBar.SetActive(false);
 		}
@@ -32,7 +35,7 @@ namespace CopycatOverCooked.UIs
 		private void UpdateProgress(float current, float surcessProgress)
 		{
 			Debug.Log(current);
-			if(current <= 0.0f)
+			if (current <= 0.0f)
 			{
 				_progressBar.SetActive(false);
 				return;
@@ -58,9 +61,9 @@ namespace CopycatOverCooked.UIs
 
 			i = 0;
 
-			foreach(var item in inputIngredient)
+			foreach (var item in inputIngredient)
 			{
-				_slotImage[i].sprite = IngredientSpriteDB.instance.GetSprite(item);
+				_slotImage[i].sprite = IngredientVisualDataDB.instance.GetSprite(item);
 				i++;
 			}
 		}

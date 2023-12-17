@@ -57,19 +57,25 @@ public class ClientBehaviour : NetworkBehaviour
 		if (Input.GetKeyDown(KeyCode.Q))
 		{
 			UtensillDropIngredientServerRpc();
+			ButtonUtensillUpdateProgressServerRpc();
 		}
 	}
 
 	[ServerRpc(RequireOwnership = false)]
 	private void PickUpDropActionServerRpc()
 	{
+		TrashCan trashCan;
+		Table dropTable;
+
 		if (_pickUpObject == null)
 		{
 			if (TryDetectInteraction<NetPickUp>(out var pickUp))
 			{
 				pickUp.PickUp(transform, Hand.transform.localPosition);
-				_pickUpUtensill = pickUp.GetComponent<NetUtensillBase>();
-				_pickUpingredient = pickUp.GetComponent<Ingredient>();
+				if (pickUp.TryGetComponent<NetUtensillBase>(out var untensill))
+					_pickUpUtensill = untensill;
+				else if (pickUp.TryGetComponent<Ingredient>(out var ingredient))
+					_pickUpingredient = ingredient;
 				_pickUpObject = pickUp;
 			}
 			if (TryDetectInteraction<IngredientBox>(out var box))
@@ -84,35 +90,64 @@ public class ClientBehaviour : NetworkBehaviour
 		}
 		else
 		{
-			if (_pickUpingredient != null && TryDetectInteraction<NetUtensillBase>(out var utensil))
+			//재료를 집고 있는 경우
+			if (_pickUpingredient != null)
 			{
-				if (utensil.TryAddResource(_pickUpingredient.type))
+				//조리도구
+				if (TryDetectInteraction<NetUtensillBase>(out var utensil))
+				{
+					if (utensil.TryAddResource(_pickUpingredient))
+					{
+						_pickUpObject = null;
+						_pickUpingredient = null;
+					}
+					return;
+				}
+				//접시
+				else if (TryDetectInteraction<Plate>(out var plate))
+				{
+					plate.AddIngredient(_pickUpingredient.type.Value);
+					_pickUpingredient.GetComponent<NetworkObject>().Despawn();
+					_pickUpObject = null;
+					_pickUpingredient = null;
+					return;
+				}
+			}
+			//조리도구를 집고 있는 경우
+			else if (_pickUpUtensill != null)
+			{
+				//접시
+				if (TryDetectInteraction<Plate>(out var plate))
+				{
+					plate.AddIngredient(_pickUpUtensill.Spill());
+					_pickUpObject = null;
+					_pickUpUtensill = null;
+					return;
+				}
+
+			}
+
+			if (TryDetectInteraction<TrashCan>(out trashCan))
+			{
+				if(_pickUpObject.TryGetComponent<ISpill>(out var spillable))
+				{
+					trashCan.TrashUse(spillable);
+					return;
+				}
+				else
 				{
 					_pickUpingredient.GetComponent<NetworkObject>().Despawn();
 					_pickUpingredient = null;
-				}
-				return;
-			}
-
-			if (TryDetectInteraction<Table>(out var dropTable))
-			{
-				if (dropTable.TryPutObject(_pickUpObject))
-				{
-					_pickUpObject = null;
-					_pickUpingredient = null;
-					_pickUpUtensill = null;
-				}
-
-				return;
-			}
-
-			if (TryDetectInteraction<TrashCan>(out var trashcan))
-			{
-				var spill = _pickUpObject.gameObject.GetComponent<ISpill>();
-				if (spill == null)
 					return;
-				trashcan.TrashUse(spill);
-				return;
+				}
+			}
+			
+			if(TryDetectInteraction<Table>(out var table))
+			{
+				table.TryPutObject(_pickUpObject);
+				_pickUpObject = null;
+				_pickUpUtensill = null;
+				_pickUpingredient = null;
 			}
 
 		}
@@ -146,9 +181,20 @@ public class ClientBehaviour : NetworkBehaviour
 	{
 		if (_pickUpUtensill == null)
 			return;
+
 		if (TryDetectInteraction<Plate>(out var plate))
 		{
-			_pickUpUtensill.SpillToPlate(plate);
+			var spillDatas = _pickUpUtensill.Spill();
+			plate.AddIngredient(spillDatas);
+		}
+	}
+
+	[ServerRpc(RequireOwnership = false)]
+	private void ButtonUtensillUpdateProgressServerRpc()
+	{
+		if (TryDetectInteraction<NetButtonUtensil>(out var utensill))
+		{
+			utensill.UpdateProgress();
 		}
 	}
 

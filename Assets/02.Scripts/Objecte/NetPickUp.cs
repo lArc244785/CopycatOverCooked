@@ -8,14 +8,15 @@ using UnityEngine;
 public class NetPickUp : NetworkBehaviour
 {
 	public event Action onPickUp;
+	public NetworkVariable<bool> canPickUP = new NetworkVariable<bool>(true);
 
 	public void PickUp(Transform parent, Vector3 localPos)
 	{
-		if (IsServer)
+		if (IsServer && canPickUP.Value)
 		{
+			onPickUp?.Invoke();
 			transform.parent = parent;
 			transform.localPosition = localPos;
-			onPickUp?.Invoke();
 		}
 	}
 

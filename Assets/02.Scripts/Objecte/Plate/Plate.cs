@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 namespace CopycatOverCooked
 {
@@ -18,12 +17,31 @@ namespace CopycatOverCooked
 
 		public event Action<IEnumerable<IngredientType>> onChangeSlot;
 		public event Action<bool> onChangeDirty;
+		private event Action<IngredientType> onChangeResult;
 
-		public IngredientType result { private set; get; }
+		public IngredientType result
+		{
+			private set
+			{
+				_result = value;
+				onChangeResult?.Invoke(_result);
+			}
+			get
+			{
+				return _result;
+			}
+		}
+		private IngredientType _result;
 
-		public ulong owner => _owner;
+		[SerializeField] private Transform _visualDataPoint;
+		private GameObject _visualObject;
 
-		private ulong _owner = 101;
+		private void Awake()
+		{
+			inputIngredients = new NetworkList<int>();
+			inputIngredients.OnListChanged += OnChangeSlot;
+			onChangeResult += UpdateVisualData;
+		}
 
 		public override void OnNetworkSpawn()
 		{
@@ -41,12 +59,6 @@ namespace CopycatOverCooked
 			onChangeSlot?.Invoke(slots);
 		}
 
-		private void Awake()
-		{
-			inputIngredients = new NetworkList<int>();
-			inputIngredients.OnListChanged += OnChangeSlot;
-			//isDirty.OnValueChanged += (prev, current) => onChangeDirty(current);
-		}
 
 		private void OnChangeSlot(NetworkListEvent<int> changeEvent)
 		{
@@ -66,10 +78,10 @@ namespace CopycatOverCooked
 			onChangeSlot?.Invoke(slots);
 		}
 
-		
-		public void AddIngredient(IngredientType[] ingredient)
+
+		public void AddIngredient(params IngredientType[] ingredient)
 		{
-			if (IsServer == false)
+			if (IsServer == false || ingredient == null)
 				return;
 
 			for (int i = 0; i < ingredient.Length && inputIngredients.Count < capacity; i++)
@@ -103,6 +115,23 @@ namespace CopycatOverCooked
 			isDirty.Value = true;
 
 			return resources;
+		}
+
+		private void UpdateVisualData(IngredientType result)
+		{
+			if (_visualObject != null)
+			{
+				Destroy(_visualObject);
+				_visualObject = null;
+			}
+
+			if (inputIngredients.Count == 0)
+				return;
+
+			var prefab = IngredientVisualDataDB.instance.GetPrefab(result);
+			_visualObject = Instantiate(prefab);
+			_visualObject.transform.parent = transform;
+			_visualObject.transform.localPosition = _visualDataPoint.localPosition;
 		}
 	}
 }
