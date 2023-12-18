@@ -1,21 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CopycatOverCooked.Datas;
 using Unity.Netcode;
-using System.Collections;
+//using Unity.Netcode.NetworkVariable;
 
 namespace CopycatOverCooked.Orders
 {
     public class OrderManager : NetworkBehaviour
     {
         // 현재 진행 중인 주문 목록
-        private List<Order> progressOrders = new List<Order>();
+        private List<NetworkObject> progressOrders = new List<NetworkObject>();
 
         // 성공한 주문 목록
-        private List<Order> successOrders = new List<Order>();
+        private List<NetworkObject> successOrders = new List<NetworkObject>();
 
         // 실패한 주문 목록
-        private List<Order> failOrders = new List<Order>();
+        private List<NetworkObject> failOrders = new List<NetworkObject>();
 
         // 주문 가능한 레시피 목록
         [SerializeField] private List<Recipe> orderableRecipes = new List<Recipe>();
@@ -30,7 +29,7 @@ namespace CopycatOverCooked.Orders
         public int _success;
         public int _fail;
 
-        private static OrderManager _instance;    
+        private static OrderManager _instance;
 
         public static OrderManager Instance
         {
@@ -63,21 +62,26 @@ namespace CopycatOverCooked.Orders
                 CreateOrderServerRpc();
 
             InstantiateOrder();
-
         }
 
         [ServerRpc(RequireOwnership = false)]
         void CreateOrderServerRpc()
         {
             // 서버에서 주문을 처리하자
-            Order nerOrder = CreateOrder();
+            Order newOrder = CreateOrder();
 
+            // NetworkObject를 생성하고 progressOrders에 추가
+            var orderNetworkObject = newOrder.gameObject.GetComponent<NetworkObject>();
+            if (orderNetworkObject != null)
+            {
+                progressOrders.Add(orderNetworkObject);
+            }
         }
 
         [ClientRpc]
         void CreateOrderClientRpc()
         {
-            
+            // 클라이언트에서는 아무 것도 하지 않음
         }
 
         void InstantiateOrder()
@@ -90,7 +94,15 @@ namespace CopycatOverCooked.Orders
                 if (randomOrderPrefab != null)
                 {
                     currentPrefab = randomOrderPrefab;
-                    Instantiate(currentPrefab);
+
+                    // NetworkObject로 주문 생성
+                    var orderGameObject = Instantiate(currentPrefab);
+                    var orderNetworkObject = orderGameObject.GetComponent<NetworkObject>();
+                    if (orderNetworkObject != null)
+                    {
+                        // 주문 생성 후 progressOrders에 추가
+                        progressOrders.Add(orderNetworkObject);
+                    }
 
                     isOrder = false;
                     Debug.Log("생성 완료");
@@ -100,16 +112,15 @@ namespace CopycatOverCooked.Orders
 
         void SpawnOrder()
         {
-          var order = orderableRecipes[0];
+            var order = orderableRecipes[0];
             //_order.InitOrder(order);
         }
 
         Order CreateOrder()
         {
-            Order nerOrder = new Order();
+            Order newOrder = new Order();
 
-            return nerOrder;
+            return newOrder;
         }
-
     }
 }
