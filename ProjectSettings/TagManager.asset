@@ -3,30 +3,31 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - GasRange
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
+  - Structure
+  - Item
+  - Player
   - 
   - 
   - 
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - IngredientBox
+  - Ingredient
+  - Table
+  - Plate
+  - Utensil
+  - UtensilDetect
+  - TrashCan
   - 
   - 
   - 
