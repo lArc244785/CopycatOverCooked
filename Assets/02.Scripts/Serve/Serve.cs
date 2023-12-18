@@ -39,7 +39,7 @@ public class Serve : NetworkBehaviour
                 _dropObject = dropObject;
                 _dropObject.onPickUp += DropObject;
 
-                deactiveObjectClientRpc();
+                _dropObject.transform.position = _putPoint.position;
 
                 return true;
             }
@@ -52,17 +52,5 @@ public class Serve : NetworkBehaviour
     {
         canPutObject.Value = true;
         _dropObject.onPickUp -= DropObject;
-    }
-
-    [ClientRpc]
-    public void deactiveObjectClientRpc()
-    {
-        _dropObject.gameObject.SetActive(false);
-    }
-
-    [ClientRpc]
-    public void activeObjectClientRpc() 
-    {
-        _dropObject.gameObject.SetActive(true);
     }
 }
