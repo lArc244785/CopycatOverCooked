@@ -151,8 +151,6 @@ public class ClientBehaviour : NetworkBehaviour
 			}
 
 		}
-
-
 	}
 
 	private bool TryDetectInteraction<T>(out T result) where T : MonoBehaviour
@@ -208,14 +206,20 @@ public class ClientBehaviour : NetworkBehaviour
 		move();
 	}
 
-	private void move()
-	{
-		_direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
-		_direction.Normalize();
+    private void move()
+    {
+        _direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+        _direction.Normalize();
 
-		transform.position += _direction * _moveSpeed * Time.deltaTime;
-	}
-	private bool DetectItem(out RaycastHit hit)
+        transform.position += _direction * _moveSpeed * Time.fixedDeltaTime;
+
+        if (_direction != Vector3.zero)
+        {
+            transform.forward = _direction;
+        }
+    }
+
+    private bool DetectItem(out RaycastHit hit)
 	{
 		if (Physics.Raycast(transform.position + transform.forward * 1.5f + transform.up,
 							Vector3.down,

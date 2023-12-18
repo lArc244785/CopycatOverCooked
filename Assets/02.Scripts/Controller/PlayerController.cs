@@ -1,70 +1,127 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+//using System.Collections;
+//using System.Collections.Generic;
+//using System.Globalization;
+//using Unity.Netcode;
+//using UnityEngine;
+//using static UnityEditor.Progress;
+//using CopycatOverCooked.Datas;
 
-public class PlayerController : MonoBehaviour
-{
-    [SerializeField] private float _moveSpeed = 0f;
-    [SerializeField] private float _dashSpeed = 0f;
-    [SerializeField] private float _throwPower = 0f;
-    [SerializeField] private float _itemDetectRange = 0f;
-    [SerializeField] private float radius = 0f;
+//public class PlayerController : NetworkBehaviour
+//{
+//    [SerializeField] private float _moveSpeed = 0f;
+//    [SerializeField] private float _dashSpeed = 0f;
+//    [SerializeField] private float _throwPower = 0f;
+//    [SerializeField] private float _itemDetectRange = 0f;
+//    [SerializeField] private float radius = 0f;
 
-    private bool _ingredientGrabbable = true;
-    private bool _untensilGrabbable = true;
-    private Vector3 _direction = Vector3.zero;
-    private Rigidbody _body = null;
+//    private bool _ingredientGrabbable = true;
+//    private bool _untensilGrabbable = true;
+//    private Vector3 _direction = Vector3.zero;
+//    private Rigidbody _body = null;
 
-    //private T item = null;
+//    //private T item = null;
 
-    private void Start()
-    {
-        _body = GetComponent<Rigidbody>();
-    }
+//    private void Start()
+//    {
+//        _body = GetComponent<Rigidbody>();
+//    }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            _body.AddForce(_direction * _dashSpeed, ForceMode.Impulse);
-        }
-    }
+//    private void Update()
+//    {
+//        if (!IsOwner)
+//        {
+//            return;
+//        }
 
-    private void FixedUpdate()
-    {
-        move();
-    }
+//        if (Input.GetKeyDown(KeyCode.LeftShift))
+//        {
+//            _body.AddForce(_direction * _dashSpeed, ForceMode.Impulse);
+//        }
 
-    private void move()
-    {
-        _direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        _direction.Normalize();
+//        if (Input.GetKeyDown(KeyCode.F))
+//        {
+//            Collider[] hitcollider = Physics.OverlapBox(new Vector3(Hand.position.x, Hand.position.y * 0.5f, Hand.position.z),
+//                                                        new Vector3(1f, Hand.position.y, 1f) * 0.5f,
+//            quaternion.identity,
+//                                                        _item
+//                                                        );
 
-        transform.position += _direction * _moveSpeed * Time.fixedDeltaTime;
+//            if (_hasItem.Value == false && hitcollider.Length != 0) //줍기
+//            {
+//                if (hitcollider[0].TryGetComponent(out IInteract interact))
+//                {
+//                    Debug.Log(hitcollider[0].GetComponent<NetworkObject>().NetworkObjectId);
+//                    InteractionServerRPC(OwnerClientId, hitcollider[0].GetComponent<NetworkObject>().NetworkObjectId);
+//                }
+//            }
 
-        if (_direction != Vector3.zero)
-        {
-            transform.forward = _direction;
-        }
-    }
+//            if (_hasItem.Value == true)                              //놓기
+//            {
+//                if (hitcollider.Length == 0 /* || !hitcollider[0].TryGetComponent(UtensilBase)*/)
+//                {
+//                    PutDown();
+//                }
 
-    private void OnDrawGizmosSelected()
-    {
-        DrawItemDetectGizmos();
-    }
+//                else
+//                {
+//                    return;
+//                }
+//            }
+//        }
+//    }
 
-    private void DrawItemDetectGizmos()
-    {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(transform.position + transform.forward * 1.5f, radius);
-        Gizmos.DrawLine(transform.position,
-                        new Vector3(0f, 0f, 0f));
+//    private void FixedUpdate()
+//    {
+//        if (!IsOwner)
+//        {
+//            return;
+//        }
 
-        Debug.Log(transform.position);
-    }
+//        move();
+//    }
 
-    private void DetectObject()
-    {
-        //if(Physics.Raycast(transform.position + transform.forward + transform.up, Vector3.down,                           ))
-    }
-}
+//    private void move()
+//    {
+//        _direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+//        _direction.Normalize();
+
+//        transform.position += _direction * _moveSpeed * Time.fixedDeltaTime;
+
+//        if (_direction != Vector3.zero)
+//        {
+//            transform.forward = _direction;
+//        }
+//    }
+
+//    public void PutDown()
+//    {
+//        if (_hasItem.Value == false)
+//        {
+//            return;
+//        }
+
+//        _hasItem.Value = false;
+
+//        GetComponent<Ingredient>().GetComponent<NetworkObject>().TryRemoveParent(transform);
+//    }
+
+//    private void OnDrawGizmosSelected()
+//    {
+//        DrawItemDetectGizmos();
+//    }
+
+//    private void DrawItemDetectGizmos()
+//    {
+//        Gizmos.color = Color.cyan;
+//        Gizmos.DrawSphere(transform.position + transform.forward * 1.5f, radius);
+//        Gizmos.DrawLine(transform.position,
+//                        new Vector3(0f, 0f, 0f));
+
+//        Debug.Log(transform.position);
+//    }
+
+//    private void DetectObject()
+//    {
+//        //if(Physics.Raycast(transform.position + transform.forward + transform.up, Vector3.down,                           ))
+//    }
+//}
