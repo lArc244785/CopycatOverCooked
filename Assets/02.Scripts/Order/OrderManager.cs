@@ -101,7 +101,7 @@ namespace CopycatOverCooked.Orders
         void SpawnOrder()
         {
           var order = orderableRecipes[0];
-            _order.InitOrder(order);
+            //_order.InitOrder(order);
         }
 
         Order CreateOrder()

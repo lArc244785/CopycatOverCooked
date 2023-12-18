@@ -1,87 +1,75 @@
-// Order.cs
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using CopycatOverCooked.Datas;
 using Unity.Netcode;
-using UnityEngine.UI;
-using System;
+using System.Collections.Generic;
 
-namespace CopycatOverCooked.Orders
+public class Order : NetworkBehaviour
 {
-    //ui
-    public class Order : NetworkBehaviour
+    [SerializeField] private Recipe _recipe;
+    private Dictionary<RecipeElement, int> _elementTable;
+
+    [SerializeField] private float _currentTime;
+    [SerializeField] private float _maxTime;
+
+    // 성공 및 실패 이벤트
+    public event System.Action OnFailed;
+    public event System.Action OnDelivered;
+
+    private void Start()
     {
-        //매니저에서 사용할 오더 선정
-        //해당 오더로 초기화 (데이터들 초기화)
+        // 요리 재료 테이블 초기화
+        _elementTable = _recipe.Init();
 
+        // 주문 타이머 시작
+        StartCoroutine(OrderTimer());
+    }
 
-        [SerializeField] private Recipe _recipe;
-        //[SerializeField] private GameObject _recipePrefab;
-
-        private NetworkVariable<float> currentTime = new NetworkVariable<float>();
-        private NetworkVariable<float> maxTime = new NetworkVariable<float>();
-        private NetworkVariable<IngredientType> result = new NetworkVariable<IngredientType>();
-        [SerializeField] private Slider timeSlider;
-
-        public event System.Action OnFailed;
-        public event System.Action OnDelivered;
-
-        public static int activeOrders = 0;
-        
-
-        private void Start()
+    private IEnumerator OrderTimer()
+    {
+        while (_currentTime > 0f)
         {
-            activeOrders++; // 주문이 생성될 때마다 활성 주문 수 증가
-            currentTime = maxTime;
+            yield return null;
+            _currentTime -= Time.deltaTime;
         }
 
-        private void Update()
+        // 시간이 다 되어 주문 실패
+        FailOrder();
+    }
+
+    private void Update()
+    {
+        // 레시피를 지속적으로 확인
+        CheckRecipe();
+    }
+
+    private void CheckRecipe()
+    {
+        foreach (var element in _elementTable)
         {
-            currentTime -= Time.deltaTime;
-
-            // Slider의 value를 갱신
-            timeSlider.value = currentTime / maxTime;
-
-            if (currentTime <= 0f)
-            {  
-                OrderManager.Instance.isOrder = true;
-                // 주문 시간이 종료되면 실패 처리
+            // 각 재료가 충분히 있는지 확인
+            if (element.Value <= 0)
+            {
+                // 재료가 하나라도 부족하면 주문 실패
                 FailOrder();
-            }
-
-        }
-
-
-        public void FailOrder()
-        {
-            OrderManager.Instance.isSuccess = false;
-            activeOrders--; // 주문이 실패하면 활성 주문 수 감소
-            OnFailed?.Invoke();
-            Destroy(gameObject);
-            OrderManager.Instance._fail++;
-            Debug.Log("타임 오버");
-        }
-
-        public void DeliverOrder()
-        {
-            OrderManager.Instance.isSuccess = true;
-            activeOrders--; // 주문이 완료되면 활성 주문 수 감소
-            OnDelivered?.Invoke();
-            Destroy(gameObject);
-            OrderManager.Instance._success++;
-            Debug.Log("성공~");
-        }
-
-        public void InitOrder(Recipe order)
-        {
-            if (IsServer == false)
                 return;
-
-            currentTime.Value = 0.0f;
-            maxTime.Value = 10.0f;
-            result.Value = order.result;
-
+            }
         }
+
+        // 모든 재료가 충분하면 주문 성공
+        DeliverOrder();
+    }
+
+    private void FailOrder()
+    {
+        OnFailed?.Invoke();
+        // 해당 주문 객체를 모든 클라이언트에서 파괴
+        NetworkObject.Destroy(gameObject);
+    }
+
+    private void DeliverOrder()
+    {
+        OnDelivered?.Invoke();
+        // 해당 주문 객체를 모든 클라이언트에서 파괴
+        NetworkObject.Destroy(gameObject);
     }
 }

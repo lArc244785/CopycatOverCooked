@@ -1,36 +1,19 @@
-using CopycatOverCooked.Datas;
+// Recipe.cs
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CopycatOverCooked.Orders
+[CreateAssetMenu(fileName = "New Recipe", menuName = "Recipe")]
+public class Recipe : ScriptableObject
 {
-    [CreateAssetMenu(fileName = "NewRecipe", menuName = "Recipes/Recipe")]
-    public class Recipe : ScriptableObject
+    public List<RecipeElement> elementsList;
+
+    public Dictionary<RecipeElement, int> Init()
     {
-        [SerializeField]
-        private List<RecipeElementInfo> elements = new List<RecipeElementInfo>();
-
-        public IngredientType result
+        Dictionary<RecipeElement, int> elementTable = new Dictionary<RecipeElement, int>();
+        foreach (var element in elementsList)
         {
-            get
-            {
-                IngredientType type = IngredientType.None;
-                foreach (var element in elements)
-                    type |= element.ingredient;
-                return type;
-            }
+            elementTable.Add(element, element.amount);
         }
-
-        public List<RecipeElementInfo> Elements
-        {
-            get { return elements; }
-        }
-
-        [System.Serializable]
-        public class RecipeElementInfo
-        {
-            public IngredientType ingredient;
-            public int quantity;
-        }
+        return elementTable;
     }
 }
