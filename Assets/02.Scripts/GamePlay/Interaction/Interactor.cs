@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace CopycatOverCooked.GamePlay
 {
+    //상호작용 주체
     public class Interactor : NetworkBehaviour
     {
         public static Dictionary<ulong, Interactor> spawned = new Dictionary<ulong, Interactor>();
