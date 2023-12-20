@@ -38,10 +38,10 @@ namespace CopycatOverCooked.GamePlay
 			var ingredientObject = Instantiate(prefab, transform.position, Quaternion.identity);
 			var netObject = ingredientObject.GetComponent<NetworkObject>();
 			netObject.Spawn();
-			ingredientObject.ingerdientType.Value = spawnType;
+			ingredientObject.Init(spawnType);
 
+			ingredientObject.GetComponent<IInteractable>().BeginInteraction(interactor);
 			interactor.currentInteractableNetworkObjectID.Value = netObject.NetworkObjectId;
-			netObject.GetComponent<IInteractable>().BeginInteraction(interactor);
 		}
 	}
 }

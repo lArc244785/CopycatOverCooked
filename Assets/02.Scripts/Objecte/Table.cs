@@ -11,14 +11,7 @@ public class Table : NetworkBehaviour, IInteractable
 
 	public void BeginInteraction(Interactor interactor)
 	{
-		if (_putObject == null)
-		{
-			interactor.currentInteractable = null;
-			return;
-		}
-
-		interactor.currentInteractable = _putObject;
-		_putObject.BeginInteraction(interactor);
+		PickUpObjectServerRpc(interactor.OwnerClientId);
 	}
 
 	public void EndInteraction(Interactor interactor)
@@ -26,18 +19,41 @@ public class Table : NetworkBehaviour, IInteractable
 	}
 
 	[ServerRpc(RequireOwnership = false)]
-	public void DropServerRpc(ulong clientID)
+	private void PickUpObjectServerRpc(ulong clientID)
+	{
+		Interactor interactor = Interactor.spawned[clientID];
+
+		if (_putObject != null &&
+			interactor.currentInteractableNetworkObjectID.Value == Interactor.NETWORK_OBJECT_NULL_ID)
+		{
+			_putObject.BeginInteraction(interactor);
+			interactor.currentInteractableNetworkObjectID.Value = _putObject.GetComponent<NetworkObject>().NetworkObjectId;
+		}
+		else
+		{
+			interactor.currentInteractableNetworkObjectID.Value = Interactor.NETWORK_OBJECT_NULL_ID;
+		}
+	}
+
+	[ServerRpc(RequireOwnership = false)]
+	public void DropPickableObjectServerRpc(ulong clientID)
 	{
 		var interactor = Interactor.spawned[clientID];
 
-		if(interactor.currentInteractable is Pickable)
+		if(interactor.TryCurrentGetInteractable(out var interactable))
 		{
-			Pickable pick = (Pickable)interactor.currentInteractable;
-			pick.DropServerRpc(clientID);
-			if(pick.NetworkObject.TrySetParent(transform))
+			if(interactable is Pickable)
 			{
-				pick.transform.localPosition = _putPoint.localPosition;
-				_putObject = pick;
+				Pickable pick = (Pickable)interactable;
+				pick.DropServerRpc(clientID);
+				if (pick.NetworkObject.TrySetParent(transform))
+				{
+					pick.transform.localPosition = _putPoint.localPosition;
+					pick.transform.localRotation = Quaternion.identity;
+					_putObject = pick;
+				}
+
+				interactor.currentInteractableNetworkObjectID.Value = Interactor.NETWORK_OBJECT_NULL_ID;
 			}
 		}
 	}

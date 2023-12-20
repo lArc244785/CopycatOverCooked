@@ -16,6 +16,14 @@ namespace CopycatOverCooked.Interaction
 
 		public override InteractableType type => InteractableType.Ingrediant;
 
+		public void Init(IngredientType type)
+		{
+			if (IsServer == false)
+				throw new Exception("Init Clinet Call");
+
+			ingerdientType.Value = type;
+		}
+
 		private void Awake()
 		{
 			ingerdientType.OnValueChanged += (prev, current) =>
@@ -62,7 +70,7 @@ namespace CopycatOverCooked.Interaction
 					break;
 				case InteractableType.Table:
 					Table table = (Table)other;
-					table.DropServerRpc(pickingClientID.Value);
+					table.DropPickableObjectServerRpc(pickingClientID.Value);
 					break;
 				case InteractableType.Plate:
 
@@ -72,6 +80,6 @@ namespace CopycatOverCooked.Interaction
 			}
 		}
 
-
+		
 	}
 }

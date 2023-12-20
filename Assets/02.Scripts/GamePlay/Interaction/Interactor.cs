@@ -6,65 +6,59 @@ using UnityEngine;
 
 namespace CopycatOverCooked.GamePlay
 {
-    public class Interactor : NetworkBehaviour
-    {
-        public static Dictionary<ulong, Interactor> spawned = new Dictionary<ulong, Interactor>();
+	public class Interactor : NetworkBehaviour
+	{
+		public const ulong NETWORK_OBJECT_NULL_ID = ulong.MaxValue;
+		public static Dictionary<ulong, Interactor> spawned = new Dictionary<ulong, Interactor>();
 
-        public Transform hand;
-        public IInteractable currentInteractable;
-        public IUsable currentUseable;
-        public NetworkVariable<ulong> currentInteractableNetworkObjectID = new NetworkVariable<ulong>();
+		public Transform hand;
+		public IUsable currentUseable;
+		public NetworkVariable<ulong> currentInteractableNetworkObjectID = new NetworkVariable<ulong>();
 
-        [SerializeField] private Vector3 _offset;
+		[SerializeField] private Vector3 _offset;
 		[SerializeField] private float _detectRadius;
-        [SerializeField] private float _distance;
-        [SerializeField] private LayerMask _layerMask;
+		[SerializeField] private float _distance;
+		[SerializeField] private LayerMask _layerMask;
 
 		public override void OnNetworkSpawn()
-        {
-            base.OnNetworkSpawn();
-            spawned.Add(OwnerClientId, this);
+		{
+			base.OnNetworkSpawn();
+			spawned.Add(OwnerClientId, this);
 
-            currentInteractableNetworkObjectID.OnValueChanged += OnUpdateInteractable;
+			Debug.Log($"{gameObject.name} is ClinetID {OwnerClientId}");
+
+			if (IsServer)
+				currentInteractableNetworkObjectID.Value = NETWORK_OBJECT_NULL_ID;
 		}
 
-        private void OnUpdateInteractable(ulong prev ,ulong current)
-        {
-            if (this.TryGet(current, out var networkObject))
-            {
-				currentInteractable = networkObject.GetComponent<IInteractable>();
-            }
-        }
+		private void Update()
+		{
+			if (!IsOwner)
+				return;
 
-        private void Update()
-        {
-            if (!IsOwner)
-                return;
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				// 상호작용하고있는게 없을때
+				if (currentInteractableNetworkObjectID.Value == NETWORK_OBJECT_NULL_ID)
+				{
+					var detect = DetectInteractable();
+					detect?.BeginInteraction(this);
+				}
+				// 상호작용중인게 있을때
+				else if (TryCurrentGetInteractable(out var interactable))
+				{
+					interactable.EndInteraction(this);
+				}
+			}
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                // 상호작용하고있는게 없을때
-                if (currentInteractable == null)
-                {
-                    currentInteractable = DetectInteractable();
-                    currentInteractable?.BeginInteraction(this);
-                }
-                // 상호작용중인게 있을때
-                else
-                {
-                    currentInteractable.EndInteraction(this);
-                    currentInteractable = null;
-                }
-            }
-               
-        }
+		}
 
-        
 
-        private IInteractable DetectInteractable()
-        {
+
+		private IInteractable DetectInteractable()
+		{
 			// todo -> cast interactable.
-            var origin = transform.position + _offset + transform.forward * _distance;
+			var origin = transform.position + _offset + transform.forward * _distance;
 
 			var interactionObjects = Physics.OverlapSphere(origin, _detectRadius, _layerMask);
 			IInteractable select = null;
@@ -84,15 +78,27 @@ namespace CopycatOverCooked.GamePlay
 			return select;
 		}
 
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.green;
-            var startPos = transform.position + _offset;
-            var origin = transform.position + _offset + transform.forward * _distance;
-            Gizmos.DrawLine(startPos, origin);
-            Gizmos.DrawWireSphere(origin, _detectRadius);
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.green;
+			var startPos = transform.position + _offset;
+			var origin = transform.position + _offset + transform.forward * _distance;
+			Gizmos.DrawLine(startPos, origin);
+			Gizmos.DrawWireSphere(origin, _detectRadius);
 		}
 
+		public bool TryCurrentGetInteractable(out IInteractable interactable)
+		{
+			interactable = null;
+			if (this.TryGet(currentInteractableNetworkObjectID.Value, out var no))
+			{
+				if (no.TryGetComponent<IInteractable>(out interactable))
+				{
+					return true;
+				}
+			}
 
-    }
+			return false;
+		}
+	}
 }
