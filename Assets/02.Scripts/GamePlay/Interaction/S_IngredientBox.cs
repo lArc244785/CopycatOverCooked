@@ -1,5 +1,6 @@
 ﻿using CopycatOverCooked.Datas;
 using CopycatOverCooked.Interaction;
+using CopycatOverCooked.NetWork;
 using System;
 using TMPro;
 using Unity.Netcode;
@@ -22,7 +23,7 @@ namespace CopycatOverCooked.GamePlay
 
 		public void BeginInteraction(Interactor interactor)
 		{
-			SpawnIngredientServerRpc(OwnerClientId);
+			SpawnIngredientServerRpc(interactor.OwnerClientId);
 		}
 
 		public void EndInteraction(Interactor interactor)
@@ -35,11 +36,12 @@ namespace CopycatOverCooked.GamePlay
 			Interactor interactor = Interactor.spawned[clientID];
 
 			var ingredientObject = Instantiate(prefab, transform.position, Quaternion.identity);
-			ingredientObject.GetComponent<NetworkObject>().Spawn();
-			ingredientObject.type.Value = spawnType;
+			var netObject = ingredientObject.GetComponent<NetworkObject>();
+			netObject.Spawn();
+			ingredientObject.ingerdientType.Value = spawnType;
 
-			interactor.currentInteractable = ingredientObject.GetComponent<IInteractable>();
-			interactor.currentInteractable.BeginInteraction(interactor);
+			interactor.currentInteractableNetworkObjectID.Value = netObject.NetworkObjectId;
+			netObject.GetComponent<IInteractable>().BeginInteraction(interactor);
 		}
 	}
 }

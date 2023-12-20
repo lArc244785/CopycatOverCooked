@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CopycatOverCooked.NetWork;
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace CopycatOverCooked.GamePlay
         public Transform hand;
         public IInteractable currentInteractable;
         public IUsable currentUseable;
+        public NetworkVariable<ulong> currentInteractableNetworkObjectID = new NetworkVariable<ulong>();
 
         [SerializeField] private Vector3 _offset;
 		[SerializeField] private float _detectRadius;
@@ -22,6 +24,16 @@ namespace CopycatOverCooked.GamePlay
         {
             base.OnNetworkSpawn();
             spawned.Add(OwnerClientId, this);
+
+            currentInteractableNetworkObjectID.OnValueChanged += OnUpdateInteractable;
+		}
+
+        private void OnUpdateInteractable(ulong prev ,ulong current)
+        {
+            if (this.TryGet(current, out var networkObject))
+            {
+				currentInteractable = networkObject.GetComponent<IInteractable>();
+            }
         }
 
         private void Update()
@@ -46,6 +58,8 @@ namespace CopycatOverCooked.GamePlay
             }
                
         }
+
+        
 
         private IInteractable DetectInteractable()
         {
@@ -78,5 +92,7 @@ namespace CopycatOverCooked.GamePlay
             Gizmos.DrawLine(startPos, origin);
             Gizmos.DrawWireSphere(origin, _detectRadius);
 		}
+
+
     }
 }

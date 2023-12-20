@@ -17,6 +17,7 @@ public class ClientBehaviour : NetworkBehaviour
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
+		gameObject.name = $"player {OwnerClientId}";
 	}
 
 	private void Awake()

@@ -29,7 +29,7 @@ namespace CopycatOverCooked.Datas
             {
                 var ingredientObject = Instantiate(prefab, transform.position, Quaternion.identity);
                 ingredientObject.GetComponent<NetworkObject>().Spawn();
-                ingredientObject.type.Value = spawnType;
+                ingredientObject.ingerdientType.Value = spawnType;
 
                 lastUnboxingTime = NetworkManager.ServerTime.Time; // 마지막 unboxing 시간을 갱신합니다.
                 ingredient = ingredientObject;

@@ -10,14 +10,15 @@ namespace CopycatOverCooked.Interaction
 {
     public class Ingredient : Pickable
     {
-		public  NetworkVariable<IngredientType> type = new NetworkVariable<IngredientType>();
+		public  NetworkVariable<IngredientType> ingerdientType = new NetworkVariable<IngredientType>();
 		[SerializeField] private Image _image;
 		private GameObject _visualObject;
 
+		public override InteractableType type => InteractableType.Ingrediant;
 
 		private void Awake()
 		{
-			type.OnValueChanged += (prev, current) =>
+			ingerdientType.OnValueChanged += (prev, current) =>
 			{
 				UpdateSprite(current);
 				UpdateVisual(current);
@@ -27,8 +28,8 @@ namespace CopycatOverCooked.Interaction
 		public override void OnNetworkSpawn()
 		{
 			base.OnNetworkSpawn();
-			UpdateVisual(type.Value);
-			UpdateSprite(type.Value);
+			UpdateVisual(ingerdientType.Value);
+			UpdateSprite(ingerdientType.Value);
 		}
 
 		private void UpdateSprite(IngredientType type)
@@ -61,7 +62,7 @@ namespace CopycatOverCooked.Interaction
 					break;
 				case InteractableType.Table:
 					Table table = (Table)other;
-					table.DropServerRpc(OwnerClientId);
+					table.DropServerRpc(pickingClientID.Value);
 					break;
 				case InteractableType.Plate:
 

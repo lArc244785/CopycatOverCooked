@@ -53,7 +53,7 @@ namespace CopycatOverCooked.NetWork.Untesils
 		public override void Sucess()
 		{
 			base.Sucess();
-			_ingredient.type.Value = GetCurrentRecipe().result;
+			_ingredient.ingerdientType.Value = GetCurrentRecipe().result;
 			_ingredient.GetComponent<NetPickUp>().canPickUP.Value = true;
 			_ingredient.GetComponent<NetPickUp>().onPickUp += ResultPickUP;
 		}

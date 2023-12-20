@@ -1,8 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
 using CopycatOverCooked.GamePlay;
-using UnityEditor.PackageManager;
-
 public class Table : NetworkBehaviour, IInteractable
 {
 	[SerializeField] private Transform _putPoint;
@@ -15,10 +13,11 @@ public class Table : NetworkBehaviour, IInteractable
 	{
 		if (_putObject == null)
 		{
-			//interactor.curr
+			interactor.currentInteractable = null;
 			return;
 		}
 
+		interactor.currentInteractable = _putObject;
 		_putObject.BeginInteraction(interactor);
 	}
 

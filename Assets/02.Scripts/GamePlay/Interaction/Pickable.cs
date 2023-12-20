@@ -13,7 +13,7 @@ namespace CopycatOverCooked.GamePlay
         [SerializeField] private float _detectRadius;
         [SerializeField] private LayerMask _layerMask;
 
-        public InteractableType type => throw new System.NotImplementedException();
+        public abstract InteractableType type { get; }
 
         public void BeginInteraction(Interactor interactor)
         {

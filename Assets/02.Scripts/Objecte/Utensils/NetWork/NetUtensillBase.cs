@@ -109,18 +109,18 @@ namespace CopycatOverCooked.NetWork.Untesils
 				return false;
 
 			//재료가 아예 없는 경우
-			if (inputIngredients.Count == 0 && CanCookableResource(resource.type.Value, out var foundRecipeIndex))
+			if (inputIngredients.Count == 0 && CanCookableResource(resource.ingerdientType.Value, out var foundRecipeIndex))
 			{
 				progressType.Value = (int)ProgressState.Progressing;
 				recipeIndex.Value = foundRecipeIndex;
-				inputIngredients.Add((int)resource.type.Value);
+				inputIngredients.Add((int)resource.ingerdientType.Value);
 				progress.Value = 0.0f;
 				return true;
 			}
 			//재료가 있는 경우
-			else if (inputIngredients.Count > 0 && GetCurrentRecipe().resource == resource.type.Value)
+			else if (inputIngredients.Count > 0 && GetCurrentRecipe().resource == resource.ingerdientType.Value)
 			{
-				inputIngredients.Add((int)resource.type.Value);
+				inputIngredients.Add((int)resource.ingerdientType.Value);
 				progress.Value = 0.0f;
 				return true;
 			}
