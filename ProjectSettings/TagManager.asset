@@ -21,14 +21,14 @@ TagManager:
   - 
   - 
   - 
-  - IngredientBox
-  - Ingredient
-  - Table
-  - Plate
-  - Utensil
-  - UtensilDetect
-  - TrashCan
   - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - InteractionObject
   - 
   - 
   - 

@@ -1,19 +1,23 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Android;
 
 namespace CopycatOverCooked.GamePlay
 {
-    public abstract class Pickable : NetworkBehaviour, IInteractable, IUsable
+    public abstract class Pickable : NetworkBehaviour, IInteractable
     {
-        NetworkVariable<ulong> _pickingClientID = new NetworkVariable<ulong>();
+        protected NetworkVariable<ulong> pickingClientID = new NetworkVariable<ulong>(EMPTY_CLIENT_ID);
         const ulong EMPTY_CLIENT_ID = ulong.MaxValue;
+
+        [SerializeField] private float _detectRadius;
+        [SerializeField] private LayerMask _layerMask;
 
         public InteractableType type => throw new System.NotImplementedException();
 
         public void BeginInteraction(Interactor interactor)
         {
-            if (_pickingClientID.Value != EMPTY_CLIENT_ID)
+            if (pickingClientID.Value != EMPTY_CLIENT_ID)
                 return;
 
             PickUpServerRpc(interactor.OwnerClientId);
@@ -21,7 +25,7 @@ namespace CopycatOverCooked.GamePlay
 
         public void EndInteraction(Interactor interactor)
         {
-            if (_pickingClientID.Value == EMPTY_CLIENT_ID)
+            if (pickingClientID.Value == EMPTY_CLIENT_ID)
                 return;
 
             OnEndInteraction(DetectInteractable());
@@ -35,7 +39,7 @@ namespace CopycatOverCooked.GamePlay
             if (NetworkObject.TrySetParent(interactor.NetworkObject))
             {
                 transform.localPosition = interactor.hand.localPosition;
-                _pickingClientID.Value = clientID;
+                pickingClientID.Value = clientID;
             }
         }
 
@@ -43,21 +47,42 @@ namespace CopycatOverCooked.GamePlay
         public void DropServerRpc(ulong clientID = ulong.MaxValue)
         {
             NetworkObject.TrySetParent(default(Transform));
-            _pickingClientID.Value = EMPTY_CLIENT_ID;
+            pickingClientID.Value = EMPTY_CLIENT_ID;
         }
 
-        protected virtual void OnEndInteraction(IInteractable other)
-        {
-            DropServerRpc();
-        }
+        protected abstract void OnEndInteraction(IInteractable other);
 
-        private IInteractable DetectInteractable()
+		private IInteractable DetectInteractable()
         {
             // todo -> cast interactable.
-            return null;
+            var interactionObjects = Physics.OverlapSphere(transform.position, _detectRadius, _layerMask);
+			IInteractable select = null;
+            foreach(var interactable in  interactionObjects)
+            {
+                IInteractable item = interactable.GetComponent<IInteractable>();
+                if (item == null)
+                    throw new Exception($"IIteractable Not found  {interactable.name}");
+                if (select == null)
+                    select = item;
+                else if(select.type < item.type)
+                {
+                    select = item;
+                }
+            }
+
+            return select;
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        protected void DestoryObjectServerRpc()
+        {
+            GetComponent<NetworkObject>().Despawn();
+        }
 
-        public abstract void Use(NetworkObject user);
-    }
+		private void OnDrawGizmos()
+		{
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, _detectRadius);
+		}
+	}
 }

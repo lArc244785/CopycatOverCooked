@@ -333,6 +333,7 @@ GameObject:
   - component: {fileID: 3669432862553244610}
   - component: {fileID: 8706602613063467009}
   - component: {fileID: 1829710718234618976}
+  - component: {fileID: 6866019699224829834}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -417,18 +418,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a85a24ff81290b49b6dbd52e3f1096f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 1
+  _moveSpeed: 5
   _dashSpeed: 1
   _throwPower: 1
-  _itemDetectRange: 1
-  radius: 0
-  _interactionObjectLayerMask:
-    serializedVersion: 2
-    m_Bits: 4063232
-  Hand: {fileID: 847879636261951367}
-  _interactionDetectCenter: {x: 0, y: 1.33, z: 0}
-  _interactionDetectedSize: {x: 0.7, y: 2, z: 1}
-  _interactionDistance: 1
 --- !u!114 &1829710718234618976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -459,6 +451,25 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &6866019699224829834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5231325737596490156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd4e3e32b46cb6b4d9812a9d924eb5a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hand: {fileID: 847879636261951367}
+  _offset: {x: 0, y: 1.3, z: 0}
+  _detectRadius: 1
+  _distance: 1.5
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 4194304
 --- !u!1 &7202956812247326714
 GameObject:
   m_ObjectHideFlags: 0

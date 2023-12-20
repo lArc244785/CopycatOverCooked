@@ -1,3 +1,4 @@
+using CopycatOverCooked.Interaction;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;

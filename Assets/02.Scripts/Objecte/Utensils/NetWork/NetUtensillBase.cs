@@ -1,4 +1,5 @@
 using CopycatOverCooked.Datas;
+using CopycatOverCooked.Interaction;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;

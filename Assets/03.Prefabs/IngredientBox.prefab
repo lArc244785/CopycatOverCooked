@@ -248,10 +248,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5303592198149752557}
-  - component: {fileID: 4143745425447304093}
   - component: {fileID: 1388575282371203575}
+  - component: {fileID: 982009367250413440}
   - component: {fileID: 8430675677849200781}
-  m_Layer: 15
+  m_Layer: 22
   m_Name: IngredientBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -275,22 +275,6 @@ Transform:
   - {fileID: 7793464643666189148}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4143745425447304093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7836037446550311637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ceaed0c4d0fbf17489dc7d2a2e3c1b6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnType: 2
-  prefab: {fileID: 4620428892557961845, guid: 60455dc75fe55be4fb3e89d67a4e6f3e, type: 3}
-  unboxingCooldown: 1
-  m_boxNameText: {fileID: 5388539701087775115}
 --- !u!114 &1388575282371203575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +295,21 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &982009367250413440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7836037446550311637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55ffdc6c737d3b142a73bde948b5681c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnType: 2
+  prefab: {fileID: 4620428892557961845, guid: 60455dc75fe55be4fb3e89d67a4e6f3e, type: 3}
+  m_boxNameText: {fileID: 5388539701087775115}
 --- !u!65 &8430675677849200781
 BoxCollider:
   m_ObjectHideFlags: 0

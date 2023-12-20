@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1987069232204613513}
   - component: {fileID: 4973715666730290673}
   - component: {fileID: 663582570614774837}
-  m_Layer: 17
+  m_Layer: 22
   m_Name: Table
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,11 +49,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _putPoint: {fileID: 7054713259176198408}
-  canPutObject:
-    m_InternalValue: 1
-  _putLayerMask:
-    serializedVersion: 2
-    m_Bits: 851968
 --- !u!114 &4973715666730290673
 MonoBehaviour:
   m_ObjectHideFlags: 0

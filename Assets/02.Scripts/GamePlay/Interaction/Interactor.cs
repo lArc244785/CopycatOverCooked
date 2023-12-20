@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,9 +11,14 @@ namespace CopycatOverCooked.GamePlay
 
         public Transform hand;
         public IInteractable currentInteractable;
+        public IUsable currentUseable;
 
+        [SerializeField] private Vector3 _offset;
+		[SerializeField] private float _detectRadius;
+        [SerializeField] private float _distance;
+        [SerializeField] private LayerMask _layerMask;
 
-        public override void OnNetworkSpawn()
+		public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
             spawned.Add(OwnerClientId, this);
@@ -43,8 +49,34 @@ namespace CopycatOverCooked.GamePlay
 
         private IInteractable DetectInteractable()
         {
-            // todo -> cast interactable.
-            return null;
-        }
+			// todo -> cast interactable.
+            var origin = transform.position + _offset + transform.forward * _distance;
+
+			var interactionObjects = Physics.OverlapSphere(origin, _detectRadius, _layerMask);
+			IInteractable select = null;
+			foreach (var interactable in interactionObjects)
+			{
+				IInteractable item = interactable.GetComponent<IInteractable>();
+				if (item == null)
+					throw new Exception($"IIteractable Not found  {interactable.name}");
+				if (select == null)
+					select = item;
+				else if (select.type < item.type)
+				{
+					select = item;
+				}
+			}
+
+			return select;
+		}
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.green;
+            var startPos = transform.position + _offset;
+            var origin = transform.position + _offset + transform.forward * _distance;
+            Gizmos.DrawLine(startPos, origin);
+            Gizmos.DrawWireSphere(origin, _detectRadius);
+		}
     }
 }
