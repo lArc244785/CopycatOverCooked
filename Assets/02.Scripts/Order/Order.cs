@@ -23,7 +23,7 @@ namespace CopycatOverCooked.Orders
         private void Start()
         {
             // 요리 재료 테이블 초기화
-            _elementTable = _recipe.Init();
+            //_elementTable = _recipe.Init();
 
             // 주문 타이머 시작
             StartCoroutine(OrderTimer());
