@@ -5,10 +5,10 @@ namespace CopycatOverCooked.Orders
 {
     public struct OrderState : IEquatable<OrderState>
     {
-        public int ingredientType;
-        public float timeMark;
+        public uint ingredientType; 
+        public float timeMark; // 주문한 시간
 
-        public OrderState(int ingredientType, float timeMark)
+        public OrderState(uint ingredientType, float timeMark)
         {
             this.ingredientType = ingredientType;
             this.timeMark = timeMark;

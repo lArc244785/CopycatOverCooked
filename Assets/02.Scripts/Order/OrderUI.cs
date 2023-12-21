@@ -8,7 +8,6 @@ namespace CopycatOverCooked.Orders
 {
     public class OrderUI : NetworkBehaviour
     {
-        public StageData this[IngredientType type] => _stageData[type];
-        private Dictionary<IngredientType, StageData> _stageData;
+        
     }
 }

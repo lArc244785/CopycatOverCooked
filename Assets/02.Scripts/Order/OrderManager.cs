@@ -34,7 +34,23 @@ namespace CopycatOverCooked.Orders
 
         private void Order(IngredientType ingredientType)
         {
-            _orderStates.Add(new OrderState((int)ingredientType, Time.time));
+            _orderStates.Add(new OrderState((uint)ingredientType, Time.time));
         }
+
+        [ServerRpc]
+        private void DeliveryServerRpc(IngredientType ingredientType)
+        {
+            foreach (OrderState state in _orderStates)
+            {
+                if ((uint)ingredientType == state.ingredientType)
+                {
+                    
+
+                    return;
+                }  
+            }
+            // ³ª»Û °á°ú
+        }
+
     }
 }
