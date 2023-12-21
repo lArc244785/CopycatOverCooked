@@ -7,7 +7,9 @@ namespace CopycatOverCooked.Orders
 {
     public class OrderManager : NetworkBehaviour
     {
-        NetworkList<OrderState> _orderStates;
+        public static OrderManager instance;
+
+        public NetworkList<OrderState> _orderStates;
         public StageData stageData;
         private float _timer;
 
@@ -46,7 +48,7 @@ namespace CopycatOverCooked.Orders
                 {
                     
 
-                    return;
+                    return; 
                 }  
             }
             // ³ª»Û °á°ú
