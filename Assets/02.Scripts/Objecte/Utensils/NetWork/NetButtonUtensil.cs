@@ -1,5 +1,6 @@
 ﻿using CopycatOverCooked.Datas;
 using CopycatOverCooked.Interaction;
+using CopycatOverCooked.Object;
 using Unity.Netcode;
 using UnityEngine;
 

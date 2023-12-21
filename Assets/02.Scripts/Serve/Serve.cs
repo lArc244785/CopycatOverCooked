@@ -27,23 +27,23 @@ public class Serve : NetworkBehaviour
         if (canPutObject.Value == false)
             return false;
 
-        if ((_putLayerMask & 1 << dropObject.gameObject.layer) > 0)
-        {
-            IngredientType[] food = dropObject.GetComponent<Plate>().Spill();
+        //if ((_putLayerMask & 1 << dropObject.gameObject.layer) > 0)
+        //{
+        //    IngredientType[] food = dropObject.GetComponent<Plate>().Spill();
 
-            if (food.Length != 0 /*&& Order참조*/)
-            {
-                dropObject.transform.parent = null;
-                dropObject.transform.position = _putPoint.position;
-                canPutObject.Value = false;
-                _dropObject = dropObject;
-                _dropObject.onPickUp += DropObject;
+        //    if (food.Length != 0 /*&& Order참조*/)
+        //    {
+        //        dropObject.transform.parent = null;
+        //        dropObject.transform.position = _putPoint.position;
+        //        canPutObject.Value = false;
+        //        _dropObject = dropObject;
+        //        _dropObject.onPickUp += DropObject;
 
-                _dropObject.transform.position = _putPoint.position;
+        //        _dropObject.transform.position = _putPoint.position;
 
-                return true;
-            }
-        }
+        //        return true;
+        //    }
+        //}
 
         return false;
     }

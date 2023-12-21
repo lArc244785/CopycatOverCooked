@@ -43,6 +43,7 @@ namespace CopycatOverCooked.GamePlay
 			{
 				transform.localPosition = interactor.hand.localPosition;
 				pickingClientID.Value = clientID;
+				interactor.currentInteractableNetworkObjectID.Value = NetworkObjectId;
 			}
 		}
 
@@ -77,7 +78,7 @@ namespace CopycatOverCooked.GamePlay
 		}
 
 		[ServerRpc(RequireOwnership = false)]
-		protected void DestoryObjectServerRpc()
+		public void DestoryObjectServerRpc()
 		{
 			GetComponent<NetworkObject>().Despawn();
 		}

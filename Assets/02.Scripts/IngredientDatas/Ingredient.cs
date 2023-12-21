@@ -3,16 +3,17 @@ using CopycatOverCooked.GamePlay;
 using System;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-namespace CopycatOverCooked.Interaction
+namespace CopycatOverCooked.Object
 {
-    public class Ingredient : Pickable
-    {
-		public  NetworkVariable<IngredientType> ingerdientType = new NetworkVariable<IngredientType>();
+	public class Ingredient : Pickable, IAddIngredient
+	{
+		public NetworkVariable<IngredientType> ingerdientType = new NetworkVariable<IngredientType>();
 		[SerializeField] private Image _image;
 		private GameObject _visualObject;
+
+		private NetworkList<int> mixIngredientList;
 
 		public override InteractableType type => InteractableType.Ingrediant;
 
@@ -22,10 +23,19 @@ namespace CopycatOverCooked.Interaction
 				throw new Exception("Init Clinet Call");
 
 			ingerdientType.Value = type;
+			mixIngredientList.Add((int)type);
+		}
+
+		[ServerRpc(RequireOwnership = false)]
+		private void AddIngredientServerRpc(int type)
+		{
+			ingerdientType.Value |= (IngredientType)type;
+			mixIngredientList.Add(type);
 		}
 
 		private void Awake()
 		{
+			mixIngredientList = new NetworkList<int>();
 			ingerdientType.OnValueChanged += (prev, current) =>
 			{
 				UpdateSprite(current);
@@ -36,19 +46,20 @@ namespace CopycatOverCooked.Interaction
 		public override void OnNetworkSpawn()
 		{
 			base.OnNetworkSpawn();
+
 			UpdateVisual(ingerdientType.Value);
 			UpdateSprite(ingerdientType.Value);
 		}
 
 		private void UpdateSprite(IngredientType type)
-        {
+		{
 			var sprite = IngredientVisualDataDB.instance.GetSprite(type);
 			_image.sprite = sprite;
 		}
 
 		private void UpdateVisual(IngredientType type)
 		{
-			if(_visualObject != null)
+			if (_visualObject != null)
 			{
 				Destroy(_visualObject);
 			}
@@ -70,16 +81,47 @@ namespace CopycatOverCooked.Interaction
 					break;
 				case InteractableType.Table:
 					Table table = (Table)other;
-					table.DropPickableObjectServerRpc(pickingClientID.Value);
+					table.InteractionServerRpc(pickingClientID.Value);
 					break;
 				case InteractableType.Plate:
 
 					break;
 				case InteractableType.Ingrediant:
+					{
+						Ingredient otherIngredient = (Ingredient)other;
+						if (CanAdd(otherIngredient.ingerdientType.Value))
+						{
+							AddIngredientServerRpc(otherIngredient.NetworkObjectId);
+							DestoryObjectServerRpc();
+						}
+					}
 					break;
 			}
 		}
 
-		
+		public bool CanAdd(IngredientType type)
+		{
+			foreach (var item in mixIngredientList)
+			{
+				if ((type & (IngredientType)item) > 0)
+					return false;
+			}
+
+			if (Enum.IsDefined(typeof(IngredientType), ingerdientType.Value | type))
+				return true;
+
+			return false;
+		}
+
+		[ServerRpc(RequireOwnership = false)]
+		public void AddIngredientServerRpc(ulong netObjectID)
+		{
+			var netObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netObjectID];
+			if (netObject.TryGetComponent<Ingredient>(out var ingredient))
+			{
+				ingerdientType.Value |= ingredient.ingerdientType.Value;
+				mixIngredientList.Add((int)ingredient.ingerdientType.Value);
+			}
+		}
 	}
 }

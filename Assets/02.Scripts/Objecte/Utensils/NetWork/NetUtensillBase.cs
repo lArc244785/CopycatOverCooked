@@ -1,5 +1,5 @@
 using CopycatOverCooked.Datas;
-using CopycatOverCooked.Interaction;
+using CopycatOverCooked.Object;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -210,8 +210,9 @@ namespace CopycatOverCooked.NetWork.Untesils
 
 		public bool CanSpillToPlate(Plate plate)
 		{
-			return progressType.Value == (int)ProgressState.Sucess &&
-				   plate.inputIngredients.Count < plate.capacity;
+			//return progressType.Value == (int)ProgressState.Sucess &&
+			//	   plate.inputIngredients.Count < plate.capacity;
+			return true;
 		}
 
 		public void SpillToTrash()

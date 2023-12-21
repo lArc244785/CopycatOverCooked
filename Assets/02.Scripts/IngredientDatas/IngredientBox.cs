@@ -1,9 +1,9 @@
-using CopycatOverCooked.Interaction;
+using CopycatOverCooked.Datas;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace CopycatOverCooked.Datas
+namespace CopycatOverCooked.Object
 {
     public class IngredientBox : NetworkBehaviour
     {

@@ -1,13 +1,13 @@
 ﻿using CopycatOverCooked.Datas;
+using CopycatOverCooked.GamePlay;
 using CopycatOverCooked.Interaction;
 using CopycatOverCooked.NetWork;
 using System;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Android;
 
-namespace CopycatOverCooked.GamePlay
+namespace CopycatOverCooked.Object
 {
 	public class S_IngredientBox : NetworkBehaviour, IInteractable
 	{

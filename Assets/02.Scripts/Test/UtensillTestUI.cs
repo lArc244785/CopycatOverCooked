@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CopycatOverCooked.NetWork.Untesils;
 using UnityEngine.UI;
-using Unity.VisualScripting;
-using CopycatOverCooked;
+using CopycatOverCooked.Object;
 
 public class UtensillTestUI : MonoBehaviour
 {
@@ -28,7 +27,7 @@ public class UtensillTestUI : MonoBehaviour
         _btnAddBread.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Bread));
         //_btnSpillToPlate.onClick.AddListener(() => _utensil.SpillToPlateServerRpc());
         _btnUntensillSpillToTrash.onClick.AddListener(()=> _utensil.SpillToTrashServerRpc());
-        _btnPlateSpillToTrash.onClick.AddListener(() => _plate.EmptyServerRpc());
+        //_btnPlateSpillToTrash.onClick.AddListener(() => _plate.EmptyServerRpc());
 	}
 
 }

@@ -1,5 +1,5 @@
 using CopycatOverCooked.Datas;
-using System.Collections;
+using CopycatOverCooked.Object;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +15,7 @@ namespace CopycatOverCooked
 		private void Start()
 		{
 			_slotImage = _gridTransform.GetComponentsInChildren<Image>();
-			_plate.onChangeSlot += OnChangeSlot;
+			//_plate.onChangeSlot += OnChangeSlot;
 		}
 
 		private void OnChangeSlot(IEnumerable<IngredientType> slots)
