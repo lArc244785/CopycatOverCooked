@@ -21,6 +21,5 @@ namespace CopycatOverCooked.Datas
 			var sprite = IngredientSpriteDB.instance.GetSprite(type);
 			_image.sprite = sprite;
 		}
-
     }
 }

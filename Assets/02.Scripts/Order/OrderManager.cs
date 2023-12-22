@@ -15,6 +15,7 @@ namespace CopycatOverCooked.Orders
 
         private void Awake()
         {
+            instance = this;
             _orderStates = new NetworkList<OrderState>();
         }
 
@@ -36,6 +37,7 @@ namespace CopycatOverCooked.Orders
 
         private void Order(IngredientType ingredientType)
         {
+            Debug.Log(ingredientType);
             _orderStates.Add(new OrderState((uint)ingredientType, Time.time));
         }
 

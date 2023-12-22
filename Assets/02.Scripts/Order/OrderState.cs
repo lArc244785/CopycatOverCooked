@@ -1,9 +1,10 @@
 using System;
+using Unity.Netcode;
 using Unity.VisualScripting;
 
 namespace CopycatOverCooked.Orders
 {
-    public struct OrderState : IEquatable<OrderState>
+    public struct OrderState : INetworkSerializeByMemcpy, IEquatable<OrderState>
     {
         public uint ingredientType; 
         public float timeMark; // 주문한 시간

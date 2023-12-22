@@ -586,6 +586,7 @@ GameObject:
   - component: {fileID: 1665730109014568005}
   - component: {fileID: 3851221165591208220}
   - component: {fileID: 3388456299213912300}
+  - component: {fileID: -4823609700536747097}
   m_Layer: 5
   m_Name: OrderSlot
   m_TagString: Untagged
@@ -653,6 +654,25 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-4823609700536747097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7437620468411091172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eba0ae90a08afa348b1a0e226a6547ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ingredientType: 0
+  image: {fileID: 6677648010977128679}
+  igredientIcons:
+  - {fileID: 288490094952759827}
+  - {fileID: 8678311867480510008}
+  - {fileID: 1564737455389193093}
+  - {fileID: 8553682348386845829}
 --- !u!1 &8774631340253371295
 GameObject:
   m_ObjectHideFlags: 0
