@@ -48,10 +48,16 @@ namespace CopycatOverCooked.GamePlay
 		}
 
 		[ServerRpc(RequireOwnership = false)]
-		public void DropServerRpc(ulong clientID = ulong.MaxValue)
+		public void DropServerRpc()
 		{
+			if (pickingClientID.Value == Pickable.EMPTY_CLIENT_ID)
+				return;
+
+			Interactor interactor = Interactor.spawned[pickingClientID.Value];
+
 			NetworkObject.TrySetParent(default(Transform));
 			pickingClientID.Value = EMPTY_CLIENT_ID;
+			interactor.currentInteractableNetworkObjectID.Value = Interactor.NETWORK_OBJECT_NULL_ID;
 		}
 
 		protected abstract void OnEndInteraction(IInteractable other);

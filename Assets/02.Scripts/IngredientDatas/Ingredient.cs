@@ -1,5 +1,6 @@
 using CopycatOverCooked.Datas;
 using CopycatOverCooked.GamePlay;
+using CopycatOverCooked.Untesil;
 using System;
 using Unity.Netcode;
 using UnityEngine;
@@ -13,9 +14,9 @@ namespace CopycatOverCooked.Object
 		[SerializeField] private Image _image;
 		private GameObject _visualObject;
 
-		private NetworkList<int> mixIngredientList;
+		private NetworkList<int> mixIngredientTypeList;
 
-		public override InteractableType type => InteractableType.Ingrediant;
+		public override InteractableType type => InteractableType.Ingredient;
 
 		public void Init(IngredientType type)
 		{
@@ -23,19 +24,19 @@ namespace CopycatOverCooked.Object
 				throw new Exception("Init Clinet Call");
 
 			ingerdientType.Value = type;
-			mixIngredientList.Add((int)type);
+			mixIngredientTypeList.Add((int)type);
 		}
 
 		[ServerRpc(RequireOwnership = false)]
-		private void AddIngredientServerRpc(int type)
+		private void AddMixIngredientTypeListServerRpc(int type)
 		{
 			ingerdientType.Value |= (IngredientType)type;
-			mixIngredientList.Add(type);
+			mixIngredientTypeList.Add(type);
 		}
 
 		private void Awake()
 		{
-			mixIngredientList = new NetworkList<int>();
+			mixIngredientTypeList = new NetworkList<int>();
 			ingerdientType.OnValueChanged += (prev, current) =>
 			{
 				UpdateSprite(current);
@@ -81,19 +82,45 @@ namespace CopycatOverCooked.Object
 					break;
 				case InteractableType.Table:
 					Table table = (Table)other;
-					table.InteractionServerRpc(pickingClientID.Value);
+					if (table.CanPutObject(type))
+					{
+						DropServerRpc();
+						table.PutObjectServerRpc(NetworkObjectId);
+					}
+					else if (table.TryGetPutObject(out var putObject))
+					{
+						if (putObject.TryGetComponent<IAddIngredient>(out var putObjectAdd))
+						{
+							if (putObjectAdd.CanAdd(ingerdientType.Value))
+							{
+								DropServerRpc();
+								putObjectAdd.AddIngredientServerRpc(NetworkObjectId);
+							}
+						}
+					}
 					break;
 				case InteractableType.Plate:
+					Plate plate = (Plate)other;
+
+					if (plate.CanAdd(ingerdientType.Value))
+						plate.AddIngredientServerRpc(NetworkObjectId);
 
 					break;
-				case InteractableType.Ingrediant:
+				case InteractableType.Ingredient:
+					Ingredient otherIngredient = (Ingredient)other;
+					if (otherIngredient.CanAdd(ingerdientType.Value))
 					{
-						Ingredient otherIngredient = (Ingredient)other;
-						if (CanAdd(otherIngredient.ingerdientType.Value))
-						{
-							AddIngredientServerRpc(otherIngredient.NetworkObjectId);
-							DestoryObjectServerRpc();
-						}
+						DropServerRpc();
+						otherIngredient.AddIngredientServerRpc(NetworkObjectId);
+						DestoryObjectServerRpc();
+					}
+					break;
+				case InteractableType.PickUtensil:
+					PickUtensil pickUntensil = (PickUtensil)other;
+					if (pickUntensil.CanAdd(ingerdientType.Value))
+					{
+						DropServerRpc();
+						pickUntensil.AddIngredientServerRpc(NetworkObjectId);
 					}
 					break;
 			}
@@ -101,7 +128,7 @@ namespace CopycatOverCooked.Object
 
 		public bool CanAdd(IngredientType type)
 		{
-			foreach (var item in mixIngredientList)
+			foreach (var item in mixIngredientTypeList)
 			{
 				if ((type & (IngredientType)item) > 0)
 					return false;
@@ -120,7 +147,7 @@ namespace CopycatOverCooked.Object
 			if (netObject.TryGetComponent<Ingredient>(out var ingredient))
 			{
 				ingerdientType.Value |= ingredient.ingerdientType.Value;
-				mixIngredientList.Add((int)ingredient.ingerdientType.Value);
+				mixIngredientTypeList.Add((int)ingredient.ingerdientType.Value);
 			}
 		}
 	}

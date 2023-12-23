@@ -1,5 +1,6 @@
 using CopycatOverCooked.Datas;
 using CopycatOverCooked.GamePlay;
+using CopycatOverCooked.Untesil;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -22,10 +23,25 @@ namespace CopycatOverCooked.Object
 					if (other is Table)
 					{
 						Table table = (Table)other;
-						table.InteractionServerRpc(pickingClientID.Value);
+						if (table.CanPutObject(type))
+						{
+							DropServerRpc();
+							table.PutObjectServerRpc(NetworkObjectId);
+						}
+						else if(table.TryGetPutObject(out var putObject))
+						{
+							if(putObject.TryGetComponent<Ingredient>(out var ingredient))
+							{
+								if (CanAdd(ingredient.ingerdientType.Value))
+								{
+									table.PopPutObjectServerRpc();
+									AddIngredientServerRpc(ingredient.NetworkObjectId);
+								}
+							}
+						}
 					}
 					break;
-				case InteractableType.Ingrediant:
+				case InteractableType.Ingredient:
 					if (other is Ingredient)
 					{
 						Ingredient ingredient = (Ingredient)other;
@@ -33,6 +49,13 @@ namespace CopycatOverCooked.Object
 						{
 							AddIngredientServerRpc(ingredient.NetworkObjectId);
 						}
+					}
+					break;
+				case InteractableType.PickUtensil:
+					if(other is PickUtensil)
+					{
+						PickUtensil pickUtensil = (PickUtensil)other;
+						pickUtensil.DropIngredientToPlateServerRpc(pickingClientID.Value);
 					}
 					break;
 			}

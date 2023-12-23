@@ -1,7 +1,7 @@
-using CopycatOverCooked;
 using CopycatOverCooked.GamePlay;
 using CopycatOverCooked.NetWork;
-using CopycatOverCooked.Object;
+using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,9 +9,30 @@ public class Table : NetworkBehaviour, IInteractable
 {
 	[SerializeField] private Transform _putPoint;
 
-	private Pickable _putObject;
+	public  InteractableType type => InteractableType.Table;
 
-	public InteractableType type => InteractableType.Table;
+	[SerializeField] private NetworkVariable<ulong> _putNetworkObjectId = new NetworkVariable<ulong>(EMPTY_PUT_OBJECT);
+
+	public const ulong EMPTY_PUT_OBJECT = ulong.MaxValue;
+
+	[SerializeField] private List<InteractableType> _putableObjectList = new List<InteractableType>();
+
+	protected event Action<ulong> onChangeputNetworkObject;
+
+	protected virtual void Awake()
+	{
+		_putNetworkObjectId.OnValueChanged = OnChangeputNetworkObject;
+	}
+
+	/// <summary>
+	/// Only ServerCall
+	/// </summary>
+	private void OnChangeputNetworkObject(ulong prev, ulong current)
+	{
+		if (IsServer == false)
+			return;
+		onChangeputNetworkObject?.Invoke(current);
+	}
 
 	public void BeginInteraction(Interactor interactor)
 	{
@@ -27,86 +48,66 @@ public class Table : NetworkBehaviour, IInteractable
 	{
 		Interactor interactor = Interactor.spawned[clientID];
 
-		if (_putObject != null &&
+		if (_putNetworkObjectId.Value != EMPTY_PUT_OBJECT &&
 			interactor.currentInteractableNetworkObjectID.Value == Interactor.NETWORK_OBJECT_NULL_ID)
 		{
-			_putObject.BeginInteraction(interactor);
-			interactor.currentInteractableNetworkObjectID.Value = _putObject.GetComponent<NetworkObject>().NetworkObjectId;
-			_putObject = null;
+			if (this.TryGet(_putNetworkObjectId.Value, out var netObject))
+			{
+				if (netObject.TryGetComponent<Pickable>(out var pickableObject))
+				{
+					pickableObject.PickUpServerRpc(clientID);
+					_putNetworkObjectId.Value = EMPTY_PUT_OBJECT;
+				}
+			}
 		}
 	}
 
-	[ServerRpc(RequireOwnership = false)]
-	public void InteractionServerRpc(ulong clientID)
+
+	public bool CanPutObject(InteractableType type)
 	{
-		var interactor = Interactor.spawned[clientID];
-
-		if (_putObject == null)
+		foreach(var putableType in _putableObjectList)
 		{
-			if (interactor.TryCurrentGetInteractable(out var interactable))
-			{
-				if (interactable is Pickable)
-				{
-					Pickable pick = (Pickable)interactable;
-					pick.DropServerRpc(clientID);
-					if (pick.NetworkObject.TrySetParent(transform))
-					{
-						pick.transform.localPosition = _putPoint.localPosition;
-						pick.transform.localRotation = Quaternion.identity;
-						_putObject = pick;
-					}
+			if (putableType == type && _putNetworkObjectId.Value == EMPTY_PUT_OBJECT)
+				return true;
+		}
+		return false;
+	}
 
-					interactor.currentInteractableNetworkObjectID.Value = Interactor.NETWORK_OBJECT_NULL_ID;
-				}
+	[ServerRpc(RequireOwnership = false)]
+	public void PutObjectServerRpc(ulong networkObjectID)
+	{
+		if (this.TryGet(networkObjectID, out var netObject))
+		{
+			if (netObject.TrySetParent(transform))
+			{
+				netObject.transform.localPosition = _putPoint.localPosition;
+				netObject.transform.localRotation = Quaternion.identity;
+				_putNetworkObjectId.Value = networkObjectID;
 			}
 		}
-		else if (interactor.TryGet(interactor.currentInteractableNetworkObjectID.Value, out var inputNetObject))
+	}
+
+	public bool TryGetPutObject(out NetworkObject netobject)
+	{
+		netobject = null;
+
+		if (_putNetworkObjectId.Value == EMPTY_PUT_OBJECT)
+			return false;
+
+		if (this.TryGet(_putNetworkObjectId.Value, out netobject))
+			return true;
+
+		return false;
+	}
+
+	[ServerRpc(RequireOwnership = false)]
+	public void PopPutObjectServerRpc()
+	{
+		if(TryGetPutObject(out var putObject))
 		{
-			//올려져 있는 오브젝트가 재료인 경우
-			if (_putObject is Ingredient)
+			if(putObject.TrySetParent(default(Transform)))
 			{
-				Ingredient putIngredient = (Ingredient)_putObject;
-
-				//들어온 오브젝트가 재료인 경우
-				if (inputNetObject.TryGetComponent<Ingredient>(out var ingredient))
-				{
-					IAddIngredient addPutIngredient = putIngredient;
-					if (addPutIngredient.CanAdd(ingredient.ingerdientType.Value))
-					{
-						ingredient.DropServerRpc();
-						addPutIngredient.AddIngredientServerRpc(ingredient.NetworkObjectId);
-						inputNetObject.Despawn();
-						interactor.currentInteractableNetworkObjectID.Value = Interactor.NETWORK_OBJECT_NULL_ID;
-					}
-				}
-				//들어온 오브젝트가 접시인경우
-				else if(inputNetObject.TryGetComponent<Plate>(out var plate))
-				{
-					IAddIngredient addPlate = plate;
-					if(addPlate.CanAdd(putIngredient.ingerdientType.Value))
-					{
-						addPlate.AddIngredientServerRpc(putIngredient.NetworkObjectId);
-						_putObject.DestoryObjectServerRpc();
-						_putObject = null;
-					}
-				}
-
-				
-			}
-			//올려져 있는 오브젝트가 접시인 경우
-			if(_putObject is Plate)
-			{
-				//들어온 오브젝트가 재료인 경우
-				if(inputNetObject.TryGetComponent<Ingredient>(out var ingredient))
-				{
-					IAddIngredient addPlate = (Plate)_putObject;
-					if(addPlate.CanAdd(ingredient.ingerdientType.Value))
-					{
-						ingredient.DropServerRpc();
-						addPlate.AddIngredientServerRpc(ingredient.NetworkObjectId);
-						interactor.currentInteractableNetworkObjectID.Value = Interactor.NETWORK_OBJECT_NULL_ID;
-					}
-				}
+				_putNetworkObjectId.Value = EMPTY_PUT_OBJECT;
 			}
 		}
 	}

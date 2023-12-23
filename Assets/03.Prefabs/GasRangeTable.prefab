@@ -123,13 +123,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1875416851497834299}
-  - component: {fileID: 8102880663055339751}
-  - component: {fileID: 1615751440146839078}
-  - component: {fileID: 2514577808920896290}
-  - component: {fileID: 2922315581120964759}
-  m_Layer: 17
+  - component: {fileID: 7327761499349472623}
+  - component: {fileID: 6546337487242975755}
+  - component: {fileID: 4944451153065052796}
+  m_Layer: 22
   m_Name: GasRangeTable
-  m_TagString: GasRange
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -151,7 +150,7 @@ Transform:
   - {fileID: 6625291803283286984}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8102880663055339751
+--- !u!114 &7327761499349472623
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -160,16 +159,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 9139272340594203434}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c75a8899234c7d438eb216ee2e0aa50, type: 3}
+  m_Script: {fileID: 11500000, guid: fafd002756727f34e912be6644a542f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _putPoint: {fileID: 6625291803283286984}
-  canPutObject:
-    m_InternalValue: 1
-  _putLayerMask:
-    serializedVersion: 2
-    m_Bits: 524288
---- !u!114 &1615751440146839078
+  _putNetworkObjectId:
+    m_InternalValue: 18446744073709551615
+  _putableObjectList: 09000000
+--- !u!114 &6546337487242975755
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -189,7 +186,7 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!65 &2514577808920896290
+--- !u!65 &4944451153065052796
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -210,24 +207,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!65 &2922315581120964759
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9139272340594203434}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.5, y: 0.1, z: 0.5}
-  m_Center: {x: 0, y: 1, z: 0}

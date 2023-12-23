@@ -16,9 +16,13 @@ namespace CopycatOverCooked.GamePlay
 		public NetworkVariable<ulong> currentInteractableNetworkObjectID = new NetworkVariable<ulong>();
 
 		[SerializeField] private Vector3 _offset;
-		[SerializeField] private float _detectRadius;
-		[SerializeField] private float _distance;
+		[SerializeField] private float _maxDistance;
 		[SerializeField] private LayerMask _layerMask;
+
+		private Vector3 offsetPoint => transform.position +
+				   transform.right * _offset.x +
+				   transform.up * _offset.y +
+				   transform.forward * _offset.z;
 
 		public override void OnNetworkSpawn()
 		{
@@ -58,33 +62,32 @@ namespace CopycatOverCooked.GamePlay
 		private IInteractable DetectInteractable()
 		{
 			// todo -> cast interactable.
-			var origin = transform.position + _offset + transform.forward * _distance;
-
-			var interactionObjects = Physics.OverlapSphere(origin, _detectRadius, _layerMask);
+			var origin = offsetPoint;
 			IInteractable select = null;
-			foreach (var interactable in interactionObjects)
+
+			RaycastHit[] hits = Physics.RaycastAll(origin, Vector3.down, _maxDistance, _layerMask);
+			foreach(var hit in hits)
 			{
-				IInteractable item = interactable.GetComponent<IInteractable>();
+				IInteractable item = hit.collider.GetComponent<IInteractable>();
 				if (item == null)
-					throw new Exception($"IIteractable Not found  {interactable.name}");
+					throw new Exception($"IIteractable Not found  {hit.collider.name}");
 				if (select == null)
 					select = item;
 				else if (select.type < item.type)
-				{
 					select = item;
-				}
 			}
 
 			return select;
 		}
 
+
+
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.green;
-			var startPos = transform.position + _offset;
-			var origin = transform.position + _offset + transform.forward * _distance;
-			Gizmos.DrawLine(startPos, origin);
-			Gizmos.DrawWireSphere(origin, _detectRadius);
+			var startPos = offsetPoint;
+			var endPos = startPos + Vector3.down * _maxDistance;
+			Gizmos.DrawLine(startPos, endPos);
 		}
 
 		public bool TryCurrentGetInteractable(out IInteractable interactable)

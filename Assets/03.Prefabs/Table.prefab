@@ -49,6 +49,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _putPoint: {fileID: 7054713259176198408}
+  _putNetworkObjectId:
+    m_InternalValue: 18446744073709551615
+  _putableObjectList: 090000000700000006000000
 --- !u!114 &4973715666730290673
 MonoBehaviour:
   m_ObjectHideFlags: 0

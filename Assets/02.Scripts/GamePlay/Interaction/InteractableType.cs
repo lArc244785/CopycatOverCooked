@@ -14,9 +14,10 @@ namespace CopycatOverCooked.GamePlay
         ServingConvayer,
         TrashCan,
         IngrediantBox,
-        Ingrediant,
+        Ingredient,
         Plate,
         Utensill,
+		PickUtensil,
         Table,
-    }
+	}
 }
