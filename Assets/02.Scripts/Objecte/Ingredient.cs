@@ -78,7 +78,8 @@ namespace CopycatOverCooked.Object
 			switch (other.type)
 			{
 				case InteractableType.TrashCan:
-					//Todo - ThrashCan.DestoryObject
+					DropServerRpc();
+					DestoryObjectServerRpc();
 					break;
 				case InteractableType.Table:
 					Table table = (Table)other;
@@ -95,6 +96,7 @@ namespace CopycatOverCooked.Object
 							{
 								DropServerRpc();
 								putObjectAdd.AddIngredientServerRpc(NetworkObjectId);
+								DestoryObjectServerRpc();
 							}
 						}
 					}
@@ -121,6 +123,14 @@ namespace CopycatOverCooked.Object
 					{
 						DropServerRpc();
 						pickUntensil.AddIngredientServerRpc(NetworkObjectId);
+					}
+					break;
+				case InteractableType.FixUtensil:
+					FixUtensil fixUtensil = (FixUtensil)other;
+					if(fixUtensil.CanAdd(ingerdientType.Value))
+					{
+						DropServerRpc();
+						fixUtensil.AddIngredientServerRpc(NetworkObjectId);
 					}
 					break;
 			}

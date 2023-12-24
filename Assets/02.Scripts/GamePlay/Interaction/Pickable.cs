@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CopycatOverCooked.NetWork;
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -69,14 +70,18 @@ namespace CopycatOverCooked.GamePlay
 			IInteractable select = null;
 			foreach (var interactable in interactionObjects)
 			{
-				IInteractable item = interactable.GetComponent<IInteractable>();
-				if (item == null)
-					throw new Exception($"IIteractable Not found  {interactable.name}");
-				if (select == null)
-					select = item;
-				else if (select.type < item.type)
+				if(interactable.TryGetComponent<NetworkObject>(out var networkObject))
 				{
-					select = item;
+					IInteractable item = interactable.GetComponent<IInteractable>();
+					if (item == null)
+						throw new Exception($"IIteractable Not found  {interactable.name}");
+					if (select == null)
+						select = item;
+					else if (networkObject.NetworkObjectId != NetworkObjectId &&
+							 select.type < item.type)
+					{
+						select = item;
+					}
 				}
 			}
 
@@ -87,6 +92,7 @@ namespace CopycatOverCooked.GamePlay
 		public void DestoryObjectServerRpc()
 		{
 			GetComponent<NetworkObject>().Despawn();
+			Debug.Log("Object Destory");
 		}
 
 		private void OnDrawGizmos()
@@ -94,5 +100,6 @@ namespace CopycatOverCooked.GamePlay
 			Gizmos.color = Color.blue;
 			Gizmos.DrawWireSphere(transform.position, _detectRadius);
 		}
+
 	}
 }

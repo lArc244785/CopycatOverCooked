@@ -2,11 +2,20 @@ using CopycatOverCooked;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CopycatOverCooked.GamePlay;
+using Unity.Netcode;
 
-public class TrashCan : MonoBehaviour
+public class TrashCan : NetworkBehaviour , IInteractable 
 {
-	public void TrashUse(ISpill spill)
+	public InteractableType type => InteractableType.TrashCan;
+
+	public void BeginInteraction(Interactor interactor)
 	{
-		spill.Spill();
+
 	}
+
+	public void EndInteraction(Interactor interactor)
+	{
+	}
+
 }

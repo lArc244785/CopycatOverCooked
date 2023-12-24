@@ -18,6 +18,7 @@ namespace CopycatOverCooked.GamePlay
         Plate,
         Utensill,
 		PickUtensil,
+        FixUtensil,
         Table,
 	}
 }

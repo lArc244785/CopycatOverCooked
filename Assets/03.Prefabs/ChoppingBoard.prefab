@@ -125,7 +125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6482853326630183572
 RectTransform:
   m_ObjectHideFlags: 0
@@ -204,9 +204,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79534202c1e6bf84bbce79e90c5aa6aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridTransform: {fileID: 0}
+  _emptySprite: {fileID: 0}
+  _slotPrefab: {fileID: 0}
+  _slotLayerOutGroup: {fileID: 0}
   _progressBar: {fileID: 8896062845875821919}
-  _progressGague: {fileID: 3338680506848882051}
+  _progressImage: {fileID: 0}
 --- !u!1 &5833579873424627326
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,12 +293,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8100297287587132676}
-  - component: {fileID: 1023738008140913948}
   - component: {fileID: 9101640791198090251}
-  - component: {fileID: 2224866205580662843}
-  - component: {fileID: 3608912977758442606}
-  - component: {fileID: 2047664600504315500}
-  m_Layer: 19
+  - component: {fileID: 974407942606691187}
+  - component: {fileID: 7761888178646736079}
+  m_Layer: 22
   m_Name: ChoppingBoard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -321,33 +321,6 @@ Transform:
   - {fileID: 2808983871521212611}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &1023738008140913948
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7643923318398155578}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &9101640791198090251
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -369,7 +342,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 0.47945487, z: 1}
   m_Center: {x: 0, y: 0.26027256, z: 0}
---- !u!114 &2224866205580662843
+--- !u!114 &974407942606691187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -378,18 +351,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 7643923318398155578}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a74eea47496a37842ae9a100578571b8, type: 3}
+  m_Script: {fileID: 11500000, guid: de2b6881984bd404b90f8641bd30abfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _slotCapcity: 1
-  recipeList:
-  - {fileID: 11400000, guid: 60865b7bcbf96b64f8c206d6296e8359, type: 2}
-  - {fileID: 11400000, guid: a61d9e4ef60d3074492c75aed2d53716, type: 2}
-  - {fileID: 11400000, guid: 11a4e3c3de6669d4c9e69f64df8cb096, type: 2}
-  - {fileID: 11400000, guid: f6b74f29a4572f947905505681e9e47a, type: 2}
-  _actionProgress: 1
-  _ingredientPosition: {fileID: 2808983871521212611}
---- !u!114 &3608912977758442606
+  _cookableRecipeList:
+  - {fileID: 11400000, guid: 5c39a74d0efaa2b47baa981b4bbbdfdf, type: 2}
+  - {fileID: 11400000, guid: da36d85ebec24374783d2b01e0bdd2df, type: 2}
+  - {fileID: 11400000, guid: 5d960286f762e9d4694920da27b90cb5, type: 2}
+  - {fileID: 11400000, guid: 13e158184606f4345a8c314124ed256e, type: 2}
+  _ingredinetPoint: {fileID: 2808983871521212611}
+  _currentProgress:
+    m_InternalValue: 0
+  _updateProgress: 0.5
+  _surcessProgress: 1
+--- !u!114 &7761888178646736079
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -409,20 +384,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &2047664600504315500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7643923318398155578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e95fc1d2e4b2ea4a84f0db7d04c9342, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canPickUP:
-    m_InternalValue: 0
 --- !u!1 &8450556541379405572
 GameObject:
   m_ObjectHideFlags: 0

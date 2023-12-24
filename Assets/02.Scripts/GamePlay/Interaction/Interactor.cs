@@ -68,12 +68,14 @@ namespace CopycatOverCooked.GamePlay
 			RaycastHit[] hits = Physics.RaycastAll(origin, Vector3.down, _maxDistance, _layerMask);
 			foreach(var hit in hits)
 			{
+				ulong id = hit.collider.GetComponent<NetworkObject>().NetworkObjectId;
 				IInteractable item = hit.collider.GetComponent<IInteractable>();
 				if (item == null)
 					throw new Exception($"IIteractable Not found  {hit.collider.name}");
 				if (select == null)
 					select = item;
-				else if (select.type < item.type)
+				else if (id != currentInteractableNetworkObjectID.Value &&
+						 select.type < item.type)
 					select = item;
 			}
 
