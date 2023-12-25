@@ -1,100 +1,129 @@
-using CopycatOverCooked;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using CopycatOverCooked.GamePlay;
+using CopycatOverCooked.NetWork;
 using Unity.Netcode;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Slider = UnityEngine.UI.Slider;
+using Progress = CopycatOverCooked.Datas.Progress;
 
-public class Sink : NetworkBehaviour
+namespace CopycatOverCooked.Object
 {
-    [SerializeField] private GameObject _platePrefab;
-    [SerializeField] private Slider _progressBar;
-    [SerializeField] private Plate _testplate;
-    [SerializeField] private GameObject _plateSpawnPoint;
 
-    private float _washingTime = 3f;
-    public NetworkVariable<bool> _hasPlates;
-    private NetworkObject _plate;
+	public class Sink : NetworkBehaviour, IInteractable, IUsable
+	{
+		[SerializeField] private float _washingTime = 3f;
+		private NetworkVariable<float> _currentTime = new NetworkVariable<float>(0.0f);
+		private NetworkVariable<Progress> _progress = new NetworkVariable<Progress>(Progress.None);
 
-    private void Awake()
-    {
-        _hasPlates = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        _progressBar.gameObject.SetActive(false);
-    }
+		[SerializeField] private Transform _dirtyPlatePoint;
+		[SerializeField] private Transform _clearPlatePoint;
 
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-    }
+		private NetworkVariable<ulong> _plateNetworkObjectID = new NetworkVariable<ulong>(NULL_OBJECT_ID);
 
-    [ClientRpc]
-    public void SliderActiveClientRpc()         //슬라이더 On
-    {
-        _progressBar.gameObject.SetActive(true);
-    }
+		private const ulong NULL_OBJECT_ID = ulong.MaxValue;
 
-    [ClientRpc]
-    public void SliderInactiveClientRpc()       //슬라이더 Off
-    {
-        _progressBar.gameObject.SetActive(false);
-        _progressBar.value = 0;
-    }
+		public InteractableType type => InteractableType.Sink;
 
-    [ClientRpc]
-    public void SpawnPlateClientRpc()
-    {
-        GameObject cleanPlate = Instantiate(_platePrefab, _plateSpawnPoint.transform.position, Quaternion.identity);
-        cleanPlate.GetComponent<NetworkObject>().Spawn(true);
-    }
+		private void Awake()
+		{
 
-    [ServerRpc]
-    public void WashingPlateServerRpc()
-    {
-        if(!_hasPlates.Value)
-        {
-            return;
-        }
+		}
 
-        _testplate.GetComponent<NetworkObject>().Despawn();
 
-        SliderActiveClientRpc();
-        CorotineClientRpc();
-    }
+		public void BeginInteraction(Interactor interactor)
+		{
+			if (_progress.Value == Progress.Sucess)
+			{
+				if (this.TryGet(_plateNetworkObjectID.Value, out var clearPlateObject))
+				{
+					if (clearPlateObject.TryGetComponent<Plate>(out var plate))
+					{
+						plate.PickUpServerRpc(interactor.OwnerClientId);
+						_progress.Value = Progress.None;
+						_plateNetworkObjectID.Value = NULL_OBJECT_ID;
+						_currentTime.Value = 0.0f;
+					}
+				}
+			}
+		}
 
-    [ClientRpc]
-    public void CorotineClientRpc()
-    {
-        StartCoroutine(WashPlateCoroutine());
-    }
+		public void EndInteraction(Interactor interactor)
+		{
 
-    IEnumerator WashPlateCoroutine()
-    {
-        while(_progressBar.value < _washingTime)
-        {
-            _progressBar.value += Time.deltaTime;
+		}
 
-            yield return new WaitForSeconds(0.001f);
-        }
+		public void Use(NetworkObject user)
+		{
+			switch (_progress.Value)
+			{
+				case Progress.Progressing:
+					_currentTime.Value += Time.deltaTime;
+					if (_currentTime.Value >= _washingTime)
+						PlateClearServerRpc();
+					break;
+			}
+		}
 
-        SpawnPlateClientRpc();
 
-        _hasPlates.Value = false;
-        SliderInactiveClientRpc();
-    }
+		public bool CanPlateToSink(Plate plate)
+		{
+			//들고있는 접시가 더러운 경우
+			return plate.isDirty == true &&
+					_progress.Value == Progress.None;
+		}
 
-    public void AddPlate(/* NetworkObject _dirtyPlate */)
-    {
-        if(_hasPlates.Value == true)
-        {
-            return;
-        }
+		[ServerRpc(RequireOwnership = false)]
+		public void PlateToSinkServerRpc(ulong plateNetworkObjectID)
+		{
+			if (this.TryGet(plateNetworkObjectID, out var plateObject))
+			{
+				if (plateObject.TrySetParent(transform))
+				{
+					plateObject.transform.localPosition = _dirtyPlatePoint.localPosition;
+					plateObject.transform.localRotation = _dirtyPlatePoint.localRotation;
+					_currentTime.Value = 0.0f;
+					_progress.Value = Progress.Progressing;
+					_plateNetworkObjectID.Value = plateNetworkObjectID;
+				}
+			}
+		}
 
-        /*_plate = _dirtyPlate;*/
+		[ServerRpc(RequireOwnership = false)]
+		private void PlateClearServerRpc()
+		{
+			if (this.TryGet(_plateNetworkObjectID.Value, out var plateObject))
+			{
+				plateObject.transform.localPosition = _clearPlatePoint.localPosition;
+				plateObject.transform.localRotation = _clearPlatePoint.localRotation;
+				if (plateObject.TryGetComponent<Plate>(out var plate))
+				{
+					plate.ClearPlateClientRpc();
+					_progress.Value = Progress.Sucess;
+				}
+			}
+		}
 
-        _hasPlates.Value = true;
-    }
+		private void OnTriggerEnter(Collider other)
+		{
+			if (other.tag == "Player")
+			{
+				if (other.TryGetComponent<Interactor>(out var player))
+				{
+					player.SetUsableObejctClientRpc(NetworkObjectId);
+				}
+			}
+		}
+
+		private void OnTriggerExit(Collider other)
+		{
+			if (other.tag == "Player")
+			{
+				if (other.TryGetComponent<Interactor>(out var player))
+				{
+					if(player.currentUsable == (IUsable)this)
+					{
+						player.currentUsable = null;
+					}
+				}
+			}
+		}
+	}
 }

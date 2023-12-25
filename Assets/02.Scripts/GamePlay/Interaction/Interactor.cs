@@ -12,7 +12,7 @@ namespace CopycatOverCooked.GamePlay
 		public static Dictionary<ulong, Interactor> spawned = new Dictionary<ulong, Interactor>();
 
 		public Transform hand;
-		public IUsable currentUseable;
+		public IUsable currentUsable;
 		public NetworkVariable<ulong> currentInteractableNetworkObjectID = new NetworkVariable<ulong>();
 
 		[SerializeField] private Vector3 _offset;
@@ -23,6 +23,13 @@ namespace CopycatOverCooked.GamePlay
 				   transform.right * _offset.x +
 				   transform.up * _offset.y +
 				   transform.forward * _offset.z;
+
+		private NetworkObject _user;
+
+		private void Awake()
+		{
+			_user = GetComponent<NetworkObject>();
+		}
 
 		public override void OnNetworkSpawn()
 		{
@@ -55,9 +62,12 @@ namespace CopycatOverCooked.GamePlay
 				}
 			}
 
+			if (Input.GetKeyDown(KeyCode.Q))
+			{
+				currentUsable?.Use(_user);
+			}
+
 		}
-
-
 
 		private IInteractable DetectInteractable()
 		{
@@ -66,7 +76,7 @@ namespace CopycatOverCooked.GamePlay
 			IInteractable select = null;
 
 			RaycastHit[] hits = Physics.RaycastAll(origin, Vector3.down, _maxDistance, _layerMask);
-			foreach(var hit in hits)
+			foreach (var hit in hits)
 			{
 				ulong id = hit.collider.GetComponent<NetworkObject>().NetworkObjectId;
 				IInteractable item = hit.collider.GetComponent<IInteractable>();
@@ -104,6 +114,18 @@ namespace CopycatOverCooked.GamePlay
 			}
 
 			return false;
+		}
+
+		[ClientRpc]
+		public void SetUsableObejctClientRpc(ulong usableObejctID)
+		{
+			if(this.TryGet(usableObejctID, out var networkObject))
+			{
+				if(networkObject.TryGetComponent<IUsable>(out var usable))
+				{
+					currentUsable = usable;
+				}
+			}
 		}
 	}
 }

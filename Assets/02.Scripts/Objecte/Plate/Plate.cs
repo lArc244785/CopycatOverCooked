@@ -12,6 +12,7 @@ namespace CopycatOverCooked.Object
 		[SerializeField] private Transform _ingredientPoint;
 
 		private Ingredient _ingredient;
+		public bool isDirty { private set; get; }
 
 		protected override void OnEndInteraction(IInteractable other)
 		{
@@ -58,12 +59,18 @@ namespace CopycatOverCooked.Object
 						pickUtensil.DropIngredientToPlateServerRpc(pickingClientID.Value);
 					}
 					break;
+				case InteractableType.TrashCan:
+					SpillIngredientServerRpc();
+					break;
 			}
 		}
 
 
 		public bool CanAdd(IngredientType type)
 		{
+			if (isDirty == false)
+				return false;
+
 			if (_ingredient == null)
 				return true;
 			return _ingredient.CanAdd(type);
@@ -98,5 +105,35 @@ namespace CopycatOverCooked.Object
 				netObject.Despawn();
 			}
 		}
+
+		[ServerRpc(RequireOwnership = false)]
+		public void SpillIngredientServerRpc()
+		{
+			_ingredient?.DestoryObjectServerRpc();
+			SpillIngredientClientRpc();
+		}
+
+		[ClientRpc]
+		private void SpillIngredientClientRpc()
+		{
+			_ingredient = null;
+			isDirty = true;
+			Debug.Log("접시가 더러워졌습니다.");
+		}
+
+		public IngredientType GetIngereint()
+		{
+			if(_ingredient == null)
+				return IngredientType.None;
+
+			return _ingredient.ingerdientType.Value;
+		}
+
+		[ClientRpc]
+		public void ClearPlateClientRpc()
+		{
+			isDirty = false;
+		}
+		
 	}
 }

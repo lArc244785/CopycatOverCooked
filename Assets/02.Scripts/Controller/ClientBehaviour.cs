@@ -13,13 +13,8 @@ public class ClientBehaviour : NetworkBehaviour
     [SerializeField] private LayerMask _interactionObjectLayerMask;
     [SerializeField] private Transform Hand = null;
 
-    private bool _hasItem = false;
     private Vector3 _direction = Vector3.zero;
     private Rigidbody _body = null;
-
-    private NetPickUp _pickUpObject;
-    private NetUtensillBase _pickUpUtensill;
-    private Table _dropTable;
 
     [Header("Detect"), SerializeField] private Vector3 _interactionDetectCenter;
     [SerializeField]private Vector3 _interactionDetectedSize;
@@ -47,48 +42,8 @@ public class ClientBehaviour : NetworkBehaviour
             _body.AddForce(_direction * _dashSpeed, ForceMode.Impulse);
         }
 
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            PickUpDropActionServerRpc();
-		}
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void PickUpDropActionServerRpc()
-    {
-        if (_pickUpObject == null)
-        {
-            _pickUpObject = DetectInteraction<NetPickUp>();
-            _pickUpObject?.PickUp(transform, Hand.transform.localPosition);
-			_pickUpUtensill = _pickUpObject.GetComponent<NetUtensillBase>();
-
-		}
-        else
-        {
-            var dropTable = DetectInteraction<Table>();
-            if (dropTable == null)
-                return;
-
-            dropTable.PutObject(_pickUpObject);
-            _pickUpObject = null;
-        }
-    }
-
-    private T DetectInteraction<T>() where T : MonoBehaviour
-    {
-		Vector3 start = transform.position + _interactionDetectCenter;
-		Vector3 center = start + transform.forward * _interactionDistance;
-
-        var colliders = Physics.OverlapBox(center, _interactionDetectedSize * 0.5f, Quaternion.identity, _interactionObjectLayerMask);
-        T hit = null;
-        foreach(var collider in colliders)
-        {
-            hit = collider.GetComponent<T>();
-            if (hit != null)
-                return hit;
-        }
-        return null;
-    }
 
 
     private void FixedUpdate()
@@ -126,14 +81,4 @@ public class ClientBehaviour : NetworkBehaviour
         return false;
     }
 
-	private void OnDrawGizmosSelected()
-	{
-        Vector3 start = transform.position + _interactionDetectCenter;
-        Vector3 center = start + transform.forward * _interactionDistance;
-
-        Gizmos.color = Color.green;
-
-        Gizmos.DrawLine(start, center);
-        Gizmos.DrawWireCube(center, _interactionDetectedSize);
-	}
 }
