@@ -673,6 +673,7 @@ MonoBehaviour:
   - {fileID: 8678311867480510008}
   - {fileID: 1564737455389193093}
   - {fileID: 8553682348386845829}
+  slider: {fileID: 3613252199259323826}
 --- !u!1 &8774631340253371295
 GameObject:
   m_ObjectHideFlags: 0
