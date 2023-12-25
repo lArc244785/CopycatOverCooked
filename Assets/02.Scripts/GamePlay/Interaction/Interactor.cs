@@ -62,7 +62,7 @@ namespace CopycatOverCooked.GamePlay
 				}
 			}
 
-			if (Input.GetKeyDown(KeyCode.Q))
+			if (Input.GetKey(KeyCode.Q))
 			{
 				currentUsable?.Use(_user);
 			}

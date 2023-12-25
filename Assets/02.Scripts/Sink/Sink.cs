@@ -1,5 +1,6 @@
 using CopycatOverCooked.GamePlay;
 using CopycatOverCooked.NetWork;
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using Progress = CopycatOverCooked.Datas.Progress;
@@ -9,7 +10,7 @@ namespace CopycatOverCooked.Object
 
 	public class Sink : NetworkBehaviour, IInteractable, IUsable
 	{
-		[SerializeField] private float _washingTime = 3f;
+		[SerializeField] public float washingTime { private set; get; } = 3.0f;
 		private NetworkVariable<float> _currentTime = new NetworkVariable<float>(0.0f);
 		private NetworkVariable<Progress> _progress = new NetworkVariable<Progress>(Progress.None);
 
@@ -22,9 +23,15 @@ namespace CopycatOverCooked.Object
 
 		public InteractableType type => InteractableType.Sink;
 
-		private void Awake()
-		{
+		public event Action<float> onChangeCurrentTime;
+		public event Action<Progress> onChangeProgress;
+		public event Action onClear;
 
+		public override void OnNetworkSpawn()
+		{
+			base.OnNetworkSpawn();
+			_currentTime.OnValueChanged = (prev, current) => onChangeCurrentTime?.Invoke(current);
+			_progress.OnValueChanged = (prev, current) => onChangeProgress?.Invoke(current);
 		}
 
 
@@ -55,9 +62,13 @@ namespace CopycatOverCooked.Object
 			switch (_progress.Value)
 			{
 				case Progress.Progressing:
+					Debug.Log("설거지중...");
 					_currentTime.Value += Time.deltaTime;
-					if (_currentTime.Value >= _washingTime)
+					if (_currentTime.Value >= washingTime)
+					{
 						PlateClearServerRpc();
+						onClear?.Invoke();
+					}
 					break;
 			}
 		}
@@ -103,25 +114,19 @@ namespace CopycatOverCooked.Object
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (other.tag == "Player")
+			if (other.transform.root.TryGetComponent<Interactor>(out var player))
 			{
-				if (other.TryGetComponent<Interactor>(out var player))
-				{
-					player.SetUsableObejctClientRpc(NetworkObjectId);
-				}
+				player.SetUsableObejctClientRpc(NetworkObjectId);
 			}
 		}
 
 		private void OnTriggerExit(Collider other)
 		{
-			if (other.tag == "Player")
+			if (other.transform.root.TryGetComponent<Interactor>(out var player))
 			{
-				if (other.TryGetComponent<Interactor>(out var player))
+				if (player.currentUsable == (IUsable)this)
 				{
-					if(player.currentUsable == (IUsable)this)
-					{
-						player.currentUsable = null;
-					}
+					player.currentUsable = null;
 				}
 			}
 		}

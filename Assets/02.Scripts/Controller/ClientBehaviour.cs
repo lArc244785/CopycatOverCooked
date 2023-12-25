@@ -1,29 +1,23 @@
+using CopycatOverCooked;
+using CopycatOverCooked.Datas;
 using CopycatOverCooked.NetWork.Untesils;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Netcode;
 using UnityEngine;
 
 public class ClientBehaviour : NetworkBehaviour
 {
-    [SerializeField] private float _moveSpeed = 0f;
-    [SerializeField] private float _dashSpeed = 0f;
-    [SerializeField] private float _throwPower = 0f;
-    [SerializeField] private float _itemDetectRange = 0f;
-    [SerializeField] private float radius = 0f;
-    [SerializeField] private LayerMask _interactionObjectLayerMask;
-    [SerializeField] private Transform Hand = null;
+	[SerializeField] private float _moveSpeed = 0f;
+	[SerializeField] private float _dashSpeed = 0f;
+	[SerializeField] private float _throwPower = 0f;
 
-    private Vector3 _direction = Vector3.zero;
-    private Rigidbody _body = null;
+	private Vector3 _direction = Vector3.zero;
+	private Rigidbody _body = null;
 
-    [Header("Detect"), SerializeField] private Vector3 _interactionDetectCenter;
-    [SerializeField]private Vector3 _interactionDetectedSize;
-    [SerializeField]private float _interactionDistance;
-    
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-    }
+	public override void OnNetworkSpawn()
+	{
+		base.OnNetworkSpawn();
+		gameObject.name = $"player {OwnerClientId}";
+	}
 
 	private void Awake()
 	{
@@ -31,54 +25,38 @@ public class ClientBehaviour : NetworkBehaviour
 	}
 
 	private void Update()
-    {
-        if (!IsOwner)
-        {
-            return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            _body.AddForce(_direction * _dashSpeed, ForceMode.Impulse);
-        }
-
-    }
-
-
-
-    private void FixedUpdate()
-    {
+	{
 		if (!IsOwner)
-        {
-            return;
-        }
+		{
+			return;
+		}
 
-        move();
-    }
+		if (Input.GetKeyDown(KeyCode.LeftShift))
+		{
+			_body.AddForce(_direction * _dashSpeed, ForceMode.Impulse);
+		}
+	}
 
-    private void move()
-    {
-        _direction = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
-        _direction.Normalize();
+	private void FixedUpdate()
+	{
+		if (!IsOwner)
+		{
+			return;
+		}
 
-        transform.position += _direction * _moveSpeed * Time.deltaTime;
-    }
-    private bool DetectItem(out RaycastHit hit)
-    {
-        if (Physics.Raycast(transform.position + transform.forward * 1.5f + transform.up,
-                            Vector3.down, 
-                            out hit,
-                            (transform.position + transform.forward + transform.up).y))
-        /*Physics.Raycast(transform.position + transform.forward * 1.5f + transform.up, 
-        Vector3.down,
-        (transform.position + transform.forward + transform.up).y,
-        _item
-        )*/
-        {
-            return true;
-        }
+		move();
+	}
 
-        return false;
-    }
+	private void move()
+	{
+		_direction = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+		_direction.Normalize();
 
+		transform.position += _direction * _moveSpeed * Time.fixedDeltaTime;
+
+		if (_direction != Vector3.zero)
+		{
+			transform.forward = _direction;
+		}
+	}
 }

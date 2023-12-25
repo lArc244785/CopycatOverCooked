@@ -1,6 +1,7 @@
 using CopycatOverCooked.Datas;
 using CopycatOverCooked.GamePlay;
 using CopycatOverCooked.Untesil;
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,7 +13,34 @@ namespace CopycatOverCooked.Object
 		[SerializeField] private Transform _ingredientPoint;
 
 		private Ingredient _ingredient;
-		public bool isDirty { private set; get; }
+		public bool isDirty
+		{
+			get
+			{
+				return _isDirty;
+			}
+			private set
+			{
+				_isDirty = value;
+				onChangeIsDirty?.Invoke(value);
+			}
+		}
+		private bool _isDirty;
+
+		public Action<bool> onChangeIsDirty;
+
+		[SerializeField] private Material _clearMaterial;
+		[SerializeField] private Material _dirtyMaterial;
+		[SerializeField] private MeshRenderer _renderer;
+
+		private void Awake()
+		{
+			onChangeIsDirty += (isDirty) =>
+				_renderer.material = isDirty ? _dirtyMaterial : _clearMaterial;
+			
+		}
+
+
 
 		protected override void OnEndInteraction(IInteractable other)
 		{
@@ -62,13 +90,21 @@ namespace CopycatOverCooked.Object
 				case InteractableType.TrashCan:
 					SpillIngredientServerRpc();
 					break;
+				case InteractableType.Sink:
+					Sink otherSink = (Sink)other;
+					if(otherSink.CanPlateToSink(this))
+					{
+						DropServerRpc();
+						otherSink.PlateToSinkServerRpc(NetworkObjectId);
+					}
+					break;
 			}
 		}
 
 
 		public bool CanAdd(IngredientType type)
 		{
-			if (isDirty == false)
+			if (isDirty == true)
 				return false;
 
 			if (_ingredient == null)

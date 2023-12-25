@@ -10,15 +10,15 @@ namespace CopycatOverCooked.GamePlay
     {
         Nothing,
         GasBurner,
-        Sink,
         ServingConvayer,
-        TrashCan,
         IngrediantBox,
         Ingredient,
         Plate,
+        Sink,
         Utensill,
 		PickUtensil,
         FixUtensil,
         Table,
-	}
+        TrashCan,
+    }
 }

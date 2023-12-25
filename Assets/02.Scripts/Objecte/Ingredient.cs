@@ -96,7 +96,10 @@ namespace CopycatOverCooked.Object
 							{
 								DropServerRpc();
 								putObjectAdd.AddIngredientServerRpc(NetworkObjectId);
-								DestoryObjectServerRpc();
+								if (putObject.TryGetComponent<Ingredient>(out var putObjectIngredient))
+								{
+									DestoryObjectServerRpc();
+								}
 							}
 						}
 					}
@@ -105,7 +108,10 @@ namespace CopycatOverCooked.Object
 					Plate plate = (Plate)other;
 
 					if (plate.CanAdd(ingerdientType.Value))
+					{
+						DropServerRpc();
 						plate.AddIngredientServerRpc(NetworkObjectId);
+					}
 
 					break;
 				case InteractableType.Ingredient:
@@ -127,7 +133,7 @@ namespace CopycatOverCooked.Object
 					break;
 				case InteractableType.FixUtensil:
 					FixUtensil fixUtensil = (FixUtensil)other;
-					if(fixUtensil.CanAdd(ingerdientType.Value))
+					if (fixUtensil.CanAdd(ingerdientType.Value))
 					{
 						DropServerRpc();
 						fixUtensil.AddIngredientServerRpc(NetworkObjectId);

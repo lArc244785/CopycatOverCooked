@@ -18,8 +18,8 @@ namespace CopycatOverCooked.Datas
 		Trimmed_Bread =	1 << 7,
 		Grilled_Shrimp = 1 << 8,
 		Soup_Tomato = 1 << 9,
+
 		
-		Test = Onion | Tomato,
 
 		//--조합 요리--
 		Salad_OnionTomato = Trimmed_Onion | Trimmed_Tomato,
