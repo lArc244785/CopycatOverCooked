@@ -94,9 +94,6 @@ namespace CopycatOverCooked.Untesil
 						}
 					}
 					break;
-
-				case InteractableType.GasBurner:
-					break;
 			}
 		}
 

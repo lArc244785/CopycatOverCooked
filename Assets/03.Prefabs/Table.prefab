@@ -51,7 +51,7 @@ MonoBehaviour:
   _putPoint: {fileID: 7054713259176198408}
   _putNetworkObjectId:
     m_InternalValue: 18446744073709551615
-  _putableObjectList: 040000000800000005000000
+  _putableObjectList: 030000000400000007000000
 --- !u!114 &4973715666730290673
 MonoBehaviour:
   m_ObjectHideFlags: 0

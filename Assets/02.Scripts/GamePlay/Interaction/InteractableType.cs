@@ -9,7 +9,6 @@ namespace CopycatOverCooked.GamePlay
     public enum InteractableType
     {
         Nothing,
-        GasBurner,
         ServingConvayer,
         IngrediantBox,
         Ingredient,
