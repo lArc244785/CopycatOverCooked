@@ -11,9 +11,8 @@ namespace CopycatOverCooked.Orders
         public IngredientType ingredientType;
         public Image image;
         public List<Image> igredientIcons;
-        public Slider slider;
-        float timer;
-
+        public Slider slider; 
+        [SerializeField] float timer;
 
         public void Setup(uint ingredientType)
         {
@@ -28,10 +27,10 @@ namespace CopycatOverCooked.Orders
                 {
                     while (e1.MoveNext() && e2.MoveNext())
                     {
-                        e1.Current.sprite = IngredientSpriteDB.instance.GetSprite(e2.Current.resource);
+                        e1.Current.sprite = IngredientSpriteDB.instance.GetSprite(e2.Current.result);
                     }
                 }
-                
+
                 slider.value = timer;
             }
             else if (ingredientType < 0)
@@ -45,8 +44,13 @@ namespace CopycatOverCooked.Orders
             if (timer > 0.0f)
             {
                 Debug.Log($"½Ã°£Àº {timer}");
+                
                 timer -= Time.deltaTime;
                 slider.value = timer;
+            }
+            else if (timer < 0.0f)
+            {
+                this.gameObject.SetActive(false);
             }
 
 
