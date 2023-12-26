@@ -41,15 +41,15 @@ namespace CopycatOverCooked.Orders
             _orderStates.Add(new OrderState((uint)ingredientType, Time.time));
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void DeliveryServerRpc(IngredientType ingredientType)
         {
             foreach (OrderState state in _orderStates)
             {
                 if ((uint)ingredientType == state.ingredientType)
                 {
-                    
-
+                    Debug.Log($"{ingredientType} 제출 완료");
+                    Slot.Destroy(gameObject);
                     return; 
                 }  
             }

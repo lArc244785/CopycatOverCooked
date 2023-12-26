@@ -14,7 +14,7 @@ namespace CopycatOverCooked.Orders
         [SerializeField] private Transform content;
 
         private void Start()
-        {
+        {    
             OrderManager.instance._orderStates.OnListChanged += OnOrderListChanged;
             slots = new List<Slot>();
             for (int i = 0; i < 20; i++)
