@@ -11,7 +11,11 @@ namespace CopycatOverCooked.Object
 	public class Sink : NetworkBehaviour, IInteractable, IUsable
 	{
 		[SerializeField] public float washingTime { private set; get; } = 3.0f;
-		private NetworkVariable<float> _currentTime = new NetworkVariable<float>(0.0f);
+		private NetworkVariable<float> _currentTime = 
+			new NetworkVariable<float>(0.0f, 
+				readPerm: NetworkVariableReadPermission.Everyone,
+				writePerm: NetworkVariableWritePermission.Owner
+			);
 		private NetworkVariable<Progress> _progress = new NetworkVariable<Progress>(Progress.None);
 
 		[SerializeField] private Transform _dirtyPlatePoint;
