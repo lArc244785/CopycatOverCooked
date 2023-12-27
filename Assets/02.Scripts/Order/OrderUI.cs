@@ -17,7 +17,7 @@ namespace CopycatOverCooked.Orders
         {    
             OrderManager.instance._orderStates.OnListChanged += OnOrderListChanged;
             slots = new List<Slot>();
-            for (int i = 0; i < 25; i++)
+            for (int i = 0; i < 30; i++)
             {
                 slot = Instantiate(slot, content);
                 slot.gameObject.SetActive(false);
@@ -37,9 +37,23 @@ namespace CopycatOverCooked.Orders
             if (changeEvent.Index < 0 || changeEvent.Index >= slots.Count)
                 return;
 
-            slots[changeEvent.Index].Setup(changeEvent.Value.ingredientType);
+            //자료구조 공부하자
 
-            
+            using (IEnumerator<Slot> e1 = slots.GetEnumerator())
+            using (IEnumerator<OrderState> e2 = OrderManager.instance._orderStates.GetEnumerator())
+            {
+                while (e1.MoveNext())
+                {
+                    if (e2.MoveNext())
+                    {
+                        e1.Current.Setup(e2.Current.ingredientType);
+                    }
+                    else
+                    {
+                        e1.Current.Setup(0);
+                    }
+                }
+            }
         }
     }
 }
