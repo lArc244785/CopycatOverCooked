@@ -1,15 +1,12 @@
 ﻿using CopycatOverCooked.Datas;
 using CopycatOverCooked.GamePlay;
-using CopycatOverCooked.Interaction;
-using CopycatOverCooked.NetWork;
-using System;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace CopycatOverCooked.Object
 {
-	public class S_IngredientBox : NetworkBehaviour, IInteractable
+	public class IngredientBox : NetworkBehaviour, IInteractable
 	{
 		public InteractableType type => InteractableType.IngrediantBox;
 		[SerializeField] private IngredientType spawnType;

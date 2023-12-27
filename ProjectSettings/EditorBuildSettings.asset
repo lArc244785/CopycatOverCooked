@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01.Scenes/TestObjectInteraction.unity
     guid: 5e1ba908f18571c45a4decd6911a433a
+  - enabled: 1
+    path: Assets/01.Scenes/Order.unity
+    guid: 259d1afd4971a6846a4401eed9b48881
   m_configObjects: {}

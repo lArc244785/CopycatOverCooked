@@ -23,6 +23,14 @@ namespace CopycatOverCooked.Datas
 
 		//--조합 요리--
 		Salad_OnionTomato = Trimmed_Onion | Trimmed_Tomato,
+		TrimmedMix_Onion_Shrimp = Trimmed_Onion | Trimmed_Shrimp,
+		
+		TrimmedMix_Bread_Onrion = Trimmed_Bread | Trimmed_Onion,
+		TrimmedMix_Bread_Tomato = Trimmed_Bread | Trimmed_Tomato,
+		TrimmedMix_Bread_Shrimp = Trimmed_Bread | Trimmed_Shrimp,
+
+		TrimmedMix_Onion_Tomato_Shrimp = Trimmed_Onion | Trimmed_Tomato | Trimmed_Shrimp,
+
 		Hamburger =			Trimmed_Onion | Trimmed_Tomato | Trimmed_Shrimp | Trimmed_Bread,
 	}
 }

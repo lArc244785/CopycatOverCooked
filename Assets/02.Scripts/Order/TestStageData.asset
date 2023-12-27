@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: TestStageData
   m_EditorClassIdentifier: 
   menu: f000000030000000
-  orderPeriod: 5
+  orderPeriod: 10

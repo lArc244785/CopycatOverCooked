@@ -98,6 +98,11 @@ namespace CopycatOverCooked.Object
 						otherSink.PlateToSinkServerRpc(NetworkObjectId);
 					}
 					break;
+				case InteractableType.ServingConvayer:
+					DropServerRpc();
+					ServingConvayer convayer = (ServingConvayer)other;
+					convayer.SendOrder(this);
+					break;
 			}
 		}
 

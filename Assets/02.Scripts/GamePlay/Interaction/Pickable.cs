@@ -15,6 +15,13 @@ namespace CopycatOverCooked.GamePlay
 
 		public abstract InteractableType type { get; }
 
+		public override void OnNetworkSpawn()
+		{
+			base.OnNetworkSpawn();
+			if (IsServer == false)
+				return;
+		}
+
 		public void BeginInteraction(Interactor interactor)
 		{
 			if (pickingClientID.Value != EMPTY_CLIENT_ID)

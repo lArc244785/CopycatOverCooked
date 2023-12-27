@@ -23,6 +23,7 @@ public class FixUtensil : NetworkBehaviour, IInteractable, IAddIngredient
 	[SerializeField] private float _updateProgress;
 	[SerializeField] private float _surcessProgress;
 
+
 	public bool CanAdd(IngredientType type)
 	{
 		if (_ingredientObjectID.Value == NULL_INGRDIENT &&

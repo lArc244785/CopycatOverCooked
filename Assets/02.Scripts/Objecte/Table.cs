@@ -1,15 +1,15 @@
 using CopycatOverCooked.GamePlay;
 using CopycatOverCooked.NetWork;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-
 public class Table : NetworkBehaviour, IInteractable
 {
 	[SerializeField] private Transform _putPoint;
 
-	public  InteractableType type => InteractableType.Table;
+	public InteractableType type => InteractableType.Table;
 
 	[SerializeField] private NetworkVariable<ulong> _putNetworkObjectId = new NetworkVariable<ulong>(EMPTY_PUT_OBJECT);
 
@@ -19,9 +19,39 @@ public class Table : NetworkBehaviour, IInteractable
 
 	protected event Action<ulong> onChangeputNetworkObject;
 
+	[SerializeField] protected LayerMask _layerMask;
+
 	protected virtual void Awake()
 	{
 		_putNetworkObjectId.OnValueChanged = OnChangeputNetworkObject;
+	}
+
+	public override void OnNetworkSpawn()
+	{
+		base.OnNetworkSpawn();
+		if (IsServer == false)
+			return;
+
+		StartCoroutine(C_NetworkInit());
+	}
+
+	private IEnumerator C_NetworkInit()
+	{
+		//yield return new WaitUntil(() => StageManager.instance.current == StageManager.Step.BeforeStartStage);
+
+		yield return new WaitForSeconds(1.0f);
+		var hits = Physics.RaycastAll(transform.position, Vector3.up, 10.0f, _layerMask);
+		foreach(var hit in hits)
+		{
+			if(hit.collider.TryGetComponent<NetworkObject>(out var networkObject))
+			{
+				if(networkObject.NetworkObjectId != NetworkObjectId)
+				{
+					PutObjectServerRpc(networkObject.NetworkObjectId);
+					break;
+				}
+			}
+		}
 	}
 
 	/// <summary>
@@ -65,7 +95,7 @@ public class Table : NetworkBehaviour, IInteractable
 
 	public bool CanPutObject(InteractableType type)
 	{
-		foreach(var putableType in _putableObjectList)
+		foreach (var putableType in _putableObjectList)
 		{
 			if (putableType == type && _putNetworkObjectId.Value == EMPTY_PUT_OBJECT)
 				return true;
@@ -103,9 +133,9 @@ public class Table : NetworkBehaviour, IInteractable
 	[ServerRpc(RequireOwnership = false)]
 	public void PopPutObjectServerRpc()
 	{
-		if(TryGetPutObject(out var putObject))
+		if (TryGetPutObject(out var putObject))
 		{
-			if(putObject.TrySetParent(default(Transform)))
+			if (putObject.TrySetParent(default(Transform)))
 			{
 				_putNetworkObjectId.Value = EMPTY_PUT_OBJECT;
 			}

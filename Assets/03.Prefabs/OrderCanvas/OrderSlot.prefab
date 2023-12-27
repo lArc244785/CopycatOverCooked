@@ -83,9 +83,9 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 15
+  m_MaxValue: 1000
   m_WholeNumbers: 0
-  m_Value: 15
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -674,7 +674,7 @@ MonoBehaviour:
   - {fileID: 1564737455389193093}
   - {fileID: 8553682348386845829}
   slider: {fileID: 3613252199259323826}
-  timer: 15
+  timer: 1000
 --- !u!1 &8774631340253371295
 GameObject:
   m_ObjectHideFlags: 0

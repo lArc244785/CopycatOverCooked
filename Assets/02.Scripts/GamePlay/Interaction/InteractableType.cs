@@ -9,7 +9,6 @@ namespace CopycatOverCooked.GamePlay
     public enum InteractableType
     {
         Nothing,
-        ServingConvayer,
         IngrediantBox,
         Ingredient,
         Plate,
@@ -19,5 +18,6 @@ namespace CopycatOverCooked.GamePlay
         FixUtensil,
         Table,
         TrashCan,
+        ServingConvayer,
     }
 }
