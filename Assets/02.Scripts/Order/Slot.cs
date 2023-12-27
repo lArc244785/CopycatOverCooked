@@ -20,14 +20,14 @@ namespace CopycatOverCooked.Orders
             {
                 gameObject.SetActive(true);
                 this.ingredientType = (IngredientType)ingredientType;
-                image.sprite = IngredientSpriteDB.instance.GetSprite(this.ingredientType);
+                image.sprite = IngredientVisualDataDB.instance.GetSprite(this.ingredientType);
 
                 using (IEnumerator<Image> e1 = igredientIcons.GetEnumerator())
                 using (IEnumerator<RecipeElementInfo> e2 = RecipeBook.instance[this.ingredientType].elements.GetEnumerator())
                 {
                     while (e1.MoveNext() && e2.MoveNext())
                     {
-                        e1.Current.sprite = IngredientSpriteDB.instance.GetSprite(e2.Current.result);
+                        e1.Current.sprite = IngredientVisualDataDB.instance.GetSprite(e2.Current.result);
                     }
                 }
 

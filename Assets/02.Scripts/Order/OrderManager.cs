@@ -42,7 +42,7 @@ namespace CopycatOverCooked.Orders
         }
 
         [ServerRpc]
-        private void DeliveryServerRpc(IngredientType ingredientType)
+        public void DeliveryServerRpc(IngredientType ingredientType)
         {
             foreach (OrderState state in _orderStates)
             {
