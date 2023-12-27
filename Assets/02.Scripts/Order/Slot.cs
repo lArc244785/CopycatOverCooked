@@ -33,8 +33,9 @@ namespace CopycatOverCooked.Orders
 
                 slider.value = timer;
             }
-            else if (ingredientType < 0)
+            else
             {
+
                 gameObject.SetActive(false);
             }
         }
