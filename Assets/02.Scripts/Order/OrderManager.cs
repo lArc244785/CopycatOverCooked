@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using CopycatOverCooked.Datas;
+using Unity.VisualScripting;
 
 namespace CopycatOverCooked.Orders
 {
     public class OrderManager : NetworkBehaviour
     {
         public static OrderManager instance;
-
         public NetworkList<OrderState> _orderStates;
         public StageData stageData;
         private float _timer;
@@ -44,15 +44,16 @@ namespace CopycatOverCooked.Orders
         [ServerRpc(RequireOwnership = false)]
         public void DeliveryServerRpc(IngredientType ingredientType)
         {
-            foreach (OrderState state in _orderStates)
+            for (int i = 0; i < _orderStates.Count; i++)
             {
-                if ((uint)ingredientType == state.ingredientType)
+                if ((uint)ingredientType == _orderStates[i].ingredientType)
                 {
                     Debug.Log($"{ingredientType} 제출 완료");
-					Slot.Destroy(gameObject);
-                    return; 
-                }  
+                    _orderStates.RemoveAt(i);
+                    return;
+                }
             }
+
             // 나쁜 결과
         }
 
