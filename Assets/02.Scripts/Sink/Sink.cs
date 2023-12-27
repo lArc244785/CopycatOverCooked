@@ -11,11 +11,7 @@ namespace CopycatOverCooked.Object
 	public class Sink : NetworkBehaviour, IInteractable, IUsable
 	{
 		[SerializeField] public float washingTime { private set; get; } = 3.0f;
-		private NetworkVariable<float> _currentTime = 
-			new NetworkVariable<float>(0.0f, 
-				readPerm: NetworkVariableReadPermission.Everyone,
-				writePerm: NetworkVariableWritePermission.Owner
-			);
+		private NetworkVariable<float> _currentTime = new NetworkVariable<float>(0.0f);
 		private NetworkVariable<Progress> _progress = new NetworkVariable<Progress>(Progress.None);
 
 		[SerializeField] private Transform _dirtyPlatePoint;
@@ -43,15 +39,23 @@ namespace CopycatOverCooked.Object
 		{
 			if (_progress.Value == Progress.Sucess)
 			{
-				if (this.TryGet(_plateNetworkObjectID.Value, out var clearPlateObject))
+				PickupPlateServerRpc(interactor.OwnerClientId);
+			}
+		}
+
+		[ServerRpc(RequireOwnership = false)]
+		private void PickupPlateServerRpc(ulong clientID)
+		{
+			Interactor interactor = Interactor.spawned[clientID];
+
+			if (this.TryGet(_plateNetworkObjectID.Value, out var clearPlateObject))
+			{
+				if (clearPlateObject.TryGetComponent<Plate>(out var plate))
 				{
-					if (clearPlateObject.TryGetComponent<Plate>(out var plate))
-					{
-						plate.PickUpServerRpc(interactor.OwnerClientId);
-						_progress.Value = Progress.None;
-						_plateNetworkObjectID.Value = NULL_OBJECT_ID;
-						_currentTime.Value = 0.0f;
-					}
+					plate.PickUpServerRpc(interactor.OwnerClientId);
+					_progress.Value = Progress.None;
+					_plateNetworkObjectID.Value = NULL_OBJECT_ID;
+					_currentTime.Value = 0.0f;
 				}
 			}
 		}
@@ -62,6 +66,12 @@ namespace CopycatOverCooked.Object
 		}
 
 		public void Use(NetworkObject user)
+		{
+			UseServerRpc();
+		}
+
+		[ServerRpc(RequireOwnership = false)]
+		private void UseServerRpc()
 		{
 			switch (_progress.Value)
 			{

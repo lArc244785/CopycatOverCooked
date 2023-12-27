@@ -63,6 +63,14 @@ public class FixUtensil : NetworkBehaviour, IInteractable, IAddIngredient
 
 	public void BeginInteraction(Interactor interactor)
 	{
+		UpdateProgressServerRpc(interactor.OwnerClientId);
+	}
+
+	[ServerRpc(RequireOwnership = false)]
+	public void UpdateProgressServerRpc(ulong clientID)
+	{
+		Interactor interactor = Interactor.spawned[clientID];
+
 		switch (_cookProgress.Value)
 		{
 			case Progress.Progressing:
@@ -90,6 +98,7 @@ public class FixUtensil : NetworkBehaviour, IInteractable, IAddIngredient
 				break;
 		}
 	}
+
 
 	public void EndInteraction(Interactor interactor)
 	{

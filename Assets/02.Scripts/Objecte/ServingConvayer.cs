@@ -27,6 +27,14 @@ namespace CopycatOverCooked.Object
 			if (_outputPlateObjectIDs.Count == 0)
 				return;
 
+			PlatePickupServerRpc(interactor.OwnerClientId);
+		}
+
+		[ServerRpc(RequireOwnership =false)]
+		private void PlatePickupServerRpc(ulong clientID)
+		{
+			Interactor interactor = Interactor.spawned[clientID];
+
 			int topPlateIndex = _outputPlateObjectIDs.Count - 1;
 			if (this.TryGet(_outputPlateObjectIDs[topPlateIndex], out var plateObject))
 			{
@@ -37,6 +45,7 @@ namespace CopycatOverCooked.Object
 				}
 			}
 		}
+
 
 		public void EndInteraction(Interactor interactor)
 		{

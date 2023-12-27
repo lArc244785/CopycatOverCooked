@@ -39,7 +39,7 @@ namespace CopycatOverCooked.GamePlay
 			if (detect == null)
 				return;
 
-			OnEndInteraction(DetectInteractable());
+			OnEndInteraction(detect);
 		}
 
 		[ServerRpc(RequireOwnership = false)]
