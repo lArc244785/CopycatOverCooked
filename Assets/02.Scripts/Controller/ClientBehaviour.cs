@@ -12,8 +12,9 @@ public class ClientBehaviour : NetworkBehaviour
 
 	private Vector3 _direction = Vector3.zero;
 	private Rigidbody _body = null;
+    private Animator _animator;
 
-	public override void OnNetworkSpawn()
+    public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
 		gameObject.name = $"player {OwnerClientId}";
@@ -22,6 +23,7 @@ public class ClientBehaviour : NetworkBehaviour
 	private void Awake()
 	{
 		_body = GetComponent<Rigidbody>();
+		_animator = GetComponent<Animator>();
 	}
 
 	private void Update()
@@ -59,4 +61,16 @@ public class ClientBehaviour : NetworkBehaviour
 			transform.forward = _direction;
 		}
 	}
+
+    private void Cutting(bool isCutting)
+    {
+        if (isCutting)
+        {
+            _animator.SetBool("Cut", true);
+        }
+        else
+        {
+            _animator.SetBool("Cut", false);
+        }
+    }
 }
