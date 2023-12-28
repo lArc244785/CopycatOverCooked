@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3512183535756193382}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.03, z: -0.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,7 +40,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3512183535756193382}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 5385832465780562169, guid: f5ddeb76101a0354ca52756ea50b4c48, type: 3}
 --- !u!23 &3465329853790649344
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0d3db429aad0a79478eec7b0ac3d0b1b, type: 2}
+  - {fileID: -1724080987372072942, guid: ea1f6e8cc05ed7a46aa2ca4bb8a0cb53, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 7327761499349472623}
   - component: {fileID: 6546337487242975755}
   - component: {fileID: 4944451153065052796}
+  - component: {fileID: 4061156314115050586}
   m_Layer: 22
   m_Name: GasRangeTable
   m_TagString: Untagged
@@ -166,6 +167,9 @@ MonoBehaviour:
   _putNetworkObjectId:
     m_InternalValue: 18446744073709551615
   _putableObjectList: 07000000
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &6546337487242975755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,5 +209,26 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 1.9701245, y: 1.0433164, z: 1.9986973}
+  m_Center: {x: -0.017929435, y: 0.5216582, z: -0.032216072}
+--- !u!65 &4061156314115050586
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9139272340594203434}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.9254773, y: 0.93434525, z: 0.44813395}
+  m_Center: {x: -0.025053263, y: 0.48148513, z: 1.1979294}

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64fc489bc4344348a1492504d9cc720, type: 3}
+  m_Name: Tomato
+  m_EditorClassIdentifier: 
+  objectName: Tomato
+  prefab: {fileID: 1809747541396962545, guid: 45e88638f05187b4382b2f1f27f05c0e, type: 3}
+  sprite: {fileID: 0}
+  cuttingMeshes:
+  - {fileID: -5321038836818693795, guid: dade6f5c8a8820c4eb6453d563f258b2, type: 3}
+  - {fileID: 5897541620420230933, guid: e9f17fc6004983a42901287cac6ee4aa, type: 3}
+  panfriedMeshes: []
