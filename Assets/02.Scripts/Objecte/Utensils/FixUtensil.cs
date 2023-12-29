@@ -136,7 +136,9 @@ public class FixUtensil : NetworkBehaviour, IInteractable, IAddIngredient
 				foreach (var recipe in _cookableRecipeList)
 				{
 					if (ingredient.ingerdientType.Value == recipe.source)
-						ingredient.ingerdientType.Value = recipe.result;
+					{
+						ingredient.ProcessIngredientServerRpc(recipe.result);
+					}
 				}
 			}
 		}

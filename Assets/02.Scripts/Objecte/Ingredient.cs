@@ -5,18 +5,34 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace CopycatOverCooked.Object
 {
 	public class Ingredient : Pickable, IAddIngredient
 	{
 		public NetworkVariable<IngredientType> ingerdientType = new NetworkVariable<IngredientType>();
-		[SerializeField] private Image _image;
 		private GameObject _visualObject;
 
 		private NetworkList<int> mixIngredientTypeList;
 
 		public override InteractableType type => InteractableType.Ingredient;
+
+		public event Action<int,IngredientType> onUpdateMixIngredinet;
+
+ 		private void Awake()
+		{
+			mixIngredientTypeList = new NetworkList<int>();
+			ingerdientType.OnValueChanged += (prev, current) =>
+			{
+				UpdateVisual(current);
+			};
+
+			mixIngredientTypeList.OnListChanged += (changeEvent) =>
+			{
+				onUpdateMixIngredinet?.Invoke(changeEvent.Index,(IngredientType)changeEvent.Value);
+			};
+		}
 
 		public void Init(IngredientType type)
 		{
@@ -26,37 +42,12 @@ namespace CopycatOverCooked.Object
 			ingerdientType.Value = type;
 			mixIngredientTypeList.Add((int)type);
 		}
-
-		[ServerRpc(RequireOwnership = false)]
-		private void AddMixIngredientTypeListServerRpc(int type)
-		{
-			ingerdientType.Value |= (IngredientType)type;
-			mixIngredientTypeList.Add(type);
-		}
-
-		private void Awake()
-		{
-			mixIngredientTypeList = new NetworkList<int>();
-			ingerdientType.OnValueChanged += (prev, current) =>
-			{
-				UpdateSprite(current);
-				UpdateVisual(current);
-			};
-		}
-
+		
 		public override void OnNetworkSpawn()
 		{
 			base.OnNetworkSpawn();
-
-			UpdateVisual(ingerdientType.Value);
-			UpdateSprite(ingerdientType.Value);
 		}
 
-		private void UpdateSprite(IngredientType type)
-		{
-			var sprite = IngredientVisualDataDB.instance.GetSprite(type);
-			_image.sprite = sprite;
-		}
 
 		private void UpdateVisual(IngredientType type)
 		{
@@ -165,6 +156,13 @@ namespace CopycatOverCooked.Object
 				ingerdientType.Value |= ingredient.ingerdientType.Value;
 				mixIngredientTypeList.Add((int)ingredient.ingerdientType.Value);
 			}
+		}
+
+		[ServerRpc(RequireOwnership = false)]
+		public void ProcessIngredientServerRpc(IngredientType type)
+		{
+			ingerdientType.Value = type;
+			mixIngredientTypeList[0] = (int)type;
 		}
 	}
 }
