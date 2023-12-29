@@ -1,5 +1,5 @@
 using CopycatOverCooked.Datas;
-using CopycatOverCooked.Utensils;
+using CopycatOverCooked.Object;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -41,8 +41,6 @@ namespace CopycatOverCooked.NetWork.Untesils
 
 		[SerializeField] private int _slotCapcity;
 		[SerializeField] private List<RecipeElementInfo> recipeList;
-		[SerializeField] private Plate _plate;
-
 		public event Action<float, float> onChangeProgress;
 		public event Action<IEnumerable<IngredientType>> onChangeSlot;
 
@@ -83,13 +81,13 @@ namespace CopycatOverCooked.NetWork.Untesils
 			if (inputIngredients.Count == _slotCapcity)
 				return;
 
-			if ((ProgressType)progressType.Value == ProgressType.Fail)
+			if ((ProgressState)progressType.Value == ProgressState.Fail)
 				return;
 
 			//재료가 아예 없는 경우
 			if (inputIngredients.Count == 0 && CanCookableResource((IngredientType)resource, out var foundRecipeIndex))
 			{
-				progressType.Value = (int)ProgressType.Progressing;
+				progressType.Value = (int)ProgressState.Progressing;
 				recipeIndex.Value = foundRecipeIndex;
 				inputIngredients.Add(resource);
 				progress.Value = 0.0f;
@@ -101,6 +99,34 @@ namespace CopycatOverCooked.NetWork.Untesils
 				progress.Value = 0.0f;
 			}
 		}
+
+		public virtual bool TryAddResource(Ingredient resource)
+		{
+			if (inputIngredients.Count == _slotCapcity)
+				return false;
+
+			if ((ProgressState)progressType.Value == ProgressState.Fail)
+				return false;
+
+			//재료가 아예 없는 경우
+			if (inputIngredients.Count == 0 && CanCookableResource(resource.ingerdientType.Value, out var foundRecipeIndex))
+			{
+				progressType.Value = (int)ProgressState.Progressing;
+				recipeIndex.Value = foundRecipeIndex;
+				inputIngredients.Add((int)resource.ingerdientType.Value);
+				progress.Value = 0.0f;
+				return true;
+			}
+			//재료가 있는 경우
+			else if (inputIngredients.Count > 0 && GetCurrentRecipe().resource == resource.ingerdientType.Value)
+			{
+				inputIngredients.Add((int)resource.ingerdientType.Value);
+				progress.Value = 0.0f;
+				return true;
+			}
+			return false;
+		}
+
 
 		private bool CanCookableResource(IngredientType resource, out int foundRecipeIndex)
 		{
@@ -178,24 +204,15 @@ namespace CopycatOverCooked.NetWork.Untesils
 			inputIngredients.Clear();
 			recipeIndex.Value = -1;
 			progress.Value = 0f;
-			progressType.Value = (int)ProgressType.None;
+			progressType.Value = (int)ProgressState.None;
 			return spills;
-		}
-
-		public void SpillToPlate(Plate plate)
-		{
-			if(CanSpillToPlate(plate) == false) 
-				return;
-			if (_plate.isDirty.Value)
-				return;
-
-			_plate.AddIngredient(Spill());
 		}
 
 		public bool CanSpillToPlate(Plate plate)
 		{
-			return progressType.Value == (int)ProgressState.Sucess &&
-				   plate.inputIngredients.Count < plate.capacity;
+			//return progressType.Value == (int)ProgressState.Sucess &&
+			//	   plate.inputIngredients.Count < plate.capacity;
+			return true;
 		}
 
 		public void SpillToTrash()
@@ -204,21 +221,32 @@ namespace CopycatOverCooked.NetWork.Untesils
 		}
 
 
-		[ServerRpc(RequireOwnership = false)]
-		public void SpillToPlateServerRpc()
-		{
-			if (CanSpillToPlate(_plate) == false)
-				return;
-			if (_plate.isDirty.Value)
-				return;
+		//[ServerRpc(RequireOwnership = false)]
+		//public void SpillToPlateServerRpc()
+		//{
+		//	if (CanSpillToPlate(_plate) == false)
+		//		return;
+		//	if (_plate.isDirty.Value)
+		//		return;
 
-			_plate.AddIngredient(Spill());
-		}
+		//	_plate.AddIngredient(Spill());
+		//}
 
 		[ServerRpc(RequireOwnership = false)]
 		public void SpillToTrashServerRpc()
 		{
 			Spill();
+		}
+
+		public virtual void Sucess()
+		{
+			var result = (int)GetCurrentRecipe().result;
+
+			for (int i = 0; i < inputIngredients.Count; i++)
+			{
+				inputIngredients[i] = result;
+			}
+			progressType.Value = (int)ProgressState.Sucess;
 		}
 	}
 }

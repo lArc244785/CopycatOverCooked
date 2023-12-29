@@ -1,4 +1,3 @@
-using CopycatOverCooked.Utensils;
 using UnityEngine;
 using UnityEngine.UI;
 using CopycatOverCooked.Datas;
@@ -30,7 +29,7 @@ public class TestPlate : NetworkBehaviour
 		inputIngredients.OnListChanged += OnChangeSlot;
 		for (int i = 0; i < inputIngredients.Count; i++)
 		{
-			var ingredientSprite = IngredientSpriteDB.instance.GetSprite((IngredientType)inputIngredients[i]);
+			var ingredientSprite = IngredientVisualDataDB.instance.GetSprite((IngredientType)inputIngredients[i]);
 			_slots[i].sprite = ingredientSprite;
 		}
 	}
@@ -75,11 +74,11 @@ public class TestPlate : NetworkBehaviour
 
 		for(int i = 0; i < inputIngredients.Count; i++)
 		{
-			var ingredientSprite = IngredientSpriteDB.instance.GetSprite((IngredientType)inputIngredients[i]);
+			var ingredientSprite = IngredientVisualDataDB.instance.GetSprite((IngredientType)inputIngredients[i]);
 			_slots[i].sprite = ingredientSprite;
 		}
 
-		var sprite = IngredientSpriteDB.instance.GetSprite((IngredientType)changeEvent.Value);
+		var sprite = IngredientVisualDataDB.instance.GetSprite((IngredientType)changeEvent.Value);
 		_slots[changeEvent.Index].sprite = sprite;
 	}
 

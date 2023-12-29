@@ -1,98 +1,180 @@
 using CopycatOverCooked.Datas;
+using CopycatOverCooked.GamePlay;
+using CopycatOverCooked.Untesil;
 using System;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
-namespace CopycatOverCooked
+namespace CopycatOverCooked.Object
 {
-	public class Plate : NetworkBehaviour
+	public class Plate : Pickable, IAddIngredient
 	{
-		[field: SerializeField] public int capacity { private set; get; }
+		public override InteractableType type => InteractableType.Plate;
+		[SerializeField] private Transform _ingredientPoint;
 
-		#region NetVailable
-		public NetworkList<int> inputIngredients;
-		public NetworkVariable<bool> isDirty = new NetworkVariable<bool>();
-		#endregion
-
-		public event Action<IEnumerable<IngredientType>> onChangeSlot;
-		public event Action<bool> onChangeDirty;
-
-		public IngredientType result { private set; get; }
-
-		public ulong owner => _owner;
-
-		private ulong _owner = 101;
-
-		public override void OnNetworkSpawn()
+		private Ingredient _ingredient;
+		public bool isDirty
 		{
-			base.OnNetworkSpawn();
-
-			InitCallSlotEvent();
+			get
+			{
+				return _isDirty;
+			}
+			private set
+			{
+				_isDirty = value;
+				onChangeIsDirty?.Invoke(value);
+			}
 		}
+		private bool _isDirty;
 
-		private void InitCallSlotEvent()
-		{
-			IngredientType[] slots = new IngredientType[inputIngredients.Count];
-			for (int i = 0; i < slots.Length; i++)
-				slots[i] = (IngredientType)inputIngredients[i];
+		public Action<bool> onChangeIsDirty;
 
-			onChangeSlot?.Invoke(slots);
-		}
+		[SerializeField] private Material _clearMaterial;
+		[SerializeField] private Material _dirtyMaterial;
+		[SerializeField] private MeshRenderer _renderer;
 
 		private void Awake()
 		{
-			inputIngredients = new NetworkList<int>();
-			inputIngredients.OnListChanged += OnChangeSlot;
-			//isDirty.OnValueChanged += (prev, current) => onChangeDirty(current);
+			onChangeIsDirty += (isDirty) =>
+				_renderer.material = isDirty ? _dirtyMaterial : _clearMaterial;
+			
 		}
 
-		private void OnChangeSlot(NetworkListEvent<int> changeEvent)
+
+
+		protected override void OnEndInteraction(IInteractable other)
 		{
-			IngredientType[] slots = new IngredientType[changeEvent.Index + 1];
+			Interactor interactor = Interactor.spawned[pickingClientID.Value];
 
-			result = IngredientType.None;
-
-			for (int i = 0; i < changeEvent.Index; i++)
+			switch (other.type)
 			{
-				slots[i] = (IngredientType)inputIngredients[i];
+				case InteractableType.Table:
+					if (other is Table)
+					{
+						Table table = (Table)other;
+						if (table.CanPutObject(type))
+						{
+							DropServerRpc();
+							table.PutObjectServerRpc(NetworkObjectId);
+						}
+						else if(table.TryGetPutObject(out var putObject))
+						{
+							if(putObject.TryGetComponent<Ingredient>(out var ingredient))
+							{
+								if (CanAdd(ingredient.ingerdientType.Value))
+								{
+									table.PopPutObjectServerRpc();
+									AddIngredientServerRpc(ingredient.NetworkObjectId);
+								}
+							}
+						}
+					}
+					break;
+				case InteractableType.Ingredient:
+					if (other is Ingredient)
+					{
+						Ingredient ingredient = (Ingredient)other;
+						if(CanAdd(ingredient.ingerdientType.Value))
+						{
+							AddIngredientServerRpc(ingredient.NetworkObjectId);
+						}
+					}
+					break;
+				case InteractableType.PickUtensil:
+					if(other is PickUtensil)
+					{
+						PickUtensil pickUtensil = (PickUtensil)other;
+						pickUtensil.DropIngredientToPlateServerRpc(pickingClientID.Value);
+					}
+					break;
+				case InteractableType.TrashCan:
+					SpillIngredientServerRpc();
+					break;
+				case InteractableType.Sink:
+					Sink otherSink = (Sink)other;
+					if(otherSink.CanPlateToSink(this))
+					{
+						DropServerRpc();
+						otherSink.PlateToSinkServerRpc(NetworkObjectId);
+					}
+					break;
+				case InteractableType.ServingConvayer:
+					DropServerRpc();
+					ServingConvayer convayer = (ServingConvayer)other;
+					convayer.SendOrder(this);
+					break;
 			}
-			slots[changeEvent.Index] = (IngredientType)changeEvent.Value;
-
-			foreach (var ingredient in slots)
-				result |= ingredient;
-
-			onChangeSlot?.Invoke(slots);
 		}
 
+
+		public bool CanAdd(IngredientType type)
+		{
+			if (isDirty == true)
+				return false;
+
+			if (_ingredient == null)
+				return true;
+			return _ingredient.CanAdd(type);
+		}
+
+		[ClientRpc]
+		private void SetUpIngredientClientRpc(ulong netObjectID)
+		{
+			var netObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netObjectID];
+			if (netObject.TryGetComponent<Ingredient>(out var ingredient))
+			{
+				_ingredient = ingredient;
+			}
+		}
+
+		[ServerRpc(RequireOwnership =false)]
+		public void AddIngredientServerRpc(ulong netObjectID)
+		{
+			var netObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netObjectID];
+			if (_ingredient == null)
+			{
+				if (netObject.TrySetParent(transform))
+				{
+					netObject.transform.localPosition = _ingredientPoint.localPosition;
+					netObject.transform.localRotation = Quaternion.identity;
+					SetUpIngredientClientRpc(netObjectID);
+				}
+			}
+			else
+			{
+				_ingredient.AddIngredientServerRpc(netObjectID);
+				netObject.Despawn();
+			}
+		}
+
+		[ServerRpc(RequireOwnership = false)]
+		public void SpillIngredientServerRpc()
+		{
+			_ingredient?.DestoryObjectServerRpc();
+			SpillIngredientClientRpc();
+		}
+
+		[ClientRpc]
+		private void SpillIngredientClientRpc()
+		{
+			_ingredient = null;
+			isDirty = true;
+			Debug.Log("접시가 더러워졌습니다.");
+		}
+
+		public IngredientType GetIngereint()
+		{
+			if(_ingredient == null)
+				return IngredientType.None;
+
+			return _ingredient.ingerdientType.Value;
+		}
+
+		[ClientRpc]
+		public void ClearPlateClientRpc()
+		{
+			isDirty = false;
+		}
 		
-		public void AddIngredient(IngredientType[] ingredient)
-		{
-			if (IsServer == false)
-				return;
-
-			for (int i = 0; i < ingredient.Length && inputIngredients.Count < capacity; i++)
-			{
-				inputIngredients.Add((int)ingredient[i]);
-				Debug.Log(ingredient[i]);
-			}
-		}
-
-
-		[ServerRpc(RequireOwnership = false)]
-		public void WashServerRpc()
-		{
-			isDirty.Value = false;
-		}
-
-		[ServerRpc(RequireOwnership = false)]
-		public void EmptyServerRpc()
-		{
-			inputIngredients.Clear();
-			isDirty.Value = true;
-		}
-
-
 	}
 }

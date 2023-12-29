@@ -1,0 +1,99 @@
+<mxfile host="Electron" modified="2023-12-27T04:28:16.080Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.3 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="o_UUvdschfT5xYh9Rp5q" version="22.0.3" type="device" pages="2">
+  <diagram name="서버" id="R5MUrF6WYsNZxySvU2GA">
+    <mxGraphModel dx="1036" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-1" value="&lt;h1&gt;Server&lt;/h1&gt;&lt;div&gt;접시를 받아서 안에 내용물을 오더에게 넘겨준다.&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="10" y="10" width="280" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Gv1xR5z9IextyKWkRcLU-2" target="Gv1xR5z9IextyKWkRcLU-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-2" value="접시 정보를 받아온다." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="374" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="Gv1xR5z9IextyKWkRcLU-5" target="Gv1xR5z9IextyKWkRcLU-12" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-5" value="오더 매니저한테 해당 음식을 전달한다." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="514" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-7" value="Server" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="140" width="260" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-8" value="- manager : OrderManger" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="Gv1xR5z9IextyKWkRcLU-7" vertex="1">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-23" value="- outputPlateObjectIDs : NetworkList&amp;lt;ulong&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="Gv1xR5z9IextyKWkRcLU-7" vertex="1">
+          <mxGeometry y="52" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-9" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="Gv1xR5z9IextyKWkRcLU-7" vertex="1">
+          <mxGeometry y="78" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-30" value="+ CanSendOrder() : bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="Gv1xR5z9IextyKWkRcLU-7" vertex="1">
+          <mxGeometry y="86" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-10" value="+ SendeOrder(Plate plate) : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="Gv1xR5z9IextyKWkRcLU-7" vertex="1">
+          <mxGeometry y="112" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-11" value="- SendeOrderServerRpc(int ingredient) : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="Gv1xR5z9IextyKWkRcLU-7" vertex="1">
+          <mxGeometry y="138" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-24" value="+ PickupPlate() : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="Gv1xR5z9IextyKWkRcLU-7" vertex="1">
+          <mxGeometry y="164" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Gv1xR5z9IextyKWkRcLU-12" target="Gv1xR5z9IextyKWkRcLU-14" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-12" value="접시에 담긴 음식을 없앤다." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="634" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-14" value="접시를 특정 위치로 옮긴다." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="45" y="779" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Gv1xR5z9IextyKWkRcLU-18" target="Gv1xR5z9IextyKWkRcLU-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-18" value="CanSendOrder ?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="65" y="252" width="110" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Gv1xR5z9IextyKWkRcLU-20" target="Gv1xR5z9IextyKWkRcLU-18" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-20" value="Player Pickup Plate Interaction Server" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-22" value="&lt;h1&gt;CanSendOrder&lt;/h1&gt;&lt;p&gt;접시를 두는 공간에 용량이 다 찼는가?&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="200" y="240" width="220" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-25" value="Last Plate PickUp To Player" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="320" y="555" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-26" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;PickupPlate&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="309" y="374" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Gv1xR5z9IextyKWkRcLU-27" target="Gv1xR5z9IextyKWkRcLU-25" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-27" value="OutputPlate.Count &amp;gt; 0" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="312" y="420" width="156" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Gv1xR5z9IextyKWkRcLU-31" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry width="790" height="860" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="v4crFD44EoQEuDKaH21n" name="GameManger">
+    <mxGraphModel dx="1036" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="XCxqGH_5n346BuFcElLO-2" value="&lt;h1&gt;Heading&lt;/h1&gt;&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="10" y="30" width="190" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
