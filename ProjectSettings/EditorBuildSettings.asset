@@ -17,10 +17,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01.Scenes/TestObjectInteraction.unity
     guid: 5e1ba908f18571c45a4decd6911a433a
-  - enabled: 1
+  - enabled: 0
     path: Assets/01.Scenes/Order.unity
     guid: 259d1afd4971a6846a4401eed9b48881
-  - enabled: 1
+  - enabled: 0
     path: Assets/01.Scenes/AnimTest.unity
     guid: 5db6bcc2de2d03a49be753c60ea7f6e3
+  - enabled: 0
+    path: Assets/01.Scenes/AnimationTest.unity
+    guid: 29cf1ca8e5c91a440990c94e309b0a36
   m_configObjects: {}

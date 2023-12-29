@@ -5,6 +5,8 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+//using static UnityEngine.Rendering.DynamicArray<T>;
+using ClientBehaviour = CopycatOverCooked.Datas.ClientBehaviour;
 
 namespace CopycatOverCooked.Object
 {
@@ -137,7 +139,9 @@ namespace CopycatOverCooked.Object
 					{
 						DropServerRpc();
 						fixUtensil.AddIngredientServerRpc(NetworkObjectId);
-					}
+
+                        
+                    }
 					break;
 			}
 		}

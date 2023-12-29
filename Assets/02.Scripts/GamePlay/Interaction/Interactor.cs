@@ -1,4 +1,5 @@
-﻿using CopycatOverCooked.NetWork;
+﻿using CopycatOverCooked.Datas;
+using CopycatOverCooked.NetWork;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -51,10 +52,12 @@ namespace CopycatOverCooked.GamePlay
 			{
 				// 상호작용하고있는게 없을때
 				if (currentInteractableNetworkObjectID.Value == NETWORK_OBJECT_NULL_ID)
-				{
-					var detect = DetectInteractable();
+                {
+                    var detect = DetectInteractable();
 					detect?.BeginInteraction(this);
-				}
+                    
+
+                }
 				// 상호작용중인게 있을때
 				else if (TryCurrentGetInteractable(out var interactable))
 				{
@@ -65,6 +68,7 @@ namespace CopycatOverCooked.GamePlay
 			if (Input.GetKey(KeyCode.Q))
 			{
 				currentUsable?.Use(_user);
+				
 			}
 
 		}

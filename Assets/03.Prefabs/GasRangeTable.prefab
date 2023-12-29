@@ -166,6 +166,9 @@ MonoBehaviour:
   _putNetworkObjectId:
     m_InternalValue: 18446744073709551615
   _putableObjectList: 07000000
+  _layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &6546337487242975755
 MonoBehaviour:
   m_ObjectHideFlags: 0

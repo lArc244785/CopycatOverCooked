@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55ffdc6c737d3b142a73bde948b5681c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnType: 2
+  spawnType: 8
   prefab: {fileID: 8687628953841732590, guid: 60455dc75fe55be4fb3e89d67a4e6f3e, type: 3}
   m_boxNameText: {fileID: 5388539701087775115}
 --- !u!65 &8430675677849200781

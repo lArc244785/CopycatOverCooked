@@ -25,9 +25,12 @@ namespace CopycatOverCooked.Orders
                 using (IEnumerator<Image> e1 = igredientIcons.GetEnumerator())
                 using (IEnumerator<RecipeElementInfo> e2 = RecipeBook.instance[this.ingredientType].elements.GetEnumerator())
                 {
-                    while (e1.MoveNext() && e2.MoveNext())
+                    while (e1.MoveNext())
                     {
-                        e1.Current.sprite = IngredientVisualDataDB.instance.GetSprite(e2.Current.result);
+                        if (e2.MoveNext())
+                            e1.Current.sprite = IngredientVisualDataDB.instance.GetSprite(e2.Current.result);
+                        else
+                            e1.Current.sprite = null;
                     }
                 }
 
