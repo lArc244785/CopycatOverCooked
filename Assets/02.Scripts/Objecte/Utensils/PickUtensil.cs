@@ -95,6 +95,9 @@ namespace CopycatOverCooked.Untesil
 						}
 					}
 					break;
+				case InteractableType.TrashCan:
+					ClearIngredientServerRpc();
+					break;
 			}
 		}
 
@@ -189,25 +192,6 @@ namespace CopycatOverCooked.Untesil
 				}
 			}
 
-
-			//foreach (var netObjectID in _ingredientObjectIDs)
-			//{
-			//	if (this.TryGet(netObjectID, out var networkObject))
-			//	{
-			//		if (networkObject.TryGetComponent<Ingredient>(out var ingredient))
-			//		{
-			//			foreach (var recipe in _cookableRecipeList)
-			//			{
-			//				if (ingredient.ingerdientType.Value == recipe.source)
-			//				{
-			//					ingredient.ingerdientType.Value = recipe.result;
-			//					onChangeIngredinet?.Invoke()
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
-
 			_cookProgress.Value = Progress.Sucess;
 		}
 
@@ -284,6 +268,27 @@ namespace CopycatOverCooked.Untesil
 			}
 		}
 
+
+		[ServerRpc(RequireOwnership = false)]
+		public void ClearIngredientServerRpc()
+		{
+			while(_ingredientObjectIDs.Count > 0)
+			{
+				if (this.TryGet(_ingredientObjectIDs[0], out var ingredientObjct))
+				{
+					ingredientObjct.Despawn();
+					_ingredientObjectIDs.RemoveAt(0);
+				}
+			}
+
+			//조리도구에 있는 모든 재료가 접시로 이동했을 경우 리셋한다.
+			if (_ingredientObjectIDs.Count == 0)
+			{
+				_cookProgress.Value = Progress.None;
+				_currentProgress.Value = 0.0f;
+			}
+
+		}
 		#endregion
 	}
 }
