@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -30,6 +31,7 @@ public class LobbyManager
     public event EventHandler<OnLobbyListChangedEventArgs> OnLobbyListChanged;
     public event EventHandler<LobbyEventArgs> OnJoinedLobbyUpdate;
     private ILobbyEvents _lobbyEvents;
+
     public static LobbyManager Instance
     {
         get
@@ -154,10 +156,13 @@ public class LobbyManager
         }
     }
 
-    public  async void CreateLobby(string lobbyName, int maxPlayers, bool isPrivate, string password = "")
+    public async void CreateLobby(string lobbyName, int maxPlayers, bool isPrivate, string password = "")
     {
         try
         {
+
+            
+
             Dictionary<string, DataObject> lobbyData = new Dictionary<string, DataObject>
                                                        {
                                                            {
@@ -190,6 +195,8 @@ public class LobbyManager
             _localLobby.AddUser(_localLobbyUser);
 
             await SubscribeLobbyAsync(lobby.Id);
+
+            
             OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
     }
 

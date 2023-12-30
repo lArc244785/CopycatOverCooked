@@ -12,7 +12,6 @@ public class CreateLobbyUI : MonoBehaviour
     [SerializeField] private Button _create = null;
     [SerializeField] private Transform _check = null;
     [SerializeField] private TMP_InputField _passWord = null;
-
     public static CreateLobbyUI Instance
     {
         get

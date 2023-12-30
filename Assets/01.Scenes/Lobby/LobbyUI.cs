@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using TMPro;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LobbyUI : MonoBehaviour, Initializer
 {
@@ -17,7 +19,7 @@ public class LobbyUI : MonoBehaviour, Initializer
     [SerializeField] private Button _exitButton;
     [SerializeField] private Button _startButton;
 
-    public Unity.Services.Lobbies.Models.Player[] pla = new Unity.Services.Lobbies.Models.Player[4];
+    //public Unity.Services.Lobbies.Models.Player[] pla = new Unity.Services.Lobbies.Models.Player[4];
 
     public void Init()
     {
@@ -36,7 +38,7 @@ public class LobbyUI : MonoBehaviour, Initializer
         _exitButton.onClick.AddListener(ShowOtherWindows);
         _startButton.onClick.AddListener(StartGame);
 
-        if(!LobbyManager.Instance._localLobbyUser.isHost)
+        if (!LobbyManager.Instance._localLobbyUser.isHost)
         {
             _startButton.gameObject.SetActive(false);
         }
@@ -57,7 +59,7 @@ public class LobbyUI : MonoBehaviour, Initializer
     private void UpdateLobby(Lobby lobby)
     {
         _roomName.text = lobby.Name;
-        int index = 0;
+
         ClearLobby();
 
         foreach (Unity.Services.Lobbies.Models.Player player in lobby.Players)
@@ -66,9 +68,6 @@ public class LobbyUI : MonoBehaviour, Initializer
             p.GetChild(0).GetComponent<TMP_Text>().text = player.Data["playerData"].Value;
             p.SetParent(_playerList);
             p.gameObject.SetActive(true);
-
-            pla[index] = player;
-            index++;
         }
 
         Show();
@@ -114,13 +113,34 @@ public class LobbyUI : MonoBehaviour, Initializer
 
     private void StartGame()
     {
-        if((LobbyManager.Instance.GetJoinedLobby().Players).Count != 4)
+        /*if ((LobbyManager.Instance.GetJoinedLobby().Players).Count != 4)
         {
             return;
-        }
+        }*/
 
+        NetworkManager.Singleton.StartHost();
+
+        LoadSceneServerRpc();
         //서버 -> 클라한테 신 불러오기
         //클라(생성, 초기화 등등) -> 서버한테 준비완료 알리기
         //카운트 다운
+    }
+
+
+    [ServerRpc]
+    private void LoadSceneServerRpc()
+    {
+        LoadSceneClientRpc();
+    }
+
+    [ClientRpc]
+    private void LoadSceneClientRpc()
+    {
+        NetworkManager.SceneManager.LoadScene("Stage1", LoadSceneMode.Single);
+
+        if(!LobbyManager.Instance._localLobbyUser.isHost)
+        {
+            NetworkManager.Singleton.StartClient();
+        }
     }
 }
