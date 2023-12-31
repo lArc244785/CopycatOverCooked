@@ -123,24 +123,29 @@ public class LobbyUI : MonoBehaviour, Initializer
         LoadSceneServerRpc();
         //서버 -> 클라한테 신 불러오기
         //클라(생성, 초기화 등등) -> 서버한테 준비완료 알리기
-        //카운트 다운
     }
 
 
     [ServerRpc]
     private void LoadSceneServerRpc()
     {
+        Debug.Log("서버rpc");
+
         LoadSceneClientRpc();
+
     }
 
     [ClientRpc]
     private void LoadSceneClientRpc()
     {
-        NetworkManager.SceneManager.LoadScene("Stage1", LoadSceneMode.Single);
+        Debug.Log("클라rpc");
 
         if(!LobbyManager.Instance._localLobbyUser.isHost)
         {
             NetworkManager.Singleton.StartClient();
         }
+
+        NetworkManager.Singleton.SceneManager.LoadScene("Stage1", LoadSceneMode.Single);
+        SceneManager.LoadSceneAsync("Stage1", LoadSceneMode.Single);
     }
 }

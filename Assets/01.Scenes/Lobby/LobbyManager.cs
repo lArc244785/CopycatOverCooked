@@ -114,7 +114,7 @@ public class LobbyManager
     {
         if (IsLobbyHost())
         {
-            Debug.Log(IsLobbyHost());
+            //Debug.Log(IsLobbyHost());
 
             heartbeatTimer -= Time.deltaTime;
 
@@ -123,7 +123,7 @@ public class LobbyManager
                 float heartbeatTimerMax = 15f;
                 heartbeatTimer = heartbeatTimerMax;
 
-                Debug.Log("Heartbeat");
+                //Debug.Log("Heartbeat");
                 await LobbyService.Instance.SendHeartbeatPingAsync(joinedLobby.Id);
             }
         }
