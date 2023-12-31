@@ -58,7 +58,7 @@ namespace CopycatOverCooked.GamePlay
             if(interactor.TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
 			{
 				client.animator.SetFloat("GetThing", 1);
-			}
+			}		
         }
 
 		[ServerRpc(RequireOwnership = false)]
@@ -102,8 +102,9 @@ namespace CopycatOverCooked.GamePlay
 					}
 				}
 			}
+           
 
-			return select;
+            return select;
 		}
 
 		[ServerRpc(RequireOwnership = false)]

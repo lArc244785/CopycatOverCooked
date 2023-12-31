@@ -129,7 +129,7 @@ MonoBehaviour:
   _moveSpeed: 5
   _dashSpeed: 1
   _throwPower: 1
-  _animator: {fileID: 9031016295091692897}
+  animator: {fileID: 0}
 --- !u!114 &7584336818848215047
 MonoBehaviour:
   m_ObjectHideFlags: 0
