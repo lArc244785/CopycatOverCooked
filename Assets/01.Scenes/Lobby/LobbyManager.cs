@@ -195,9 +195,10 @@ public class LobbyManager
             _localLobby.AddUser(_localLobbyUser);
 
             await SubscribeLobbyAsync(lobby.Id);
-
-            
+                        
             OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
+
+            NetworkManager.Singleton.StartHost();
     }
 
         catch (Exception except) 
@@ -293,7 +294,13 @@ public class LobbyManager
 
             //_users.AddUser(_user);
             await SubscribeLobbyAsync(lobby.Id);
+
             OnJoinedLobby?.Invoke(this, new LobbyEventArgs { lobby = lobby });
+
+            if(NetworkManager.Singleton.StartClient())
+            {
+                Debug.Log("start≈¨∂Û");
+            }
         }
 
         catch (Exception except)

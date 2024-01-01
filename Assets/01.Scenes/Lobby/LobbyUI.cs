@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class LobbyUI : MonoBehaviour, Initializer
+public class LobbyUI : NetworkBehaviour, Initializer
 {
     [SerializeField] private TMP_Text _roomName;
     [SerializeField] private Transform _player;
@@ -18,7 +18,10 @@ public class LobbyUI : MonoBehaviour, Initializer
     [SerializeField] private GameObject _CreateRoomWindow;
     [SerializeField] private Button _exitButton;
     [SerializeField] private Button _startButton;
+    [SerializeField] private GameObject _ordermanager;
+    [SerializeField] private Image _background;
 
+    private LobbyListUI _lobbyListUI;
     //public Unity.Services.Lobbies.Models.Player[] pla = new Unity.Services.Lobbies.Models.Player[4];
 
     public void Init()
@@ -43,6 +46,7 @@ public class LobbyUI : MonoBehaviour, Initializer
             _startButton.gameObject.SetActive(false);
         }
 
+        _lobbyListUI = new LobbyListUI();
         //LobbyManager.Instance._users.onNumberOfPeopleChanged += UpdateLobby;
     }
 
@@ -118,34 +122,22 @@ public class LobbyUI : MonoBehaviour, Initializer
             return;
         }*/
 
-        NetworkManager.Singleton.StartHost();
-
-        LoadSceneServerRpc();
-        //서버 -> 클라한테 신 불러오기
-        //클라(생성, 초기화 등등) -> 서버한테 준비완료 알리기
+        showServerRpc();
+        showSceneClientRpc();
     }
 
-
     [ServerRpc]
-    private void LoadSceneServerRpc()
+    private void showServerRpc()
     {
         Debug.Log("서버rpc");
-
-        LoadSceneClientRpc();
-
+        showSceneClientRpc();
     }
 
     [ClientRpc]
-    private void LoadSceneClientRpc()
+    private void showSceneClientRpc()   
     {
         Debug.Log("클라rpc");
-
-        if(!LobbyManager.Instance._localLobbyUser.isHost)
-        {
-            NetworkManager.Singleton.StartClient();
-        }
-
-        NetworkManager.Singleton.SceneManager.LoadScene("Stage1", LoadSceneMode.Single);
-        SceneManager.LoadSceneAsync("Stage1", LoadSceneMode.Single);
+        _background.gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
     }
 }

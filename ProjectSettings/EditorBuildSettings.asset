@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/01.Scenes/Order.unity
     guid: 259d1afd4971a6846a4401eed9b48881
-  - enabled: 1
+  - enabled: 0
     path: Assets/01.Scenes/Lobby.unity
     guid: 27f591e3064834f41b0dfc80b6af1cc7
   - enabled: 1
