@@ -22,6 +22,8 @@ namespace CopycatOverCooked.Untesil
 		[field: SerializeField] public float sucessProgress { private set; get; }
 		[field: SerializeField] public float failProgress { private set; get; }
 
+		[SerializeField] private Transform _ingredientPoint;
+
 		public event Action<IngredientType> onAddIngredient;
 		public event Action<int, IngredientType> onChangeIngredinet;
 		public event Action<int> onRemoveAtIngredientList;
@@ -41,9 +43,9 @@ namespace CopycatOverCooked.Untesil
 			switch (changeEvent.Type)
 			{
 				case NetworkListEvent<ulong>.EventType.Add:
-					if(this.TryGet(changeEvent.Value, out var networkObjcet))
+					if (this.TryGet(changeEvent.Value, out var networkObjcet))
 					{
-						if(networkObjcet.TryGetComponent<Ingredient>(out var addIngredient))
+						if (networkObjcet.TryGetComponent<Ingredient>(out var addIngredient))
 						{
 							onAddIngredient?.Invoke(addIngredient.ingerdientType.Value);
 						}
@@ -78,20 +80,20 @@ namespace CopycatOverCooked.Untesil
 						DropServerRpc();
 						table.PutObjectServerRpc(NetworkObjectId);
 					}
-					else if(table.TryGetPutObject(out var putObject))
+					else if (table.TryGetPutObject(out var putObject))
 					{
-						if(putObject.TryGetComponent<Plate>(out var putPlate))
+						if (putObject.TryGetComponent<Plate>(out var putPlate))
 						{
 							DropIngredientToPlateServerRpc(putObject.NetworkObjectId);
 						}
-						else if(putObject.TryGetComponent<Ingredient>(out var putIngredient))
+						else if (putObject.TryGetComponent<Ingredient>(out var putIngredient))
 						{
 							if (CanAdd(putIngredient.ingerdientType.Value))
 							{
 								table.PopPutObjectServerRpc();
 								AddIngredientServerRpc(putIngredient.NetworkObjectId);
 							}
-								
+
 						}
 					}
 					break;
@@ -131,10 +133,21 @@ namespace CopycatOverCooked.Untesil
 						networkObject.transform.localRotation = Quaternion.identity;
 
 						_currentProgress.Value = 0.0f;
-						_cookProgress.Value = Progress.Progressing;
+
+						if (_cookProgress.Value == Progress.None)
+						{
+							networkObject.gameObject.transform.localPosition = _ingredientPoint.localPosition;
+							networkObject.gameObject.transform.localRotation = _ingredientPoint.localRotation;
+							networkObject.gameObject.transform.localScale = _ingredientPoint.localScale;
+							ingredient.isUIVisable.Value = false;
+						}
+						else
+						{
+							networkObject.gameObject.SetActive(false);
+						}
 
 						_ingredientObjectIDs.Add(netObjectID);
-						networkObject.gameObject.SetActive(false);
+						_cookProgress.Value = Progress.Progressing;
 					}
 				}
 			}
@@ -174,7 +187,7 @@ namespace CopycatOverCooked.Untesil
 		[ServerRpc(RequireOwnership = false)]
 		private void SucessProcessServerRpc()
 		{
-			for(int i = 0; i < _ingredientObjectIDs.Count; i++)
+			for (int i = 0; i < _ingredientObjectIDs.Count; i++)
 			{
 				if (this.TryGet(_ingredientObjectIDs[i], out var networkObject))
 				{
@@ -184,6 +197,7 @@ namespace CopycatOverCooked.Untesil
 						{
 							if (ingredient.ingerdientType.Value == recipe.source)
 							{
+								ingredient.transform.localPosition += Vector3.up * 0.38f;
 								ingredient.ChangeIngredientTypeServerRpc((int)recipe.result);
 								onChangeIngredinet?.Invoke(i, recipe.result);
 							}
@@ -250,6 +264,7 @@ namespace CopycatOverCooked.Untesil
 							if (plateAdd.CanAdd(ingredient.ingerdientType.Value))
 							{
 								ingredient.gameObject.SetActive(true);
+								ingredient.isUIVisable.Value = true;
 								plateAdd.AddIngredientServerRpc(_ingredientObjectIDs[i]);
 								_ingredientObjectIDs.RemoveAt(i);
 								continue;
@@ -272,7 +287,7 @@ namespace CopycatOverCooked.Untesil
 		[ServerRpc(RequireOwnership = false)]
 		public void ClearIngredientServerRpc()
 		{
-			while(_ingredientObjectIDs.Count > 0)
+			while (_ingredientObjectIDs.Count > 0)
 			{
 				if (this.TryGet(_ingredientObjectIDs[0], out var ingredientObjct))
 				{

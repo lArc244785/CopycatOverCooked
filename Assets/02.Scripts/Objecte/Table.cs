@@ -120,7 +120,9 @@ public class Table : NetworkBehaviour, IInteractable
 			if (netObject.TrySetParent(transform))
 			{
 				netObject.transform.localPosition = _putPoint.localPosition;
-				netObject.transform.localRotation = Quaternion.identity;
+				netObject.transform.localRotation = _putPoint.localRotation;
+				netObject.transform.localScale = _putPoint.localScale;
+
 				_putNetworkObjectId.Value = networkObjectID;
 			}
 		}

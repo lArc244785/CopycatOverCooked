@@ -102,6 +102,7 @@ MonoBehaviour:
   - {fileID: 845905244083986766}
   - {fileID: 3374671977702686654}
   - {fileID: 7521395418680098333}
+  _slotGameObject: {fileID: 206716507273560560}
 --- !u!1 &2556863950271144038
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,6 +262,8 @@ MonoBehaviour:
     m_Bits: 4194304
   ingerdientType:
     m_InternalValue: 0
+  isUIVisable:
+    m_InternalValue: 1
 --- !u!114 &4750362992538202143
 MonoBehaviour:
   m_ObjectHideFlags: 0

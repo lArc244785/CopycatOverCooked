@@ -50,6 +50,9 @@ namespace CopycatOverCooked.GamePlay
 			if (NetworkObject.TrySetParent(interactor.NetworkObject))
 			{
 				transform.localPosition = interactor.hand.localPosition;
+				transform.localRotation = interactor.hand.localRotation;
+				transform.localScale = interactor.hand.localScale;
+
 				pickingClientID.Value = clientID;
 				interactor.currentInteractableNetworkObjectID.Value = NetworkObjectId;
 

@@ -16,9 +16,13 @@ namespace CopycatOverCooked.Object
 
 		private NetworkList<int> mixIngredientTypeList;
 
+		public NetworkVariable<bool> isUIVisable = new NetworkVariable<bool>(true);
+
 		public override InteractableType type => InteractableType.Ingredient;
 
 		public event Action<int,IngredientType> onUpdateMixIngredinet;
+
+		public event Action<bool> onSetVisableUI;
 
  		private void Awake()
 		{
@@ -32,6 +36,8 @@ namespace CopycatOverCooked.Object
 			{
 				onUpdateMixIngredinet?.Invoke(changeEvent.Index,(IngredientType)changeEvent.Value);
 			};
+
+			isUIVisable.OnValueChanged += (prev, current) => onSetVisableUI?.Invoke(current);
 		}
 
 		public void Init(IngredientType type)
