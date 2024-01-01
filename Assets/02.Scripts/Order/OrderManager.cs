@@ -3,6 +3,7 @@ using UnityEngine;
 using Unity.Netcode;
 using CopycatOverCooked.Datas;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 
 namespace CopycatOverCooked.Orders
 {
@@ -21,7 +22,9 @@ namespace CopycatOverCooked.Orders
 
         private void Update()
         {
-            if (!IsServer)
+            Debug.Log(_timer);
+
+            if (!LobbyManager.Instance._localLobbyUser.isHost)
                 return;
 
             if (_timer <= 0)
@@ -29,6 +32,7 @@ namespace CopycatOverCooked.Orders
                 Order(stageData.menu[Random.Range(0, stageData.menu.Count)]);
                 _timer = stageData.orderPeriod;
             }
+
             else
             {
                 _timer -= Time.deltaTime;
