@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b94b62c067668947829266153245644, type: 3}
   m_Name: CookRecipe_Cook_Stake
   m_EditorClassIdentifier: 
-  source: 2
-  result: 512
+  source: 64
+  result: 1024

@@ -24,6 +24,9 @@ namespace CopycatOverCooked.Untesil
 
 		[SerializeField] private Transform _ingredientPoint;
 
+		[SerializeField] private Vector3 _progressOffset;
+		[SerializeField] private Vector3 _sucessOffset;
+
 		public event Action<IngredientType> onAddIngredient;
 		public event Action<int, IngredientType> onChangeIngredinet;
 		public event Action<int> onRemoveAtIngredientList;
@@ -136,7 +139,7 @@ namespace CopycatOverCooked.Untesil
 
 						if (_cookProgress.Value == Progress.None)
 						{
-							networkObject.gameObject.transform.localPosition = _ingredientPoint.localPosition;
+							networkObject.gameObject.transform.localPosition = _progressOffset;
 							networkObject.gameObject.transform.localRotation = _ingredientPoint.localRotation;
 							networkObject.gameObject.transform.localScale = _ingredientPoint.localScale;
 							ingredient.isUIVisable.Value = false;
@@ -197,7 +200,7 @@ namespace CopycatOverCooked.Untesil
 						{
 							if (ingredient.ingerdientType.Value == recipe.source)
 							{
-								ingredient.transform.localPosition += Vector3.up * 0.38f;
+								ingredient.transform.localPosition = _sucessOffset;
 								ingredient.ChangeIngredientTypeServerRpc((int)recipe.result);
 								onChangeIngredinet?.Invoke(i, recipe.result);
 							}

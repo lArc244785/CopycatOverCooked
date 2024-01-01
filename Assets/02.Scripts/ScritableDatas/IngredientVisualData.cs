@@ -22,10 +22,16 @@ namespace CopycatOverCooked.Datas
 		public Dictionary<IngredientType, GameObject> ingredientVisualTable;
 		public void Init()
 		{
+			int count = 0;
 			ingredientVisualTable = new();
 			foreach(var data in _datas)
 			{
+				if(ingredientVisualTable.ContainsKey(data.key))
+				{
+					throw new Exception($"Same Key {data.key} {count}");
+				}
 				ingredientVisualTable.Add(data.key, data.prefab);
+				count++;
 			}
 		}
 	}

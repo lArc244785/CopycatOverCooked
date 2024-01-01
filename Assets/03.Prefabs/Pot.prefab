@@ -60,6 +60,8 @@ MonoBehaviour:
   <sucessProgress>k__BackingField: 1
   <failProgress>k__BackingField: 2
   _ingredientPoint: {fileID: 9075408479733964268}
+  _progressOffset: {x: 0, y: 0, z: 0}
+  _sucessOffset: {x: 0, y: 0.4, z: 0}
 --- !u!65 &1250558470356654911
 BoxCollider:
   m_ObjectHideFlags: 0
