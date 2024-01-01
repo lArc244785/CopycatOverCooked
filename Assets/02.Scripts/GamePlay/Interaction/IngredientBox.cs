@@ -11,13 +11,6 @@ namespace CopycatOverCooked.Object
 		public InteractableType type => InteractableType.IngrediantBox;
 		[SerializeField] private IngredientType spawnType;
 		[SerializeField] private Ingredient prefab;
-		[SerializeField] private TextMeshProUGUI m_boxNameText;
-
-		private void Awake()
-		{
-			m_boxNameText.text = spawnType.ToString();
-		}
-
 		public void BeginInteraction(Interactor interactor)
 		{
 			SpawnIngredientServerRpc(interactor.OwnerClientId);
@@ -32,7 +25,7 @@ namespace CopycatOverCooked.Object
 		{
 			Interactor interactor = Interactor.spawned[clientID];
 
-			var ingredientObject = Instantiate(prefab, transform.position, Quaternion.identity);
+			var ingredientObject = Instantiate(prefab, transform.position, Quaternion.identity);	
 			var netObject = ingredientObject.GetComponent<NetworkObject>();
 			netObject.Spawn();
 			ingredientObject.Init(spawnType);

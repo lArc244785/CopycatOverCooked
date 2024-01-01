@@ -1,11 +1,8 @@
-using CopycatOverCooked;
-using CopycatOverCooked.Datas;
-using CopycatOverCooked.NetWork.Untesils;
 using System;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace CopycatOverCooked.Datas
+namespace CopycatOverCooked.GamePlay
 {
 	public class ClientBehaviour : NetworkBehaviour
 	{
@@ -23,6 +20,11 @@ namespace CopycatOverCooked.Datas
 		{
 			base.OnNetworkSpawn();
 			gameObject.name = $"player {OwnerClientId}";
+		}
+
+		private void Start()
+		{
+			transform.position = StageManager.instance.GetStartPoint((int)OwnerClientId);
 		}
 
 		private void Awake()
@@ -67,10 +69,12 @@ namespace CopycatOverCooked.Datas
 			if (_direction != Vector3.zero)
 			{
 				transform.forward = _direction;
-				animator.SetFloat("Walk", 1);
+				animator?.SetFloat("Walk", 1);
 			}
 			else
-				animator.SetFloat("Walk", 0);
+			{
+				animator?.SetFloat("Walk", 0);
+			}
 
 		}
 

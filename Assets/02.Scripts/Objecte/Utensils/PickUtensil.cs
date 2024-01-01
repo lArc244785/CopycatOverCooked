@@ -22,7 +22,8 @@ namespace CopycatOverCooked.Untesil
 		[field: SerializeField] public float sucessProgress { private set; get; }
 		[field: SerializeField] public float failProgress { private set; get; }
 
-		public event Action<IngredientType> onAddIngredientList;
+		public event Action<IngredientType> onAddIngredient;
+		public event Action<int, IngredientType> onChangeIngredinet;
 		public event Action<int> onRemoveAtIngredientList;
 		public event Action onFail;
 		public event Action<float> onChangeProgress;
@@ -44,7 +45,7 @@ namespace CopycatOverCooked.Untesil
 					{
 						if(networkObjcet.TryGetComponent<Ingredient>(out var addIngredient))
 						{
-							onAddIngredientList?.Invoke(addIngredient.ingerdientType.Value);
+							onAddIngredient?.Invoke(addIngredient.ingerdientType.Value);
 						}
 					}
 					break;
@@ -93,6 +94,9 @@ namespace CopycatOverCooked.Untesil
 								
 						}
 					}
+					break;
+				case InteractableType.TrashCan:
+					ClearIngredientServerRpc();
 					break;
 			}
 		}
@@ -170,17 +174,19 @@ namespace CopycatOverCooked.Untesil
 		[ServerRpc(RequireOwnership = false)]
 		private void SucessProcessServerRpc()
 		{
-			foreach (var netObjectID in _ingredientObjectIDs)
+			for(int i = 0; i < _ingredientObjectIDs.Count; i++)
 			{
-				if (this.TryGet(netObjectID, out var networkObject))
+				if (this.TryGet(_ingredientObjectIDs[i], out var networkObject))
 				{
 					if (networkObject.TryGetComponent<Ingredient>(out var ingredient))
 					{
-						//재료를 완료 재료 타입으로 변경
 						foreach (var recipe in _cookableRecipeList)
 						{
 							if (ingredient.ingerdientType.Value == recipe.source)
-								ingredient.ingerdientType.Value = recipe.result;
+							{
+								ingredient.ChangeIngredientTypeServerRpc((int)recipe.result);
+								onChangeIngredinet?.Invoke(i, recipe.result);
+							}
 						}
 					}
 				}
@@ -262,6 +268,27 @@ namespace CopycatOverCooked.Untesil
 			}
 		}
 
+
+		[ServerRpc(RequireOwnership = false)]
+		public void ClearIngredientServerRpc()
+		{
+			while(_ingredientObjectIDs.Count > 0)
+			{
+				if (this.TryGet(_ingredientObjectIDs[0], out var ingredientObjct))
+				{
+					ingredientObjct.Despawn();
+					_ingredientObjectIDs.RemoveAt(0);
+				}
+			}
+
+			//조리도구에 있는 모든 재료가 접시로 이동했을 경우 리셋한다.
+			if (_ingredientObjectIDs.Count == 0)
+			{
+				_cookProgress.Value = Progress.None;
+				_currentProgress.Value = 0.0f;
+			}
+
+		}
 		#endregion
 	}
 }

@@ -91,7 +91,7 @@ namespace CopycatOverCooked.Object
 		public bool CanPlateToSink(Plate plate)
 		{
 			//들고있는 접시가 더러운 경우
-			return plate.isDirty == true &&
+			return plate.isDirty.Value == true &&
 					_progress.Value == Progress.None;
 		}
 
@@ -120,7 +120,7 @@ namespace CopycatOverCooked.Object
 				plateObject.transform.localRotation = _clearPlatePoint.localRotation;
 				if (plateObject.TryGetComponent<Plate>(out var plate))
 				{
-					plate.ClearPlateClientRpc();
+					plate.isDirty.Value = false;
 					_progress.Value = Progress.Sucess;
 				}
 			}

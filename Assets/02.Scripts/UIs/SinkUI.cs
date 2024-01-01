@@ -10,15 +10,15 @@ namespace CopycatOverCooked.UIs
     public class SinkUI : MonoBehaviour
     {
 		[SerializeField] private Slider _slider;
+		[SerializeField] private Sink _sink;
 
 		private void Start()
 		{
-			Sink sink = transform.root.GetComponent<Sink>();
 			_slider.minValue = 0.0f;
-			_slider.maxValue = sink.washingTime;
+			_slider.maxValue = _sink.washingTime;
 
-			sink.onChangeCurrentTime += OnChangedateTime;
-			sink.onChangeProgress += OnChangeProgress;
+			_sink.onChangeCurrentTime += OnChangedateTime;
+			_sink.onChangeProgress += OnChangeProgress;
 			OnChangeProgress(Progress.None);
 		}
 

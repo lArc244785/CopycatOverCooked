@@ -35,10 +35,11 @@ namespace CopycatOverCooked.UIs
 			_sucessProgress = utensil.sucessProgress;
 			_failProgress = utensil.failProgress;
 
-			utensil.onAddIngredientList += OnAddIngredient;
+			utensil.onAddIngredient += OnAddIngredient;
 			utensil.onRemoveAtIngredientList += OnRemoveAtIngrdient;
 			utensil.onChangeProgress += OnChangeProgress;
 			utensil.onFail += OnFail;
+			utensil.onChangeIngredinet += OnChangeIngredient;
 
 			OnChangeProgress(0.0f);
 		}
@@ -62,7 +63,7 @@ namespace CopycatOverCooked.UIs
 			float amount = progress / _sucessProgress;
 			if(amount > 1.0f)
 			{
-				color = Color.red;
+  				color = Color.red;
 				amount = progress / _failProgress;
 			}
 
@@ -87,6 +88,10 @@ namespace CopycatOverCooked.UIs
 			_slotImage[_slotCount++].sprite = sprite;
 		}
 
-
+		private void OnChangeIngredient(int index, IngredientType type)
+		{
+			Sprite sprite = IngredientVisualDataDB.instance.GetSprite(type);
+			_slotImage[index].sprite = sprite;
+		}
 	}
 }
