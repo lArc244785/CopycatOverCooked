@@ -29,6 +29,7 @@ public class LobbyUI : NetworkBehaviour, Initializer
     {
         LobbyManager.Instance.OnJoinedLobby += UpdateLobby_Event;
         LobbyManager.Instance.OnJoinedLobbyUpdate += UpdateLobby_Event;
+        LobbyManager.Instance.OnLeftLobby += LobbyManager_OnLeftLobby;
     }
 
     public void Update()
@@ -118,6 +119,12 @@ public class LobbyUI : NetworkBehaviour, Initializer
         _joinAndCreateWindow.SetActive(true);
         _CreateRoomWindow.SetActive(true);
 
+        Hide();
+    }
+
+    private void LobbyManager_OnLeftLobby(object sender, System.EventArgs e)
+    {
+        ClearLobby();
         Hide();
     }
 

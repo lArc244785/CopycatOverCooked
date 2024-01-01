@@ -3,7 +3,7 @@ using UnityEngine;
 using Unity.Netcode;
 using CopycatOverCooked.Datas;
 using Unity.VisualScripting;
-using CopycatOverCooked.GamePlay;
+using UnityEditor.Rendering;
 
 namespace CopycatOverCooked.Orders
 {
@@ -14,6 +14,7 @@ namespace CopycatOverCooked.Orders
         public StageData stageData;
         private float _timer;
 
+
         private void Awake()
         {
             instance = this;
@@ -22,18 +23,27 @@ namespace CopycatOverCooked.Orders
 
         private void Update()
         {
-            if (!IsServer)
+            Debug.Log(_timer);
+
+            if (!LobbyManager.Instance._localLobbyUser.isHost)
                 return;
 
+
             if (_timer <= 0)
-            {
+            { 
                 Order(stageData.menu[Random.Range(0, stageData.menu.Count)]);
                 _timer = stageData.orderPeriod;
+
             }
+
             else
             {
-                _timer -= Time.deltaTime;
+                if (_orderStates.Count != 5)
+                    _timer -= Time.deltaTime;
+
             }
+
+            
         }
 
         private void Order(IngredientType ingredientType)
@@ -50,8 +60,8 @@ namespace CopycatOverCooked.Orders
                 if ((uint)ingredientType == _orderStates[i].ingredientType)
                 {
                     Debug.Log($"{ingredientType} 제출 완료");
-                    StageManager.instance.currentScore.Value += 100;
                     _orderStates.RemoveAt(i);
+                    Debug.Log($"현재 오더 리스트 수 {_orderStates.Count}");
                     return;
                 }
             }

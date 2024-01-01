@@ -81,7 +81,14 @@ public class FixUtensil : NetworkBehaviour, IInteractable, IAddIngredient
 					{
 						SucessProcessServerRpc();
 					}
-				}
+
+                    // 도마에 대한 애니메이션 실행 또는 동작 수행
+                    if (interactor.TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
+                    {
+                        client.animator.SetTrigger("Cut");
+                        //Debug.Log($"도마질 {select.type}");
+                    }
+                }
 				break;
 
 			//플레이어한테 완성된 재료 픽업

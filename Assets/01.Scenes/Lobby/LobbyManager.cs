@@ -27,6 +27,7 @@ public class LobbyManager
 
     public event Action onLobbyCreated;
     public event Action<ILobbyChanges> OnLobbyChanged;
+    public event EventHandler OnLeftLobby;
     public event EventHandler<LobbyEventArgs> OnJoinedLobby;
     public event EventHandler<OnLobbyListChangedEventArgs> OnLobbyListChanged;
     public event EventHandler<LobbyEventArgs> OnJoinedLobbyUpdate;
@@ -324,5 +325,25 @@ public class LobbyManager
                                                                                                displayName = x.Player.Data["playerName"].Value
                                                                                            }
                                                                                        })));;
+    }
+
+    public async void LeaveLobby()
+    {
+        if (joinedLobby != null)
+        {
+            try
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+
+                joinedLobby = null;
+
+                OnLeftLobby?.Invoke(this, EventArgs.Empty);
+            }
+
+            catch (LobbyServiceException e)
+            {
+                Debug.Log(e);
+            }
+        }
     }
 }
