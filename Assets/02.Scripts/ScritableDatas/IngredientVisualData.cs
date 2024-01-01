@@ -28,7 +28,7 @@ namespace CopycatOverCooked.Datas
 			{
 				if(ingredientVisualTable.ContainsKey(data.key))
 				{
-					throw new Exception($"Same Key {data.key} {count}");
+					throw new Exception($"Same Key {data.key} {count} {ingredientVisualTable[data.key].GetHashCode()}");
 				}
 				ingredientVisualTable.Add(data.key, data.prefab);
 				count++;

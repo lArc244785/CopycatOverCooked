@@ -12217,7 +12217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentStep:
     m_InternalValue: 0
-  isTest: 1
+  isTest: 0
   _playerCam: {fileID: 400971342}
   _startPoints:
   - {fileID: 1660442610}

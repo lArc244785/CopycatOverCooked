@@ -8,6 +8,7 @@ using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using CopycatOverCooked.GamePlay;
 
 public class LobbyUI : NetworkBehaviour, Initializer
 {
@@ -74,12 +75,17 @@ public class LobbyUI : NetworkBehaviour, Initializer
             p.gameObject.SetActive(true);
         }
 
+        GameManager.instance.loadPlayCount = lobby.Players.Count;
+
         Show();
         HideOtherWindows();
     }
 
     private void ClearLobby()
     {
+        if (GameManager.instance.state.Value != GameFlow.Lobby)
+            return;
+
         foreach (Transform child in _playerList)
         {
             if (child == _player)
@@ -122,8 +128,10 @@ public class LobbyUI : NetworkBehaviour, Initializer
             return;
         }*/
 
-        showServerRpc();
-
+        //showServerRpc();
+        gameObject.SetActive(false);
+        gameObject.GetComponent<NetworkObject>().Despawn();
+        GameManager.instance.StartGameServerRpc();
     }
 
     [ServerRpc]

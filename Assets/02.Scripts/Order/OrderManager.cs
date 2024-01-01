@@ -3,6 +3,7 @@ using UnityEngine;
 using Unity.Netcode;
 using CopycatOverCooked.Datas;
 using Unity.VisualScripting;
+using CopycatOverCooked.GamePlay;
 
 namespace CopycatOverCooked.Orders
 {
@@ -49,6 +50,7 @@ namespace CopycatOverCooked.Orders
                 if ((uint)ingredientType == _orderStates[i].ingredientType)
                 {
                     Debug.Log($"{ingredientType} 제출 완료");
+                    StageManager.instance.currentScore.Value += 100;
                     _orderStates.RemoveAt(i);
                     return;
                 }

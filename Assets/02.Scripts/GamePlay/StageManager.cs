@@ -1,6 +1,8 @@
-﻿using Unity.Netcode;
+﻿using Cinemachine;
+using System;
+using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
-using Cinemachine;
 
 namespace CopycatOverCooked.GamePlay
 {
@@ -25,33 +27,41 @@ namespace CopycatOverCooked.GamePlay
 
 		[SerializeField] private Transform[] _startPoints;
 
+		public int PlayTime;
+		public NetworkVariable<int> InGameTime = new NetworkVariable<int>();
+		public Action<int> onChangeInGameTime;
+
+		public int goalScore;
+		public NetworkVariable<int> currentScore = new NetworkVariable<int>(0);
+		public Action<int> onChangeGoalScore;
+
 		private void Awake()
 		{
 			instance = this;
-
+			InGameTime.OnValueChanged += (p, c) => onChangeInGameTime?.Invoke(c);
+			currentScore.OnValueChanged += (p, c) => onChangeGoalScore?.Invoke(c);
 		}
 
 		private void Start()
 		{
-			currentStep.OnValueChanged += InitProgress;
 		}
 
 		public override void OnNetworkSpawn()
 		{
 			base.OnNetworkSpawn();
+
+			currentStep.OnValueChanged += InitProgress;
 			if (IsServer)
 			{
-				currentStep.OnValueChanged += InitProgress;
+				InGameTime.Value = PlayTime;
+				currentStep.Value = Step.WaitUntilAllPlayersAreReady;
 			}
 
 			if (isTest == false)
 			{
 				GameManager.instance.InGameSceneCompleteServerRpc();
 			}
-			else if(IsServer)
-			{
-				currentStep.Value = Step.BeforeStartStage;
-			}
+
 		}
 
 		private void InitProgress(Step prev, Step current)
@@ -68,11 +78,20 @@ namespace CopycatOverCooked.GamePlay
 					currentStep.Value = Step.StartStage;
 					break;
 				case Step.StartStage:
-					//GameManager.instance.GameStartClientRpc();
+					if (IsServer)
+					{
+						GameManager.instance.GameStartServerRpc();
+						currentStep.Value = Step.DuringStartStage;
+					}
+
 					break;
 				case Step.AfterStartStage:
 					break;
 				case Step.DuringStartStage:
+					if (IsServer)
+					{
+						StartCoroutine(C_GameTimer());
+					}
 					break;
 			}
 		}
@@ -87,5 +106,30 @@ namespace CopycatOverCooked.GamePlay
 		{
 			return _startPoints[index].position;
 		}
+
+		private void Update()
+		{
+			if (IsServer == false)
+				return;
+
+			if (currentStep.Value == Step.DuringStartStage)
+			{
+
+			}
+		}
+
+		private IEnumerator C_GameTimer()
+		{
+			while (InGameTime.Value > 0.0f)
+			{
+				yield return new WaitForSeconds(1.0f);
+				InGameTime.Value--;
+			}
+
+			GameManager.instance.GameOverServerRpc(currentScore.Value);
+
+
+		}
+
 	}
 }

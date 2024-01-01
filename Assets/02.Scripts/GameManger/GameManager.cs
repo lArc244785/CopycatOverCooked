@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace CopycatOverCooked.GamePlay
 {
@@ -8,6 +9,7 @@ namespace CopycatOverCooked.GamePlay
 	{
 		None,
 		Lobby,
+		Load,
 		Play,
 		Gameover,
 	}
@@ -22,6 +24,10 @@ namespace CopycatOverCooked.GamePlay
 
 		[SerializeField]
 		private string m_SceneName;
+		[SerializeField]
+		private string m_ResulteSceneName;
+
+		public int StageClearScore;
 
 		private void Awake()
 		{
@@ -29,10 +35,12 @@ namespace CopycatOverCooked.GamePlay
 			DontDestroyOnLoad(gameObject);
 		}
 
-		public override void OnNetworkSpawn()
+		[ServerRpc(RequireOwnership = false)]
+		public void StartGameServerRpc()
 		{
 			if (IsServer && !string.IsNullOrEmpty(m_SceneName))
 			{
+				state.Value = GameFlow.Load;
 				var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
 				if (status != SceneEventProgressStatus.Started)
 				{
@@ -41,6 +49,7 @@ namespace CopycatOverCooked.GamePlay
 				}
 			}
 		}
+
 
 		public bool IsPlayerLoadFish()
 		{
@@ -57,18 +66,28 @@ namespace CopycatOverCooked.GamePlay
 			}
 		}
 
-		[ClientRpc]
-		public void GameStartClientRpc()
+		[ServerRpc(RequireOwnership = false)]
+		public void GameStartServerRpc()
 		{
-			if (Interactor.spawned[OwnerClientId].TryGetComponent<Rigidbody>(out var rig))
-				rig.isKinematic = false;
-			//if (Interactor.spawned[OwnerClientId].TryGetComponent<ClientBehaviour>(out var player))
-			//	player.isControl = true;
+			state.Value = GameFlow.Play;
 		}
 
-		private void Update()
+		[ServerRpc(RequireOwnership =false)]
+		public void GameOverServerRpc(int value)
 		{
-			Debug.Log(IsServer);
+			state.Value = GameFlow.Gameover;
+			StageClearScore = value;
+
+			if (IsServer && !string.IsNullOrEmpty(m_SceneName))
+			{
+				state.Value = GameFlow.Load;
+				var status = NetworkManager.SceneManager.LoadScene(m_ResulteSceneName, LoadSceneMode.Single);
+				if (status != SceneEventProgressStatus.Started)
+				{
+					Debug.LogWarning($"Failed to load {m_ResulteSceneName} " +
+						  $"with a {nameof(SceneEventProgressStatus)}: {status}");
+				}
+			}
 		}
 	}
 }

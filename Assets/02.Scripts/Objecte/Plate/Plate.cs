@@ -139,7 +139,7 @@ namespace CopycatOverCooked.Object
 			//접	시에 재료가 있는 경우
 			if (TryGetIngredient(out var baseIngredient))
 			{
-				if (netObject.TryGetComponent<Ingredient>(out var input))
+ 				if (netObject.TryGetComponent<Ingredient>(out var input))
 				{
 					if (baseIngredient.CanAdd(input.ingerdientType.Value))
 					{

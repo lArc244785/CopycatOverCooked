@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -16,15 +17,27 @@ namespace CopycatOverCooked.GamePlay
 
 		public event Action<float> onChangeDiractionMagnitude;
 
+		private bool isControl => GameManager.instance.state.Value == GameFlow.Play;
+
 		public override void OnNetworkSpawn()
 		{
 			base.OnNetworkSpawn();
 			gameObject.name = $"player {OwnerClientId}";
+
+			if (IsOwner)
+			{
+				_body.isKinematic = true;
+				StartCoroutine(C_WaitPlayer());
+			}
 		}
 
-		private void Start()
+		private IEnumerator C_WaitPlayer()
 		{
+			yield return new WaitUntil(() => GameManager.instance.state.Value == GameFlow.Load);
+			yield return new WaitUntil(() => StageManager.instance != null);
+			yield return new WaitUntil(() => StageManager.instance.currentStep.Value >= StageManager.Step.WaitUntilAllPlayersAreReady);
 			transform.position = StageManager.instance.GetStartPoint((int)OwnerClientId);
+			_body.isKinematic = false;
 		}
 
 		private void Awake()
@@ -35,7 +48,7 @@ namespace CopycatOverCooked.GamePlay
 
 		private void Update()
 		{
-			if (!IsOwner)
+			if (!IsOwner || !isControl)
 			{
 				return;
 			}
@@ -50,7 +63,7 @@ namespace CopycatOverCooked.GamePlay
 
 		private void FixedUpdate()
 		{
-			if (!IsOwner)
+			if (!IsOwner || !isControl)
 			{
 				return;
 			}
