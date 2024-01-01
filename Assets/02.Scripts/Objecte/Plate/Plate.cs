@@ -1,5 +1,6 @@
 using CopycatOverCooked.Datas;
 using CopycatOverCooked.GamePlay;
+using CopycatOverCooked.NetWork;
 using CopycatOverCooked.Untesil;
 using System;
 using Unity.Netcode;
@@ -12,20 +13,26 @@ namespace CopycatOverCooked.Object
 		public override InteractableType type => InteractableType.Plate;
 		[SerializeField] private Transform _ingredientPoint;
 
-		private Ingredient _ingredient;
-		public bool isDirty
+		private NetworkVariable<ulong> _ingredientNetworkId =
+			new NetworkVariable<ulong>(NetworkBehaviourExtensions.NULL_NETWORK_OBJECT_ID);
+
+		private bool TryGetIngredient(out Ingredient ingredient)
 		{
-			get
+			ingredient = null;
+			if (_ingredientNetworkId.Value == NetworkBehaviourExtensions.NULL_NETWORK_OBJECT_ID)
 			{
-				return _isDirty;
+				return false;
 			}
-			private set
+			else if (this.TryGet(_ingredientNetworkId.Value, out var ingredinetObject))
 			{
-				_isDirty = value;
-				onChangeIsDirty?.Invoke(value);
+				ingredient = ingredinetObject.GetComponent<Ingredient>();
+				return true;
 			}
+
+			return false;
 		}
-		private bool _isDirty;
+
+		public NetworkVariable<bool> isDirty = new NetworkVariable<bool>(false);
 
 		public Action<bool> onChangeIsDirty;
 
@@ -35,9 +42,10 @@ namespace CopycatOverCooked.Object
 
 		private void Awake()
 		{
+			isDirty.OnValueChanged += (prev, current) => onChangeIsDirty?.Invoke(current);
 			onChangeIsDirty += (isDirty) =>
 				_renderer.material = isDirty ? _dirtyMaterial : _clearMaterial;
-			
+
 		}
 
 
@@ -57,9 +65,9 @@ namespace CopycatOverCooked.Object
 							DropServerRpc();
 							table.PutObjectServerRpc(NetworkObjectId);
 						}
-						else if(table.TryGetPutObject(out var putObject))
+						else if (table.TryGetPutObject(out var putObject))
 						{
-							if(putObject.TryGetComponent<Ingredient>(out var ingredient))
+							if (putObject.TryGetComponent<Ingredient>(out var ingredient))
 							{
 								if (CanAdd(ingredient.ingerdientType.Value))
 								{
@@ -74,14 +82,14 @@ namespace CopycatOverCooked.Object
 					if (other is Ingredient)
 					{
 						Ingredient ingredient = (Ingredient)other;
-						if(CanAdd(ingredient.ingerdientType.Value))
+						if (CanAdd(ingredient.ingerdientType.Value))
 						{
 							AddIngredientServerRpc(ingredient.NetworkObjectId);
 						}
 					}
 					break;
 				case InteractableType.PickUtensil:
-					if(other is PickUtensil)
+					if (other is PickUtensil)
 					{
 						PickUtensil pickUtensil = (PickUtensil)other;
 						pickUtensil.DropIngredientToPlateServerRpc(pickingClientID.Value);
@@ -92,7 +100,7 @@ namespace CopycatOverCooked.Object
 					break;
 				case InteractableType.Sink:
 					Sink otherSink = (Sink)other;
-					if(otherSink.CanPlateToSink(this))
+					if (otherSink.CanPlateToSink(this))
 					{
 						DropServerRpc();
 						otherSink.PlateToSinkServerRpc(NetworkObjectId);
@@ -109,72 +117,65 @@ namespace CopycatOverCooked.Object
 
 		public bool CanAdd(IngredientType type)
 		{
-			if (isDirty == true)
+			if (isDirty.Value == true)
 				return false;
 
-			if (_ingredient == null)
+			if (_ingredientNetworkId.Value == NetworkBehaviourExtensions.NULL_NETWORK_OBJECT_ID)
 				return true;
-			return _ingredient.CanAdd(type);
-		}
 
-		[ClientRpc]
-		private void SetUpIngredientClientRpc(ulong netObjectID)
-		{
-			var netObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netObjectID];
-			if (netObject.TryGetComponent<Ingredient>(out var ingredient))
+			if (TryGetIngredient(out var ingredient))
 			{
-				_ingredient = ingredient;
+				return ingredient.CanAdd(type);
 			}
+
+			return false;
 		}
 
-		[ServerRpc(RequireOwnership =false)]
+
+		[ServerRpc(RequireOwnership = false)]
 		public void AddIngredientServerRpc(ulong netObjectID)
 		{
 			var netObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netObjectID];
-			if (_ingredient == null)
+			//접	시에 재료가 있는 경우
+			if (TryGetIngredient(out var baseIngredient))
 			{
-				if (netObject.TrySetParent(transform))
+				if (netObject.TryGetComponent<Ingredient>(out var input))
 				{
-					netObject.transform.localPosition = _ingredientPoint.localPosition;
-					netObject.transform.localRotation = Quaternion.identity;
-					SetUpIngredientClientRpc(netObjectID);
+					if (baseIngredient.CanAdd(input.ingerdientType.Value))
+					{
+						baseIngredient.AddIngredientServerRpc(input.NetworkObjectId);
+						netObject.Despawn();
+					}
 				}
 			}
-			else
+			//없는 경우
+			else if (netObject.TrySetParent(transform))
 			{
-				_ingredient.AddIngredientServerRpc(netObjectID);
-				netObject.Despawn();
+				netObject.transform.localPosition = _ingredientPoint.localPosition;
+				netObject.transform.localRotation = _ingredientPoint.localRotation;
+				_ingredientNetworkId.Value = netObjectID;
 			}
 		}
 
 		[ServerRpc(RequireOwnership = false)]
 		public void SpillIngredientServerRpc()
 		{
-			_ingredient?.DestoryObjectServerRpc();
-			SpillIngredientClientRpc();
+			if (TryGetIngredient(out var ingredient))
+			{
+				ingredient.DestoryObjectServerRpc();
+				_ingredientNetworkId.Value = NetworkBehaviourExtensions.NULL_NETWORK_OBJECT_ID;
+				isDirty.Value = true;
+			}
 		}
 
-		[ClientRpc]
-		private void SpillIngredientClientRpc()
-		{
-			_ingredient = null;
-			isDirty = true;
-			Debug.Log("접시가 더러워졌습니다.");
-		}
 
 		public IngredientType GetIngereint()
 		{
-			if(_ingredient == null)
-				return IngredientType.None;
+			if (TryGetIngredient(out var ingredinet))
+				return ingredinet.ingerdientType.Value;
 
-			return _ingredient.ingerdientType.Value;
+			return IngredientType.None;
 		}
 
-		[ClientRpc]
-		public void ClearPlateClientRpc()
-		{
-			isDirty = false;
-		}
-		
 	}
 }

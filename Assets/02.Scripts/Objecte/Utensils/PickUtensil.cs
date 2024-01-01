@@ -184,7 +184,7 @@ namespace CopycatOverCooked.Untesil
 						{
 							if (ingredient.ingerdientType.Value == recipe.source)
 							{
-								ingredient.ingerdientType.Value = recipe.result;
+								ingredient.ChangeIngredientTypeServerRpc((int)recipe.result);
 								onChangeIngredinet?.Invoke(i, recipe.result);
 							}
 						}

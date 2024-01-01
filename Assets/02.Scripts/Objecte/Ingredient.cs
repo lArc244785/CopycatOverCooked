@@ -42,6 +42,13 @@ namespace CopycatOverCooked.Object
 			ingerdientType.Value = type;
 			mixIngredientTypeList.Add((int)type);
 		}
+
+		[ServerRpc(RequireOwnership = false)]
+		public void ChangeIngredientTypeServerRpc(int ingredientType)
+		{
+			ingerdientType.Value = (IngredientType)ingredientType;
+			mixIngredientTypeList[0] = ingredientType;
+		}
 		
 		public override void OnNetworkSpawn()
 		{

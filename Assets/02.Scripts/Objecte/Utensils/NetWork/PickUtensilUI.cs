@@ -63,7 +63,7 @@ namespace CopycatOverCooked.UIs
 			float amount = progress / _sucessProgress;
 			if(amount > 1.0f)
 			{
-				color = Color.red;
+  				color = Color.red;
 				amount = progress / _failProgress;
 			}
 
