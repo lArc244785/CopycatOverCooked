@@ -71,7 +71,7 @@ public class FireExtinguisher : NetworkBehaviour
         if (rb != null)
         {
             rb.AddForce(transform.forward * 10f, ForceMode.Impulse);
-            Debug.Log("소화기 발사!");
+            Debug.Log("소화기 발기!");
         }
     }
 }
