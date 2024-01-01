@@ -123,7 +123,7 @@ public class LobbyUI : NetworkBehaviour, Initializer
         }*/
 
         showServerRpc();
-        showSceneClientRpc();
+
     }
 
     [ServerRpc]
@@ -139,5 +139,7 @@ public class LobbyUI : NetworkBehaviour, Initializer
         Debug.Log("Å¬¶órpc");
         _background.gameObject.SetActive(false);
         this.gameObject.SetActive(false);
+
+        _ordermanager.gameObject.SetActive(true);
     }
 }
