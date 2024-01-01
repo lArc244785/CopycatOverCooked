@@ -14,6 +14,7 @@ namespace CopycatOverCooked.Orders
         public StageData stageData;
         private float _timer;
 
+
         private void Awake()
         {
             instance = this;
@@ -27,16 +28,22 @@ namespace CopycatOverCooked.Orders
             if (!LobbyManager.Instance._localLobbyUser.isHost)
                 return;
 
+
             if (_timer <= 0)
-            {
+            { 
                 Order(stageData.menu[Random.Range(0, stageData.menu.Count)]);
                 _timer = stageData.orderPeriod;
+
             }
 
             else
             {
-                _timer -= Time.deltaTime;
+                if (_orderStates.Count != 5)
+                    _timer -= Time.deltaTime;
+
             }
+
+            
         }
 
         private void Order(IngredientType ingredientType)
@@ -54,6 +61,7 @@ namespace CopycatOverCooked.Orders
                 {
                     Debug.Log($"{ingredientType} 제출 완료");
                     _orderStates.RemoveAt(i);
+                    Debug.Log($"현재 오더 리스트 수 {_orderStates.Count}");
                     return;
                 }
             }

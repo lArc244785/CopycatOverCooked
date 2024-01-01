@@ -1,9 +1,9 @@
-﻿using CopycatOverCooked.NetWork;
+﻿using CopycatOverCooked.Datas;
+using CopycatOverCooked.NetWork;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-
 namespace CopycatOverCooked.GamePlay
 {
 	public class Interactor : NetworkBehaviour
@@ -51,23 +51,36 @@ namespace CopycatOverCooked.GamePlay
 			{
 				// 상호작용하고있는게 없을때
 				if (currentInteractableNetworkObjectID.Value == NETWORK_OBJECT_NULL_ID)
-				{
-					var detect = DetectInteractable();
-					detect?.BeginInteraction(this);
-				}
+                {
+                    var detect = DetectInteractable();
+                    detect?.BeginInteraction(this);
+
+                }
 				// 상호작용중인게 있을때
 				else if (TryCurrentGetInteractable(out var interactable))
 				{
 					interactable.EndInteraction(this);
-				}
+
+                }
 			}
 
-			if (Input.GetKey(KeyCode.Q))
-			{
-				currentUsable?.Use(_user);
-			}
+            /*if (Input.GetKey(KeyCode.Q))
+            {
+                currentUsable?.Use(_user);
+
+            }*/
+
+            Wash();
 
 		}
+
+		public void Wash()
+		{
+            if (Input.GetKey(KeyCode.Q))
+            {
+                currentUsable?.Use(_user);			
+            }
+        }
 
 		private IInteractable DetectInteractable()
 		{
@@ -88,9 +101,8 @@ namespace CopycatOverCooked.GamePlay
 						 select.type < item.type)
 					select = item;
 			}
-
-			return select;
-		}
+            return select;
+        }
 
 
 

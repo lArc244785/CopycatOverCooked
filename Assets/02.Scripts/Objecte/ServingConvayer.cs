@@ -67,16 +67,25 @@ namespace CopycatOverCooked.Object
 			StartCoroutine(ReturnWait(networkObjectID));
 		}
 
+		//Only Server Call
 		private IEnumerator ReturnWait(ulong plateObjectID)
 		{
 			if (this.TryGet(plateObjectID, out var plate))
 			{
-				plate.gameObject.SetActive(false);
+				SetActiveClientRpc(plateObjectID, false);
+				PlateToOutputPointServerRpc(plateObjectID);
+				yield return new WaitForSeconds(_returnTick);
+				SetActiveClientRpc(plateObjectID, true);
 			}
-			yield return new WaitForSeconds(_returnTick);
-			plate.gameObject.SetActive(true);
-			PlateToOutputPointServerRpc(plateObjectID);
 		}
+
+		[ClientRpc]
+		private void SetActiveClientRpc(ulong objectID, bool isActive)
+		{
+			if (this.TryGet(objectID, out var networkObject))
+				networkObject.gameObject.SetActive(isActive);
+		}
+
 
 		[ServerRpc(RequireOwnership = false)]
 		private void PlateToOutputPointServerRpc(ulong plateObjectId)
