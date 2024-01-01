@@ -23,7 +23,7 @@ public class UtensillTestUI : MonoBehaviour
     {
         _btnAddOnion.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Onion));
         _btnAddTomato.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Tomato));
-        _btnAddShrimp.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Shrimp));
+        _btnAddShrimp.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Stake));
         _btnAddBread.onClick.AddListener(() => _utensil.AddResourceServerRpc((int)CopycatOverCooked.Datas.IngredientType.Bread));
         //_btnSpillToPlate.onClick.AddListener(() => _utensil.SpillToPlateServerRpc());
         _btnUntensillSpillToTrash.onClick.AddListener(()=> _utensil.SpillToTrashServerRpc());
