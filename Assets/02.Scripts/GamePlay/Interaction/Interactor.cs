@@ -103,29 +103,6 @@ namespace CopycatOverCooked.GamePlay
 						 select.type < item.type)
 					select = item;
 			}
-
-			if (select != null)
-			{
-				if (select.type == InteractableType.FixUtensil)
-				{
-					// 도마에 대한 애니메이션 실행 또는 동작 수행
-					if (TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
-					{
-						client.animator.SetBool("Cut", true);
-						Debug.Log($"도마질 {select.type}");
-					}
-				}
-				else
-				{
-					if (TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
-					{
-
-						client.animator.SetBool("Cut", false);
-                        Debug.Log($"현재상태 {select.type}");
-                    }
-				}
-			}
-
             return select;
         }
 
