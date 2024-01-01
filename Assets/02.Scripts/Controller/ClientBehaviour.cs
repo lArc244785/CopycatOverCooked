@@ -13,6 +13,8 @@ public class ClientBehaviour : NetworkBehaviour
 	private Vector3 _direction = Vector3.zero;
 	private Rigidbody _body = null;
 
+	public bool isControl = false;
+
 	public override void OnNetworkSpawn()
 	{
 		base.OnNetworkSpawn();
@@ -26,7 +28,7 @@ public class ClientBehaviour : NetworkBehaviour
 
 	private void Update()
 	{
-		if (!IsOwner)
+		if (!IsOwner || isControl == false)
 		{
 			return;
 		}
@@ -39,7 +41,7 @@ public class ClientBehaviour : NetworkBehaviour
 
 	private void FixedUpdate()
 	{
-		if (!IsOwner)
+		if (!IsOwner || isControl == false)
 		{
 			return;
 		}
