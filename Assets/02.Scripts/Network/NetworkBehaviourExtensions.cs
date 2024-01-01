@@ -14,5 +14,6 @@ namespace CopycatOverCooked.NetWork
 
 			return false;
 		}
+
 	}
 }

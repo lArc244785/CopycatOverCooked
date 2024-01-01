@@ -168,6 +168,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4194304
   _ingredientPoint: {fileID: 5289578512559144980}
+  isDirty:
+    m_InternalValue: 0
   _clearMaterial: {fileID: 2100000, guid: e3eed7bd767ddab4790d78e7e3545907, type: 2}
   _dirtyMaterial: {fileID: 2100000, guid: d39ee9c6d97169e40be840b48ce0a89a, type: 2}
   _renderer: {fileID: 4683089055615070549}
@@ -186,7 +188,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
+  ActiveSceneSynchronization: 1
   SceneMigrationSynchronization: 1
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
