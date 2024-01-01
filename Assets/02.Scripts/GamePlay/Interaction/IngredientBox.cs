@@ -25,7 +25,7 @@ namespace CopycatOverCooked.Object
 		{
 			Interactor interactor = Interactor.spawned[clientID];
 
-			var ingredientObject = Instantiate(prefab, transform.position, Quaternion.identity);
+			var ingredientObject = Instantiate(prefab, transform.position, Quaternion.identity);	
 			var netObject = ingredientObject.GetComponent<NetworkObject>();
 			netObject.Spawn();
 			ingredientObject.Init(spawnType);
