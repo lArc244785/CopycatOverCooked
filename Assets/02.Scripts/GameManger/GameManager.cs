@@ -62,8 +62,8 @@ namespace CopycatOverCooked.GamePlay
 		{
 			if (Interactor.spawned[OwnerClientId].TryGetComponent<Rigidbody>(out var rig))
 				rig.isKinematic = false;
-			if (Interactor.spawned[OwnerClientId].TryGetComponent<ClientBehaviour>(out var player))
-				player.isControl = true;
+			//if (Interactor.spawned[OwnerClientId].TryGetComponent<ClientBehaviour>(out var player))
+			//	player.isControl = true;
 		}
 
 		private void Update()

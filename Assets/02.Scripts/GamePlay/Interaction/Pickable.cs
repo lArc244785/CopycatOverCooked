@@ -2,7 +2,6 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
-using ClientBehaviour = CopycatOverCooked.Datas.ClientBehaviour;
 
 namespace CopycatOverCooked.GamePlay
 {

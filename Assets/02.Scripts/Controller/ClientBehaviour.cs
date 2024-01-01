@@ -5,7 +5,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace CopycatOverCooked.Datas
+namespace CopycatOverCooked.GamePlay
 {
 	public class ClientBehaviour : NetworkBehaviour
 	{

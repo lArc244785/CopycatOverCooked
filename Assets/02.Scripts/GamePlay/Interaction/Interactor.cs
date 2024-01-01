@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using ClientBehaviour = CopycatOverCooked.Datas.ClientBehaviour;
-
 namespace CopycatOverCooked.GamePlay
 {
 	public class Interactor : NetworkBehaviour
