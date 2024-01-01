@@ -38,6 +38,8 @@ namespace CopycatOverCooked.GamePlay
 		[ServerRpc(RequireOwnership = false)]
 		public void StartGameServerRpc()
 		{
+			TestClientRpc();
+
 			if (IsServer && !string.IsNullOrEmpty(m_SceneName))
 			{
 				state.Value = GameFlow.Load;
@@ -48,6 +50,13 @@ namespace CopycatOverCooked.GamePlay
 						  $"with a {nameof(SceneEventProgressStatus)}: {status}");
 				}
 			}
+		}
+
+
+		[ClientRpc]
+		private void TestClientRpc()
+		{
+			Debug.Log("PingPong");
 		}
 
 
