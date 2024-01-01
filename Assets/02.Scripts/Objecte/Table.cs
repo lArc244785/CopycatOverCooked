@@ -37,9 +37,8 @@ public class Table : NetworkBehaviour, IInteractable
 
 	private IEnumerator C_NetworkInit()
 	{
-		//yield return new WaitUntil(() => StageManager.instance.current == StageManager.Step.BeforeStartStage);
+		yield return new WaitUntil(() => StageManager.instance.currentStep.Value > StageManager.Step.BeforeStartStage);
 
-		yield return new WaitForSeconds(1.0f);
 		var hits = Physics.RaycastAll(transform.position, Vector3.up, 10.0f, _layerMask);
 		foreach (var hit in hits)
 		{

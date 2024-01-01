@@ -170,9 +170,11 @@ MonoBehaviour:
   _ingredientPoint: {fileID: 5289578512559144980}
   isDirty:
     m_InternalValue: 0
-  _clearMaterial: {fileID: 2100000, guid: e3eed7bd767ddab4790d78e7e3545907, type: 2}
-  _dirtyMaterial: {fileID: 2100000, guid: d39ee9c6d97169e40be840b48ce0a89a, type: 2}
-  _renderer: {fileID: 0}
+  _clearMesh: {fileID: 808474172911093344, guid: b7948d2de15ed5d4688b1138b0e22dea,
+    type: 3}
+  _dirtyMesh: {fileID: -7809081079837637166, guid: bbf37566731ad3346bf1cd7f89e6cec5,
+    type: 3}
+  _meshFilter: {fileID: 628670443820382165}
 --- !u!114 &2297409051118464732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,7 +215,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.5, y: 0.1, z: 0.5}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.05, z: 0}
 --- !u!114 &-4404583344009528514
 MonoBehaviour:
   m_ObjectHideFlags: 0

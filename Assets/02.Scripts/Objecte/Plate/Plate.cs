@@ -36,15 +36,15 @@ namespace CopycatOverCooked.Object
 
 		public Action<bool> onChangeIsDirty;
 
-		[SerializeField] private Material _clearMaterial;
-		[SerializeField] private Material _dirtyMaterial;
-		[SerializeField] private MeshRenderer _renderer;
+		[SerializeField] private Mesh _clearMesh;
+		[SerializeField] private Mesh _dirtyMesh;
+		[SerializeField] private MeshFilter _meshFilter;
 
 		private void Awake()
 		{
 			isDirty.OnValueChanged += (prev, current) => onChangeIsDirty?.Invoke(current);
 			onChangeIsDirty += (isDirty) =>
-				_renderer.material = isDirty ? _dirtyMaterial : _clearMaterial;
+				_meshFilter.mesh = isDirty ? _dirtyMesh : _clearMesh;
 
 		}
 
