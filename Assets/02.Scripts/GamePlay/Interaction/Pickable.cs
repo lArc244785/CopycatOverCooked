@@ -2,6 +2,7 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
+using ClientBehaviour = CopycatOverCooked.Datas.ClientBehaviour;
 
 namespace CopycatOverCooked.GamePlay
 {
@@ -52,8 +53,13 @@ namespace CopycatOverCooked.GamePlay
 				transform.localPosition = interactor.hand.localPosition;
 				pickingClientID.Value = clientID;
 				interactor.currentInteractableNetworkObjectID.Value = NetworkObjectId;
-			}
-		}
+
+            }
+            if(interactor.TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
+			{
+				client.animator.SetFloat("GetThing", 1);
+			}		
+        }
 
 		[ServerRpc(RequireOwnership = false)]
 		public void DropServerRpc()
@@ -66,7 +72,12 @@ namespace CopycatOverCooked.GamePlay
 			NetworkObject.TrySetParent(default(Transform));
 			pickingClientID.Value = EMPTY_CLIENT_ID;
 			interactor.currentInteractableNetworkObjectID.Value = Interactor.NETWORK_OBJECT_NULL_ID;
-		}
+
+            if (interactor.TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
+            {
+                client.animator.SetFloat("GetThing", 0);
+            }
+        }
 
 		protected abstract void OnEndInteraction(IInteractable other);
 
@@ -91,8 +102,9 @@ namespace CopycatOverCooked.GamePlay
 					}
 				}
 			}
+           
 
-			return select;
+            return select;
 		}
 
 		[ServerRpc(RequireOwnership = false)]

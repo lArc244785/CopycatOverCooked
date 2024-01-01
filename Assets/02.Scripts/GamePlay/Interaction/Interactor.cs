@@ -1,8 +1,10 @@
-﻿using CopycatOverCooked.NetWork;
+﻿using CopycatOverCooked.Datas;
+using CopycatOverCooked.NetWork;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using ClientBehaviour = CopycatOverCooked.Datas.ClientBehaviour;
 
 namespace CopycatOverCooked.GamePlay
 {
@@ -51,23 +53,36 @@ namespace CopycatOverCooked.GamePlay
 			{
 				// 상호작용하고있는게 없을때
 				if (currentInteractableNetworkObjectID.Value == NETWORK_OBJECT_NULL_ID)
-				{
-					var detect = DetectInteractable();
-					detect?.BeginInteraction(this);
-				}
+                {
+                    var detect = DetectInteractable();
+                    detect?.BeginInteraction(this);
+
+                }
 				// 상호작용중인게 있을때
 				else if (TryCurrentGetInteractable(out var interactable))
 				{
 					interactable.EndInteraction(this);
-				}
+
+                }
 			}
 
-			if (Input.GetKey(KeyCode.Q))
-			{
-				currentUsable?.Use(_user);
-			}
+            /*if (Input.GetKey(KeyCode.Q))
+            {
+                currentUsable?.Use(_user);
+
+            }*/
+
+            Wash();
 
 		}
+
+		public void Wash()
+		{
+            if (Input.GetKey(KeyCode.Q))
+            {
+                currentUsable?.Use(_user);			
+            }
+        }
 
 		private IInteractable DetectInteractable()
 		{
@@ -89,8 +104,30 @@ namespace CopycatOverCooked.GamePlay
 					select = item;
 			}
 
-			return select;
-		}
+			if (select != null)
+			{
+				if (select.type == InteractableType.FixUtensil)
+				{
+					// 도마에 대한 애니메이션 실행 또는 동작 수행
+					if (TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
+					{
+						client.animator.SetBool("Cut", true);
+						Debug.Log($"도마질 {select.type}");
+					}
+				}
+				else
+				{
+					if (TryGetComponent<ClientBehaviour>(out ClientBehaviour client))
+					{
+
+						client.animator.SetBool("Cut", false);
+                        Debug.Log($"현재상태 {select.type}");
+                    }
+				}
+			}
+
+            return select;
+        }
 
 
 

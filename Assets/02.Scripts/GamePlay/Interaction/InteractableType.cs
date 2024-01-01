@@ -15,7 +15,7 @@ namespace CopycatOverCooked.GamePlay
         Sink,
         Utensill,
 		PickUtensil,
-        FixUtensil,
+        FixUtensil, // 도마 판정
         Table,
         TrashCan,
         ServingConvayer,
