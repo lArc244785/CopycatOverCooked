@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class IngredientUI : MonoBehaviour
 {
 	[SerializeField] private Image[] icons;
-	[SerializeField] private GameObject _slotGameObject;
 	private void Awake()
 	{
 		Ingredient ingredient = transform.root.GetComponent<Ingredient>();
@@ -28,7 +27,7 @@ public class IngredientUI : MonoBehaviour
 
 	private void OnSetVisableUI(bool isVisable)
 	{
-		_slotGameObject.SetActive(isVisable);
+		gameObject.SetActive(isVisable);
 	}
 
 }

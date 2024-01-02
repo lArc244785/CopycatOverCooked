@@ -15,6 +15,7 @@ namespace CopycatOverCooked.UIs
 		[SerializeField] private Image _progressImage;
 
 		[SerializeField] private PickUtensil _utensil;
+		[SerializeField] private FixUtensil _fixUtensil;
 
 		private Image[] _slotImage;
 		private int _slotCount;
@@ -24,6 +25,7 @@ namespace CopycatOverCooked.UIs
 
 		private void Awake()
 		{
+			Debug.Log($"{gameObject.name} {_utensil.capacity}");
 			_slotImage = new Image[_utensil.capacity];
 
 			for (int i = 0; i < _slotImage.Length; i++)
