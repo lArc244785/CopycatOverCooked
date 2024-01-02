@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b6d602bd13c3fc4da256b8a42583cc7, type: 3}
   m_Name: TestStageData
   m_EditorClassIdentifier: 
-  menu: f000000030000000
+  menu: b0040000300000000002000000020000
   orderPeriod: 5

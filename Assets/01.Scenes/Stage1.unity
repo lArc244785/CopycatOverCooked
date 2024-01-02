@@ -1419,6 +1419,7 @@ MonoBehaviour:
   _recipeList:
   - {fileID: 11400000, guid: 2e95523d774f5b4498744a80daafbab3, type: 2}
   - {fileID: 11400000, guid: 1a29c525a673cb94f80a6275fcfc4d0f, type: 2}
+  - {fileID: 11400000, guid: def49fbbd88bdb94d841ee066e26ac2a, type: 2}
 --- !u!4 &228316442
 Transform:
   m_ObjectHideFlags: 0
@@ -12756,7 +12757,7 @@ MonoBehaviour:
   - {fileID: 218293371}
   - {fileID: 1345752409}
   - {fileID: 1058564346}
-  PlayTime: 30
+  PlayTime: 60
   InGameTime:
     m_InternalValue: 0
   goalScore: 1000
