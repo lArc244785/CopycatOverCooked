@@ -17,13 +17,15 @@ namespace CopycatOverCooked.Orders
         {    
             OrderManager.instance._orderStates.OnListChanged += OnOrderListChanged;
             slots = new List<Slot>();
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 20; i++)
             {
                 slot = Instantiate(slot, content);
                 slot.gameObject.SetActive(false);
                 slots.Add(slot);
             }
         }
+
+
 
         private void OnDestroy()
         {
