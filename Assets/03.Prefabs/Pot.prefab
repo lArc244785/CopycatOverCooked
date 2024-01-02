@@ -515,6 +515,7 @@ GameObject:
   - component: {fileID: 5205708266436067855}
   - component: {fileID: 1682688121450511004}
   - component: {fileID: 6446476274942063071}
+  - component: {fileID: 8023039580001898651}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -607,3 +608,17 @@ MonoBehaviour:
   _slotLayerOutGroup: {fileID: 7664446170122658772}
   _progressBar: {fileID: 4046848678758393088}
   _progressImage: {fileID: 5319047594071775685}
+  _utensil: {fileID: 5141968421353437079}
+--- !u!114 &8023039580001898651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6258628704729361634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc809810263803c438fac3c98b525fe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  setCameraHere: {fileID: 0}

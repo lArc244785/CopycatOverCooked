@@ -137,7 +137,7 @@ public class LobbyUI : NetworkBehaviour, Initializer
 
         //showServerRpc();
         gameObject.SetActive(false);
-        gameObject.GetComponent<NetworkObject>().Despawn();
+        //gameObject.GetComponent<NetworkObject>().Despawn();
         GameManager.instance.StartGameServerRpc();
     }
 

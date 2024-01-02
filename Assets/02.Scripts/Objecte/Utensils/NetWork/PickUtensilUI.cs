@@ -12,7 +12,9 @@ namespace CopycatOverCooked.UIs
 		[SerializeField] private Image _slotPrefab;
 		[SerializeField] private GridLayoutGroup _slotLayerOutGroup;
 		[SerializeField] private GameObject _progressBar;
-		[SerializeField] private Image _progressImage; 
+		[SerializeField] private Image _progressImage;
+
+		[SerializeField] private PickUtensil _utensil;
 
 		private Image[] _slotImage;
 		private int _slotCount;
@@ -22,8 +24,7 @@ namespace CopycatOverCooked.UIs
 
 		private void Awake()
 		{
-			PickUtensil utensil = transform.root.GetComponent<PickUtensil>();
-			_slotImage = new Image[utensil.capacity];
+			_slotImage = new Image[_utensil.capacity];
 
 			for (int i = 0; i < _slotImage.Length; i++)
 			{
@@ -32,14 +33,14 @@ namespace CopycatOverCooked.UIs
 				_slotImage[i] = newSlot;
 			}
 
-			_sucessProgress = utensil.sucessProgress;
-			_failProgress = utensil.failProgress;
+			_sucessProgress = _utensil.sucessProgress;
+			_failProgress = _utensil.failProgress;
 
-			utensil.onAddIngredient += OnAddIngredient;
-			utensil.onRemoveAtIngredientList += OnRemoveAtIngrdient;
-			utensil.onChangeProgress += OnChangeProgress;
-			utensil.onFail += OnFail;
-			utensil.onChangeIngredinet += OnChangeIngredient;
+			_utensil.onAddIngredient += OnAddIngredient;
+			_utensil.onRemoveAtIngredientList += OnRemoveAtIngrdient;
+			_utensil.onChangeProgress += OnChangeProgress;
+			_utensil.onFail += OnFail;
+			_utensil.onChangeIngredinet += OnChangeIngredient;
 
 			OnChangeProgress(0.0f);
 		}

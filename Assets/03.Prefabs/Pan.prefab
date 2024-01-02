@@ -108,7 +108,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 187128967187362930}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7742573402198774119
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -332,6 +332,7 @@ MonoBehaviour:
   _slotLayerOutGroup: {fileID: 3059715480627664298}
   _progressBar: {fileID: 4804234298482186744}
   _progressImage: {fileID: 4860038810060851373}
+  _utensil: {fileID: 6116404085540514265}
 --- !u!1 &4804234298482186744
 GameObject:
   m_ObjectHideFlags: 0

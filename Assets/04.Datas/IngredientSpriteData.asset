@@ -16,28 +16,26 @@ MonoBehaviour:
   - key: -9999
     sprite: {fileID: 21300000, guid: 8a68552738c4e924c95ed41e0101fa1a, type: 3}
   - key: 1
-    sprite: {fileID: -545915511, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: 365739d89513dd54e8305b4525128443, type: 3}
   - key: 2
-    sprite: {fileID: 164475797, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: 002f87bc5f302884ca0bb4204d6ce295, type: 3}
   - key: 4
-    sprite: {fileID: 1142528877, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: 31e88f5b8f0d605459b00622c8ebb6ca, type: 3}
   - key: 8
-    sprite: {fileID: -955986649, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: b57e413c77297be45948d6a621a67899, type: 3}
   - key: 16
-    sprite: {fileID: -1660944295, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: da175f94caba5a2459eafbf6dbafc027, type: 3}
   - key: 32
-    sprite: {fileID: 385593514, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: 8f55f20643ad61b4a96e32dbb074dff5, type: 3}
   - key: 64
-    sprite: {fileID: 517285138, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: 6c93b0e6f841a4949bec9a0f2a86306a, type: 3}
   - key: 128
-    sprite: {fileID: 1220388436, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: 12d1713da162a1944a6686f0b92a23e1, type: 3}
   - key: 256
-    sprite: {fileID: -1175074579, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: 61b3915c2a1376a45b1f2bdd62ac8d4e, type: 3}
   - key: 512
-    sprite: {fileID: 90050547, guid: 0c19fceb3861d084086fbe1d6e30aeb3, type: 3}
+    sprite: {fileID: 21300000, guid: c9b08fe0a6f95a14abe37a75409ef05c, type: 3}
   - key: 48
-    sprite: {fileID: -478841059, guid: b270afb2c1d902d46810e7f9931549b6, type: 3}
+    sprite: {fileID: 21300000, guid: 92cb5b50fb7bb0d4dbead8823edd116f, type: 3}
   - key: 1200
-    sprite: {fileID: -1191804857, guid: b270afb2c1d902d46810e7f9931549b6, type: 3}
-  - key: 1024
-    sprite: {fileID: 21300000, guid: 6f9d493ba0168d347a2d3d8816677604, type: 3}
+    sprite: {fileID: 21300000, guid: 1afc5ba097093cb409d72ebfb22b9eb4, type: 3}
