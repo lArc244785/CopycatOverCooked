@@ -1,6 +1,6 @@
 using System;
 using Unity.Netcode;
-using Unity.VisualScripting;
+// 히히 발싸
 
 namespace CopycatOverCooked.Orders
 {
@@ -8,7 +8,6 @@ namespace CopycatOverCooked.Orders
     {
         public uint ingredientType; 
         public float timeMark; // 주문한 시간
-
         public OrderState(uint ingredientType, float timeMark)
         {
             this.ingredientType = ingredientType;

@@ -1,31 +1,28 @@
 using UnityEngine;
-using UnityEngine.UI;
 using Unity.Netcode;
-using CopycatOverCooked.Datas;
 using System.Collections.Generic;
-using System;
 
+// 히히 발싸
 namespace CopycatOverCooked.Orders
 {
     public class OrderUI : MonoBehaviour
     {
+        [SerializeField] private Transform content;
+
         public Slot slot;
         private List<Slot> slots;
-        [SerializeField] private Transform content;
 
         private void Start()
         {    
             OrderManager.instance._orderStates.OnListChanged += OnOrderListChanged;
             slots = new List<Slot>();
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 30; i++)
             {
                 slot = Instantiate(slot, content);
                 slot.gameObject.SetActive(false);
                 slots.Add(slot);
             }
         }
-
-
 
         private void OnDestroy()
         {
@@ -35,10 +32,7 @@ namespace CopycatOverCooked.Orders
 
         private void OnOrderListChanged(NetworkListEvent<OrderState> changeEvent)
         {
-            Debug.Log(changeEvent.Index);
-            if (changeEvent.Index < 0 || changeEvent.Index >= slots.Count)
-                return;
-
+            Debug.Log($"오더 이벤트 인덱스 {changeEvent.Index}");
             //자료구조 공부하자
 
             using (IEnumerator<Slot> e1 = slots.GetEnumerator())
@@ -47,13 +41,9 @@ namespace CopycatOverCooked.Orders
                 while (e1.MoveNext())
                 {
                     if (e2.MoveNext())
-                    {
                         e1.Current.Setup(e2.Current.ingredientType);
-                    }
                     else
-                    {
                         e1.Current.Setup(0);
-                    }
                 }
             }
         }

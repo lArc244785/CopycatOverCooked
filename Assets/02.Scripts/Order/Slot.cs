@@ -8,11 +8,12 @@ namespace CopycatOverCooked.Orders
 {
     public class Slot : MonoBehaviour
     {
-        public IngredientType ingredientType;
-        public Image image;
-        public List<Image> igredientIcons;
-        public Slider slider; 
         [SerializeField] float timer;
+
+        public IngredientType ingredientType;
+        public List<Image> igredientIcons;
+        public Slider slider;
+        public Image image;
 
         public void Setup(uint ingredientType)
         {
@@ -33,7 +34,6 @@ namespace CopycatOverCooked.Orders
                             e1.Current.sprite = null;
                     }
                 }
-
                 slider.value = timer;
             }
             else if (ingredientType < 0)
@@ -41,7 +41,6 @@ namespace CopycatOverCooked.Orders
                 gameObject.SetActive(false);
             }
         }
-
         private void Update()
         {
             if (timer > 0.0f)
@@ -53,8 +52,6 @@ namespace CopycatOverCooked.Orders
             {
                 this.gameObject.SetActive(false);
             }
-
-
         }
     }
 }
