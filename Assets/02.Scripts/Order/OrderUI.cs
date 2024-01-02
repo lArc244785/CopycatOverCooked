@@ -35,10 +35,7 @@ namespace CopycatOverCooked.Orders
 
         private void OnOrderListChanged(NetworkListEvent<OrderState> changeEvent)
         {
-            Debug.Log(changeEvent.Index);
-            //if (changeEvent.Index < 0 || changeEvent.Index >= slots.Count)
-            //    return;
-
+            Debug.Log($"오더 이벤트 인덱스 {changeEvent.Index}");
             //자료구조 공부하자
 
             using (IEnumerator<Slot> e1 = slots.GetEnumerator())
