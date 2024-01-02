@@ -2,6 +2,8 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System;
+using TMPro;
+using Unity.Services.Lobbies.Models;
 
 namespace CopycatOverCooked.GamePlay
 {
@@ -43,21 +45,34 @@ namespace CopycatOverCooked.GamePlay
 			if (IsServer && !string.IsNullOrEmpty(m_SceneName))
 			{
 				state.Value = GameFlow.Load;
-				var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
+
+				Debug.Log("¾Àº¯°æ");
+
+                var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
 				if (status != SceneEventProgressStatus.Started)
 				{
 					Debug.LogWarning($"Failed to load {m_SceneName} " +
 						  $"with a {nameof(SceneEventProgressStatus)}: {status}");
 				}
 			}
-		}
+
+			Debug.Log(LobbyManager.Instance.GetJoinedLobby());
+            Debug.Log((LobbyManager.Instance.GetJoinedLobby().Players).Count);
+        }
 
 
 		[ClientRpc]
 		private void TestClientRpc()
 		{
 			Debug.Log("PingPong");
-		}
+
+            var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
+            if (status != SceneEventProgressStatus.Started)
+            {
+                Debug.LogWarning($"Failed to load {m_SceneName} " +
+                      $"with a {nameof(SceneEventProgressStatus)}: {status}");
+            }
+        }
 
 
 		public bool IsPlayerLoadFish()
