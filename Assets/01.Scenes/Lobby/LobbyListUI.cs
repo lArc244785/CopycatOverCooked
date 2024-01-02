@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,6 +32,7 @@ public class LobbyListUI : MonoBehaviour
         LobbyManager.Instance.OnLobbyListChanged += LobbyManager_OnLobbyListChanged;
         LobbyManager.Instance.OnJoinedLobby += LobbyManager_OnJoinedLobby;
         LobbyManager.Instance.onLobbyCreated += RefreshLobbyListButtonClick;
+        LobbyManager.Instance.OnLeftLobby += LobbyManager_OnLeftLobby;
     }
     private void RefreshLobbyListButtonClick()
     {        
@@ -40,6 +42,11 @@ public class LobbyListUI : MonoBehaviour
     private void CreateLobbyButtonClick()
     {
         _createRoomUI.gameObject.SetActive(true);
+    }
+
+    private void LobbyManager_OnLeftLobby(object sender, EventArgs e)
+    {
+        Show();
     }
 
     private void ClearLobbyList()
