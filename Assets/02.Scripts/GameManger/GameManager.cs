@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System;
 using TMPro;
 using Unity.Services.Lobbies.Models;
+using UnityEngine.SceneManagement;
 
 namespace CopycatOverCooked.GamePlay
 {
@@ -66,12 +67,9 @@ namespace CopycatOverCooked.GamePlay
 		{
 			Debug.Log("PingPong");
 
-            var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
-            if (status != SceneEventProgressStatus.Started)
-            {
-                Debug.LogWarning($"Failed to load {m_SceneName} " +
-                      $"with a {nameof(SceneEventProgressStatus)}: {status}");
-            }
+            //var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
+
+			SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
         }
 
 
