@@ -11,6 +11,7 @@ namespace CopycatOverCooked.GamePlay
 		[SerializeField] private float _dashSpeed = 0f;
 		[SerializeField] private float _throwPower = 0f;
 
+
 		private Vector3 _direction = Vector3.zero;
 		private Rigidbody _body = null;
 		public Animator animator;

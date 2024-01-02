@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/01.Scenes/TestObjectInteraction.unity
     guid: 5e1ba908f18571c45a4decd6911a433a
-  - enabled: 1
+  - enabled: 0
     path: Assets/01.Scenes/Lobby.unity
     guid: 27f591e3064834f41b0dfc80b6af1cc7
   - enabled: 0
@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01.Scenes/Resulte.unity
     guid: 857746416cf2fed4f89bbbf243a0bdfb
+  - enabled: 1
+    path: Assets/Scenes/LobbyScene.unity
+    guid: 2db6d82244b549b43a11236a066ead09
   m_configObjects: {}
