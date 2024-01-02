@@ -84,9 +84,6 @@ public class LobbyUI : NetworkBehaviour, Initializer
 
     private void ClearLobby()
     {
-        if (GameManager.instance.state.Value != GameFlow.Lobby)
-            return;
-
         foreach (Transform child in _playerList)
         {
             if (child == _player)
@@ -135,23 +132,21 @@ public class LobbyUI : NetworkBehaviour, Initializer
             return;
         }*/
 
-        //showServerRpc();
+
         gameObject.SetActive(false);
-        //gameObject.GetComponent<NetworkObject>().Despawn();
+
         GameManager.instance.StartGameServerRpc();
     }
 
     [ServerRpc]
     private void showServerRpc()
     {
-        Debug.Log("서버rpc");
         showSceneClientRpc();
     }
 
     [ClientRpc]
     private void showSceneClientRpc()   
     {
-        Debug.Log("클라rpc");
         _background.gameObject.SetActive(false);
         this.gameObject.SetActive(false);
 
