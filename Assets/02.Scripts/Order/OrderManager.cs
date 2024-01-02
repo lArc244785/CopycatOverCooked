@@ -34,7 +34,7 @@ namespace CopycatOverCooked.Orders
             }
             else
             {
-                if (_orderStates.Count != 5)
+               
                     _timer -= Time.deltaTime;
 
             }
