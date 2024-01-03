@@ -61,6 +61,16 @@ namespace CopycatOverCooked.GamePlay
             Debug.Log($"{gameObject.name} Move {position}");
             transform.position = position;
         }
+
+        [ClientRpc]
+        public void SetPositionAndRotationClientRpc(Vector3 position, Vector3 rotation)
+		{
+            if (IsOwner == false)
+                return;
+            transform.position = position;
+			transform.rotation = Quaternion.Euler(rotation);
+        }
+
         private IEnumerator C_WaitPlayer()
 		{
             Debug.Log($"[ClientBehaviour] : Spawned of client {OwnerClientId}");

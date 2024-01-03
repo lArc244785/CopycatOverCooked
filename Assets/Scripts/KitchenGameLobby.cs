@@ -151,9 +151,12 @@ public class KitchenGameLobby : MonoBehaviour {
     public async void CreateLobby(string lobbyName, bool isPrivate) {
         OnCreateLobbyStarted?.Invoke(this, EventArgs.Empty);
         try {
-            joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, KitchenGameMultiplayer.MAX_PLAYER_AMOUNT, new CreateLobbyOptions {
-                IsPrivate = isPrivate,
-            });
+            joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, 
+                                                                       KitchenGameMultiplayer.MAX_PLAYER_AMOUNT, 
+                                                                       new CreateLobbyOptions 
+                                                                       {
+                                                                           IsPrivate = isPrivate,
+                                                                       });
 
             Allocation allocation = await AllocateRelay();
 
@@ -196,6 +199,7 @@ public class KitchenGameLobby : MonoBehaviour {
     public async void JoinWithId(string lobbyId) {
         OnJoinStarted?.Invoke(this, EventArgs.Empty);
         try {
+            Debug.Log("join with id");
             joinedLobby = await LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
 
             string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;
@@ -214,6 +218,7 @@ public class KitchenGameLobby : MonoBehaviour {
     public async void JoinWithCode(string lobbyCode) {
         OnJoinStarted?.Invoke(this, EventArgs.Empty);
         try {
+            Debug.Log("join with code");
             joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
 
             string relayJoinCode = joinedLobby.Data[KEY_RELAY_JOIN_CODE].Value;

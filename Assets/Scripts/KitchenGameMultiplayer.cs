@@ -1,8 +1,10 @@
+using CopycatOverCooked.GamePlay;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Services.Authentication;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -90,7 +92,20 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         });
         SetPlayerNameServerRpc(GetPlayerName());
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
+
+        Debug.Log($"{clientId} Set Move And Rotation");
+        ClientBehaviour.spawned[clientId].SetPositionAndRotationClientRpc(spawnPoss[clientId], spawnRots[clientId]);
     }
+
+    Vector3[] spawnPoss = { new Vector3(-2.46000004f, 0.00877737999f, 0.0700000003f),
+                            new Vector3(-1,0.00877726078f,0.219999999f),
+                            new Vector3(0.889999986f,0.00877726078f,0.219999999f),
+                            new Vector3(2.75f,0.00877726078f,0.419999987f)};
+
+    Vector3[] spawnRots = { new Vector3(0f, 145f, 0f),
+                            new Vector3(0f, 160f, 0f),
+                            new Vector3(0f, 188f, 0f),
+                            new Vector3(0f, 216.88f, 0f)};
 
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse) {
         if (SceneManager.GetActiveScene().name != Loader.Scene.Stage1.ToString()) {
@@ -115,6 +130,8 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Client_OnClientConnectedCallback;
         NetworkManager.Singleton.StartClient();
     }
+
+
 
     private void NetworkManager_Client_OnClientConnectedCallback(ulong clientId) {
         SetPlayerNameServerRpc(GetPlayerName());
@@ -141,6 +158,8 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
         playerData.playerId = playerId;
 
         playerDataNetworkList[playerDataIndex] = playerData;
+
+
     }
 
     private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId) {

@@ -79,7 +79,7 @@ namespace CopycatOverCooked.GamePlay
                         foreach (var item in ClientBehaviour.spawned)
                         {
 							Vector3 startPosition = GetStartPoint(count++);
-                            item.Value.MoveToClientRpc(startPosition);
+                            item.Value.SetPositionAndRotationClientRpc(startPosition, Vector3.zero);
                             item.Value.Active();
                         }
                     }

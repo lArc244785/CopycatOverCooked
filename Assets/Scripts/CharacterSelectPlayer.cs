@@ -13,6 +13,7 @@ public class CharacterSelectPlayer : MonoBehaviour {
     [SerializeField] private PlayerVisual playerVisual;
     [SerializeField] private Button kickButton;
     [SerializeField] private TextMeshPro playerNameText;
+    [SerializeField] private Transform[] _position;
 
 
     private void Awake() {
@@ -42,15 +43,17 @@ public class CharacterSelectPlayer : MonoBehaviour {
 
     private void UpdatePlayer() {
         if (KitchenGameMultiplayer.Instance.IsPlayerIndexConnected(playerIndex)) {
-            Show();
+            //Show();
 
-            PlayerData playerData = KitchenGameMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
+            //PlayerData playerData = KitchenGameMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
 
-            readyGameObject.SetActive(CharacterSelectReady.Instance.IsPlayerReady(playerData.clientId));
+            //readyGameObject.SetActive(CharacterSelectReady.Instance.IsPlayerReady(playerData.clientId));
 
-            playerNameText.text = playerData.playerName.ToString();
+            //playerNameText.text = playerData.playerName.ToString();
 
-            playerVisual.SetPlayerColor(KitchenGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+            //playerVisual.SetPlayerColor(KitchenGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+
+
         } else {
             Hide();
         }
