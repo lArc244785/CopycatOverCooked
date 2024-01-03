@@ -78,7 +78,8 @@ namespace CopycatOverCooked.GamePlay
                         int count = 0;
                         foreach (var item in ClientBehaviour.spawned)
                         {
-                            item.Value.MoveTo(GetStartPoint(count++));
+							Vector3 startPosition = GetStartPoint(count++);
+                            item.Value.MoveToClientRpc(startPosition);
                             item.Value.Active();
                         }
                     }
@@ -114,34 +115,6 @@ namespace CopycatOverCooked.GamePlay
 		public Vector3 GetStartPoint(int index)
 		{
 			return _startPoints[index].position;
-		}
-
-		private void Update()
-		{
-			if (IsServer == false)
-				return;
-
-			switch (currentStep.Value)
-			{
-				case Step.Idle:
-					break;
-				case Step.WaitUntilAllPlayersAreReady:
-                    if (KitchenGameLobby.Instance.GetLobby().Players.Count == ClientBehaviour.spawned.Count)
-					{
-						currentStep.Value++;
-					}
-                    break;
-				case Step.BeforeStartStage:
-					break;
-				case Step.StartStage:
-					break;
-				case Step.AfterStartStage:
-					break;
-				case Step.DuringStartStage:
-					break;
-				default:
-					break;
-			}
 		}
 
 		private IEnumerator C_GameTimer()

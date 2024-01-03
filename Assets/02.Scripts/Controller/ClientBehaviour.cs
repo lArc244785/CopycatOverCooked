@@ -48,10 +48,20 @@ namespace CopycatOverCooked.GamePlay
 
 		public void MoveTo(Vector3 position)
 		{
+			Debug.Log($"{gameObject.name} Move {position}");
 			transform.position = position;
 		}
 
-		private IEnumerator C_WaitPlayer()
+		[ClientRpc]
+        public void MoveToClientRpc(Vector3 position)
+        {
+			if (IsOwner == false)
+				return;
+
+            Debug.Log($"{gameObject.name} Move {position}");
+            transform.position = position;
+        }
+        private IEnumerator C_WaitPlayer()
 		{
             Debug.Log($"[ClientBehaviour] : Spawned of client {OwnerClientId}");
 
