@@ -9,5 +9,5 @@ namespace CopycatOverCooked.Orders
     {
         public List<IngredientType> menu;
         public float orderPeriod;
-    }
+    } //È÷È÷ ¹ß½Î
 }
