@@ -31,11 +31,9 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 6c93b0e6f841a4949bec9a0f2a86306a, type: 3}
   - key: 128
     sprite: {fileID: 21300000, guid: 12d1713da162a1944a6686f0b92a23e1, type: 3}
-  - key: 256
+  - key: 1024
     sprite: {fileID: 21300000, guid: 61b3915c2a1376a45b1f2bdd62ac8d4e, type: 3}
   - key: 512
     sprite: {fileID: 21300000, guid: c9b08fe0a6f95a14abe37a75409ef05c, type: 3}
-  - key: 48
-    sprite: {fileID: 21300000, guid: 92cb5b50fb7bb0d4dbead8823edd116f, type: 3}
   - key: 1200
     sprite: {fileID: 21300000, guid: 1afc5ba097093cb409d72ebfb22b9eb4, type: 3}

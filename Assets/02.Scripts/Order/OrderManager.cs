@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using CopycatOverCooked.Datas;
+using CopycatOverCooked.GamePlay;
 
 namespace CopycatOverCooked.Orders
 {
@@ -44,6 +45,7 @@ namespace CopycatOverCooked.Orders
             {
                 if ((uint)ingredientType == _orderStates[i].ingredientType)
                 {
+                    StageManager.instance.currentScore.Value += 100;
                     Debug.Log($"{ingredientType} 제출 완료");
                     _orderStates.RemoveAt(i);
                     Debug.Log($"현재 오더 리스트 수 {_orderStates.Count}");

@@ -914,10 +914,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 3c083c92-361b-4e60-8817-c88a8f34ed7b
+  cloudProjectId: 6058f185-8d86-482b-9ed4-34a50948b12a
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: CopycatOvercooked (1)
+  projectName: CopycatOvercooked
   organizationId: ldgun
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0

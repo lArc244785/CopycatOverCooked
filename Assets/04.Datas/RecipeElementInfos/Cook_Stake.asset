@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b6d602bd13c3fc4da256b8a42583cc7, type: 3}
-  m_Name: TestStageData
+  m_Script: {fileID: 11500000, guid: 0cbbf1845d4c34342b2978303699d0cc, type: 3}
+  m_Name: Cook_Stake
   m_EditorClassIdentifier: 
-  menu: b00400000002000000040000
-  orderPeriod: 7
+  <resource>k__BackingField: 64
+  <utensil>k__BackingField: 1
+  <result>k__BackingField: 1024
+  <cookSucessProgress>k__BackingField: 1
+  <cookFailProgress>k__BackingField: 0

@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4b182bdd5018bb4088941398d3fce58, type: 3}
-  m_Name: Recipe_Hamborger
+  m_Script: {fileID: 11500000, guid: 5be6b794101f8e94f8842a6f97d18938, type: 3}
+  m_Name: Cook_Stake
   m_EditorClassIdentifier: 
+  type: 1024
   elements:
-  - {fileID: 11400000, guid: 60865b7bcbf96b64f8c206d6296e8359, type: 2}
-  - {fileID: 11400000, guid: a61d9e4ef60d3074492c75aed2d53716, type: 2}
-  - {fileID: 11400000, guid: f6b74f29a4572f947905505681e9e47a, type: 2}
   - {fileID: 11400000, guid: 11da74c30601fc74f85beeef9fcc550b, type: 2}
-  result: 1200
