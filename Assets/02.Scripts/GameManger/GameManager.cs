@@ -39,8 +39,8 @@ namespace CopycatOverCooked.GamePlay
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);
-            NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
-			OnFailedToJoinGame += KitchenGameMultiplayer_OnFailedToJoinGame;
+            //NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
+			//OnFailedToJoinGame += KitchenGameMultiplayer_OnFailedToJoinGame;
         }
 
 		public bool startcli()

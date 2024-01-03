@@ -73,6 +73,15 @@ namespace CopycatOverCooked.GamePlay
 				case Step.WaitUntilAllPlayersAreReady:
 					break;
 				case Step.BeforeStartStage:
+					if (IsServer)
+					{
+                        int count = 0;
+                        foreach (var item in ClientBehaviour.spawned)
+                        {
+                            item.Value.MoveTo(GetStartPoint(count++));
+                            item.Value.Active();
+                        }
+                    }
 					Debug.Log("모든 플레이어가 준비가 완료되어 스테이지 시작전 해야되는 내용을 시작합니다.");
 					CameraSetting();
 					currentStep.Value = Step.StartStage;
@@ -112,9 +121,26 @@ namespace CopycatOverCooked.GamePlay
 			if (IsServer == false)
 				return;
 
-			if (currentStep.Value == Step.DuringStartStage)
+			switch (currentStep.Value)
 			{
-
+				case Step.Idle:
+					break;
+				case Step.WaitUntilAllPlayersAreReady:
+                    if (KitchenGameLobby.Instance.GetLobby().Players.Count == ClientBehaviour.spawned.Count)
+					{
+						currentStep.Value++;
+					}
+                    break;
+				case Step.BeforeStartStage:
+					break;
+				case Step.StartStage:
+					break;
+				case Step.AfterStartStage:
+					break;
+				case Step.DuringStartStage:
+					break;
+				default:
+					break;
 			}
 		}
 

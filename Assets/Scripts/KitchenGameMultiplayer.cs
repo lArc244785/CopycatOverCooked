@@ -93,7 +93,7 @@ public class KitchenGameMultiplayer : NetworkBehaviour {
     }
 
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse) {
-        if (SceneManager.GetActiveScene().name != Loader.Scene.CharacterSelectScene.ToString()) {
+        if (SceneManager.GetActiveScene().name != Loader.Scene.Stage1.ToString()) {
             connectionApprovalResponse.Approved = false;
             connectionApprovalResponse.Reason = "Game has already started";
             return;
