@@ -100,7 +100,7 @@ PlayerSettings:
   xboxEnableFitness: 0
   visibleInBackground: 1
   allowFullscreenSwitch: 1
-  fullscreenMode: 3
+  fullscreenMode: 1
   xboxSpeechDB: 0
   xboxEnableHeadOrientation: 0
   xboxEnableGuest: 0
@@ -912,13 +912,13 @@ PlayerSettings:
   hmiLogStartupTiming: 0
   hmiCpuConfiguration: 
   apiCompatibilityLevel: 6
-  activeInputHandler: 0
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 6058f185-8d86-482b-9ed4-34a50948b12a
+  cloudProjectId: 24588626-c643-46ff-9166-e29b36cb594e
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: CopycatOvercooked
-  organizationId: ldgun
+  organizationId: gong_do_ri
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

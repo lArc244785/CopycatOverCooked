@@ -61,11 +61,11 @@ namespace CopycatOverCooked.GamePlay
 			{
 				GameManager.instance.InGameSceneCompleteServerRpc();
 			}
-
-		}
+        }
 
 		private void InitProgress(Step prev, Step current)
 		{
+			Debug.Log($"Init {current}");
 			switch (current)
 			{
 				case Step.Idle:
@@ -73,8 +73,18 @@ namespace CopycatOverCooked.GamePlay
 				case Step.WaitUntilAllPlayersAreReady:
 					break;
 				case Step.BeforeStartStage:
+					if (IsServer)
+					{
+                        int count = 0;
+                        foreach (var item in ClientBehaviour.spawned)
+                        {
+							Vector3 startPosition = GetStartPoint(count++);
+                            item.Value.SetPositionAndRotationClientRpc(startPosition, Vector3.zero);
+                            item.Value.Active();
+                        }
+                    }
 					Debug.Log("모든 플레이어가 준비가 완료되어 스테이지 시작전 해야되는 내용을 시작합니다.");
-					CameraSetting();
+
 					currentStep.Value = Step.StartStage;
 					break;
 				case Step.StartStage:
@@ -83,8 +93,8 @@ namespace CopycatOverCooked.GamePlay
 						GameManager.instance.GameStartServerRpc();
 						currentStep.Value = Step.DuringStartStage;
 					}
-
-					break;
+                
+                    break;
 				case Step.AfterStartStage:
 					break;
 				case Step.DuringStartStage:
@@ -92,30 +102,21 @@ namespace CopycatOverCooked.GamePlay
 					{
 						StartCoroutine(C_GameTimer());
 					}
-					break;
+					CameraSetting();
+                    break;
 			}
 		}
 
-		private void CameraSetting()
+		public void CameraSetting()
 		{
-			Interactor interactor = Interactor.spawned[OwnerClientId];
+			Debug.Log($"CamerSetting...{NetworkManager.LocalClientId}");
+			Interactor interactor = Interactor.spawned[NetworkManager.LocalClientId];
 			_playerCam.Follow = interactor.transform;
 		}
 
 		public Vector3 GetStartPoint(int index)
 		{
 			return _startPoints[index].position;
-		}
-
-		private void Update()
-		{
-			if (IsServer == false)
-				return;
-
-			if (currentStep.Value == Step.DuringStartStage)
-			{
-
-			}
 		}
 
 		private IEnumerator C_GameTimer()
