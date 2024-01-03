@@ -1,15 +1,20 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace CopycatOverCooked.GamePlay
 {
 	public class ClientBehaviour : NetworkBehaviour
 	{
+		public static Dictionary<ulong, ClientBehaviour> spawned = new Dictionary<ulong, ClientBehaviour>();
+
 		[SerializeField] private float _moveSpeed = 0f;
 		[SerializeField] private float _dashSpeed = 0f;
 		[SerializeField] private float _throwPower = 0f;
+
 
 		private Vector3 _direction = Vector3.zero;
 		private Rigidbody _body = null;
@@ -23,19 +28,47 @@ namespace CopycatOverCooked.GamePlay
 		{
 			base.OnNetworkSpawn();
 			gameObject.name = $"player {OwnerClientId}";
+			if (spawned.ContainsKey(OwnerClientId))
+				spawned[OwnerClientId] = this;
+			else
+				spawned.Add(OwnerClientId, this);
 
-			if (IsOwner)
-			{
-				_body.isKinematic = true;
-				StartCoroutine(C_WaitPlayer());
-			}
+            _body.isKinematic = true;
+
+            //if (IsOwner)
+			//{
+			//	StartCoroutine(C_WaitPlayer());
+			//}
 		}
 
-		private IEnumerator C_WaitPlayer()
+		public void Active()
 		{
-			yield return new WaitUntil(() => GameManager.instance.state.Value == GameFlow.Load);
-			yield return new WaitUntil(() => StageManager.instance != null);
-			yield return new WaitUntil(() => StageManager.instance.currentStep.Value >= StageManager.Step.WaitUntilAllPlayersAreReady);
+			_body.isKinematic = false;
+		}
+
+		public void MoveTo(Vector3 position)
+		{
+			Debug.Log($"{gameObject.name} Move {position}");
+			transform.position = position;
+		}
+
+		[ClientRpc]
+        public void MoveToClientRpc(Vector3 position)
+        {
+			if (IsOwner == false)
+				return;
+
+            Debug.Log($"{gameObject.name} Move {position}");
+            transform.position = position;
+        }
+        private IEnumerator C_WaitPlayer()
+		{
+            Debug.Log($"[ClientBehaviour] : Spawned of client {OwnerClientId}");
+
+            yield return new WaitUntil(() => StageManager.instance != null);
+			yield return new WaitUntil(() => StageManager.instance.currentStep.Value >= StageManager.Step.BeforeStartStage);
+			// return new WaitUntil(() => SceneManager.GetActiveScene().name == Loader.Scene.Stage1.ToString());
+			Debug.Log($"[ClientBehaviour] : {OwnerClientId} is spawning on point {StageManager.instance.GetStartPoint((int)OwnerClientId)}");
 			transform.position = StageManager.instance.GetStartPoint((int)OwnerClientId);
 			_body.isKinematic = false;
 		}

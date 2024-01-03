@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System;
 using TMPro;
 using Unity.Services.Lobbies.Models;
+using UnityEngine.SceneManagement;
 
 namespace CopycatOverCooked.GamePlay
 {
@@ -24,7 +25,10 @@ namespace CopycatOverCooked.GamePlay
 		public int loadPlayCount = 2;
 		private NetworkVariable<int> _waitPlayerCount = new NetworkVariable<int>(0);
 
-		[SerializeField]
+
+        public event EventHandler OnFailedToJoinGame;
+
+        [SerializeField]
 		private string m_SceneName;
 		[SerializeField]
 		private string m_ResulteSceneName;
@@ -35,43 +39,84 @@ namespace CopycatOverCooked.GamePlay
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);
+            //NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Client_OnClientDisconnectCallback;
+			//OnFailedToJoinGame += KitchenGameMultiplayer_OnFailedToJoinGame;
+        }
+
+		public bool startcli()
+		{
+            if (NetworkManager.Singleton.StartClient())
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+
+		public bool startho()
+		{
+			if(NetworkManager.Singleton.StartHost())
+			{
+				return true;
+			}
+
+			else 
+			{
+				return false; 
+			}
 		}
 
 		[ServerRpc(RequireOwnership = false)]
-		public void StartGameServerRpc()
+		public void StartGameServerRpc(string sceneName)
 		{
-			TestClientRpc();
+			TestClientRpc(sceneName);
 
-			if (IsServer && !string.IsNullOrEmpty(m_SceneName))
-			{
-				state.Value = GameFlow.Load;
+            NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
 
-				Debug.Log("¾Àº¯°æ");
+            //if (IsServer && !string.IsNullOrEmpty(sceneName))
+            //{
+            //	state.Value = GameFlow.Load;
 
-                var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
-				if (status != SceneEventProgressStatus.Started)
-				{
-					Debug.LogWarning($"Failed to load {m_SceneName} " +
-						  $"with a {nameof(SceneEventProgressStatus)}: {status}");
-				}
-			}
+            //	Debug.Log("¾Àº¯°æ");
 
-			Debug.Log(LobbyManager.Instance.GetJoinedLobby());
-            Debug.Log((LobbyManager.Instance.GetJoinedLobby().Players).Count);
+            //             var status = NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+
+            //	if (status != SceneEventProgressStatus.Started)
+            //	{
+            //		Debug.LogWarning($"Failed to load {sceneName} " +
+            //			  $"with a {nameof(SceneEventProgressStatus)}: {status}");
+            //	}
+            //}
         }
 
+        private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId)
+        {
+            OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
+        }
 
-		[ClientRpc]
-		private void TestClientRpc()
+		private void KitchenGameMultiplayer_OnFailedToJoinGame(object sender, System.EventArgs e)
+		{
+			if (NetworkManager.Singleton.DisconnectReason == "")
+			{
+                Debug.Log("Failed to connect");
+			}
+			else
+			{
+				Debug.Log(NetworkManager.Singleton.DisconnectReason);
+			}
+		}
+
+            [ClientRpc]
+		private void TestClientRpc(string sceneName)
 		{
 			Debug.Log("PingPong");
 
-            var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
-            if (status != SceneEventProgressStatus.Started)
-            {
-                Debug.LogWarning($"Failed to load {m_SceneName} " +
-                      $"with a {nameof(SceneEventProgressStatus)}: {status}");
-            }
+            //var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Single);
+
+			SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
         }
 
 

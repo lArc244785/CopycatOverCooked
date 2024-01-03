@@ -8,13 +8,19 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/01.Scenes/TestUtensilScene.unity
     guid: 1752d2b4cac741e4ba0a046b11fd2747
+  - enabled: 1
+    path: Assets/Scenes/LobbyScene.unity
+    guid: 2db6d82244b549b43a11236a066ead09
+  - enabled: 1
+    path: Assets/Scenes/CharacterSelectScene.unity
+    guid: ef11a265631e36c42a4f15c9b9aa6bc3
   - enabled: 0
     path: Assets/01.Scenes/TestLobby.unity
     guid: 83e96ba7b799987468ab805472a7acd4
   - enabled: 0
     path: Assets/01.Scenes/TestObjectInteraction.unity
     guid: 5e1ba908f18571c45a4decd6911a433a
-  - enabled: 1
+  - enabled: 0
     path: Assets/01.Scenes/Lobby.unity
     guid: 27f591e3064834f41b0dfc80b6af1cc7
   - enabled: 0
@@ -24,6 +30,6 @@ EditorBuildSettings:
     path: Assets/01.Scenes/Stage1.unity
     guid: 994ac4f0b4058f94e8bcc3b7fb45ec15
   - enabled: 1
-    path: Assets/01.Scenes/Resulte.unity
+    path: Assets/01.Scenes/Result.unity
     guid: 857746416cf2fed4f89bbbf243a0bdfb
   m_configObjects: {}
